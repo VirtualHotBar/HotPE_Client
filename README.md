@@ -2,7 +2,7 @@
 
 # 介绍
 
-此仓库为HotPE的客户端,基于Electron,React,TypeScript,Semi Design(或Ant Design)
+此仓库为HotPE的客户端,基于Electron,React,TypeScript,Ant Design
 
 ![](https://pic.imgdb.cn/item/631aecdd16f2c2beb185bb6c.png)
 
@@ -18,3 +18,6 @@
 ### 构建
 `npm run react-build`
 `npm run electron-build`
+
+# 许可证
+HotPE Client的自编代码基于Apache-2.0许可证开源
