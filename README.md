@@ -1,7 +1,7 @@
 # HotPE Client
 
 # 介绍
-
+未完工（
 此仓库为HotPE的客户端,基于Electron,React,TypeScript,Ant Design
 
 ![](https://pic.imgdb.cn/item/631aecdd16f2c2beb185bb6c.png)
