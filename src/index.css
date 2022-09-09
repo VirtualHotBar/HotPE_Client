@@ -1,0 +1,14 @@
+div.loading {
+    height: 100%;
+    text-align: center;
+    background-color: #EDEDED;
+    -webkit-app-region: drag;
+}
+
+img.logoimg {
+    width: 100px;
+    height: 100px;
+    margin-top: 130px;
+    
+};
+

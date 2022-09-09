@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "esNext",   
+    "module": "commonjs", 
+    "jsx": "react",
+    "outDir": "./build", 
+    "strict": true, 
+    "noImplicitAny": true, 
+    "strictNullChecks": true, 
+    "baseUrl": ".",  
+    "paths": {
+     
+      },  
+    "esModuleInterop": true, 
+    "skipLibCheck": true, 
+    "forceConsistentCasingInFileNames": true 
+    },
+    "include": [
+      "./src/**/*"
+    ]
+}

@@ -1,0 +1,98 @@
+Arguments: 
+  D:\Software\nodejs\node.exe C:\Users\yyds_\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js install
+
+PATH: 
+  C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\dotnet\;D:\Software\Bandizip\Bandizip;D:\Software\nodejs\;D:\Software\Git\cmd;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;D:\Software\XSHELL7\;D:\Software\Go\bin;C:\Users\yyds_\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\yyds_\AppData\Local\Programs\Python\Python310\;C:\Users\yyds_\AppData\Local\Microsoft\WindowsApps;D:\Software\Microsoft VS Code\bin;C:\Users\yyds_\AppData\Roaming\npm;C:\Users\yyds_\AppData\Local\GitHubDesktop\bin;C:\Users\yyds_\.dotnet\tools;C:\Users\yyds_\go\bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.13.2
+
+Platform: 
+  win32 x64
+
+Trace: 
+  SyntaxError: E:\HotPE_Client\package.json: Unexpected token } in JSON at position 737
+      at JSON.parse (<anonymous>)
+      at C:\Users\yyds_\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:1629:59
+      at Generator.next (<anonymous>)
+      at step (C:\Users\yyds_\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:310:30)
+      at C:\Users\yyds_\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "hotpe_client",
+    "version": "0.1.0",
+    "private": true,
+    "devDependencies": {
+      "@testing-library/jest-dom": "^5.16.5",
+      "@testing-library/react": "^13.3.0",
+      "@testing-library/user-event": "^14.4.3",
+      "@types/react-router-dom": "^5.3.3",
+      "@types/antd": "^1.0.0",
+      "@types/jest": "^29.0.0",
+      "@types/node": "^18.7.14",
+      "@types/react": "^18.0.18",
+      "@types/react-dom": "^18.0.6",
+      "antd": "^4.22.8",
+      "cra-template": "1.2.0",
+      "electron": "^8.2.1",
+      "electron-builder": "^23.3.3",
+      "nodemon": "^2.0.19",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "typescript": "^4.8.2",
+      "web-vitals": "^3.0.0",
+      "react-router-dom": "^6.3.0",
+      "react-scripts": "^5.0.1", 
+  
+    },
+    "dependencies": {
+      "@ant-design/icons": "^4.7.0",
+      "electron-is-dev": "^2.0.0"
+  
+    },
+    "main": "index.ts",
+    "homepage": ".",
+    "scripts": {
+      "react-start": "react-scripts start",
+      "react-build": "react-scripts  build",
+      "electron-start": "nodemon --watch index.ts --exec electron .",
+      "electron-build": "electron-builder --win --ia32"
+    },
+    "build": {
+      "files": [
+        "build",
+        "index.ts"
+      ],
+      "productName": "HotPE Client",
+      "appId": "pc",
+      "copyright": "Copyright © 2019-Present VirtualHotBar",
+      "directories": {
+        "output": "dist"
+      },
+      "win": {
+        "icon": "./icon.ico"
+      }
+    },
+    "browserslist": {
+      "production": [
+        ">0.2%",
+        "not dead",
+        "not op_mini all"
+      ],
+      "development": [
+        "last 1 chrome version",
+        "last 1 firefox version",
+        "last 1 safari version"
+      ]
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

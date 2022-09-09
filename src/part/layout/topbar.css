@@ -1,0 +1,36 @@
+div.topbar-low {
+    width: 100%;
+    height: 40px;
+    background-color: rgb(245, 231, 231);
+    -webkit-app-region: drag;
+    display: flex;
+}
+
+img.top-img {
+    height: 30px;
+    width: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+a.window-title {
+    font-size: 15px;
+    height: 100%;
+    margin-top: -12px;
+    margin-left: 10px;
+    color: #000;
+}
+
+div.winbutton {
+    width: 100%;
+    margin-top: -13px;
+    
+    text-align: right;
+}
+
+Button.button-exit {
+    -webkit-app-region: no-drag;
+    margin: 0 0 0 0;
+    padding: 0px 13px 0px;
+    
+}
