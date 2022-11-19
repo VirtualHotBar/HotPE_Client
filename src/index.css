@@ -1,14 +1,29 @@
-div.loading {
-    height: 100%;
-    text-align: center;
-    background-color: #EDEDED;
-    -webkit-app-region: drag;
+body {
+    color: 'var(--semi-color-text-0)';
+    background-color: 'var( --semi-color-bg-0)';
 }
 
-img.logoimg {
-    width: 100px;
-    height: 100px;
-    margin-top: 130px;
-    
-};
+h1,h2,h3,h4,h5,h6 {
+    color: var(--semi-color-text-0);
+}
 
+/* 链接美化 */
+a.linka:link {
+    color: #0099ff;
+    text-decoration: none;
+}
+
+a.linka:visited {
+    color: #00aeff;
+    text-decoration: none;
+}
+
+a.linka:hover {
+    color: #95deff;
+    text-decoration: none;
+}
+
+a.linka:active {
+    color: #9655ff;
+    text-decoration: none;
+}

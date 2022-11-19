@@ -1,8 +1,0 @@
-DevDependencies:
-@testing-library/user-event @testing-library/react @testing-library/jest-dom @types/antd @types/jest @types/node @types/react @types/react-dom antd electron electron-builder nodemon react react-dom typescript   react-scripts cra-template
-
-Dependencies:
-@ant-design/icons electron-is-dev web-vitals
-
-
-asar extract app.asar ./

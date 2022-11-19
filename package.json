@@ -3,16 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "@douyinfe/semi-ui": "^2.18.2",
+    "@icon-park/react": "^1.4.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/antd": "^1.0.0",
     "@types/jest": "^29.0.0",
-    "@types/node": "^18.7.14",
+    "@types/node": "^18.7.16",
     "@types/react": "^18.0.18",
     "@types/react-dom": "^18.0.6",
     "@types/react-router-dom": "^5.3.3",
-    "antd": "^4.22.8",
     "cra-template": "1.2.0",
     "electron": "^8.2.1",
     "electron-builder": "^23.3.3",
@@ -22,26 +24,31 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
     "typescript": "^4.8.2",
-    "web-vitals": "^3.0.0"
+    "web-vitals": "^3.0.0",
+    "request": "^2.88.2"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
-    "@heroicons/react": "^2.0.10",
     "electron-is-dev": "^2.0.0"
+    
   },
-  "main": "index.ts",
+  "main": "build-mian/index.js",
   "homepage": ".",
   "scripts": {
-    "react-start": "react-scripts start",
-    "react-build": "react-scripts  build",
-    "electron-start": "nodemon --watch index.ts --exec electron .",
+    "main-build": "tsc --p tsconfig-main.json",
+    "main-start": "tsc -w --p tsconfig-main.json",
+    "render-start": "react-scripts start",
+    "render-build": "react-scripts  build",
+    "electron-start": "nodemon --watch build-mian/index.js --exec electron .",
     "electron-build": "electron-builder --win --ia32"
   },
   "build": {
     "files": [
       "build",
-      "index.ts"
+      "build-mian"
     ],
+    "extraMetadata": {
+      "main": "build-mian/index.js"
+    },
     "productName": "HotPE Client",
     "appId": "pc",
     "copyright": "Copyright © 2019-Present VirtualHotBar",
@@ -49,7 +56,11 @@
       "output": "dist"
     },
     "win": {
+      "requestedExecutionLevel": "highestAvailable",
       "icon": "./icon.ico"
+    },
+    "extraResources": {
+      "from": "./resources/"
     }
   },
   "browserslist": {

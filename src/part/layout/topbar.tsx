@@ -1,15 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Button } from 'antd';
-import "../layout/topbar.css";
-import 'antd/dist/antd.css';
-import { CloseOutlined,MinusOutlined} from '@ant-design/icons';
-//const { ipcRenderer } = require('electron')
-//import ipcRenderer from "electron"
-const { shell, ipcRenderer } = window.require('electron')
+import React from 'react'
+import {Button} from '@douyinfe/semi-ui';
+import './topBar.css'
+import { CloseOutlined} from '@ant-design/icons';
 
-function Topbar() {
-    return (
+export default function TopBar(){
+    return(
+
         <div className="topbar-low" >
             <div style={{ display: "flex",width:"100%"}}>
                 <img src="./img/logo.ico" className="top-img" />
@@ -18,15 +14,16 @@ function Topbar() {
             </div>
 
             <div className='winbutton'>
-                <Button onClick={windows_mini} className='button-exit' type="text">ㅡ</Button>
-                <Button onClick={exithub} className='button-exit' type="text"  danger><CloseOutlined /></Button>
+                <Button onClick={windows_mini} className='button-exit' type="tertiary">ㅡ</Button>
+                <Button onClick={exithub} className='button-exit' type="danger"><CloseOutlined/></Button>
 
             </div>
         </div>
-    );
+
+    )
 }
 
-export default Topbar;
+const { shell, ipcRenderer } = window.require('electron')
 
 function exithub() {
     ipcRenderer.send('exithub')
@@ -35,4 +32,3 @@ function exithub() {
 function windows_mini() {
     ipcRenderer.send('windows:mini')
 }
-

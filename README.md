@@ -1,11 +1,10 @@
 # HotPE Client
 
 # 介绍
-未完工（
 
-此仓库为HotPE的客户端,基于Electron,React,TypeScript,Ant Design
+此仓库为HotPE的聚合客户端，技术栈:Electron,React,TypeScript,Semi Design
 
-![](https://pic.imgdb.cn/item/631aecdd16f2c2beb185bb6c.png)
+![](https://p2.myzwq.com/i/2022/11/19/637864867904d.png)
 
 # 使用
 
@@ -13,14 +12,24 @@
 `npm install`
 
 ### 开发
-`npm run react-start`
+启动主线程开发：
+`dev-main.bat`
 
-`npm run electron-start`
+启动渲染线程开发：
+`dev-render.bat`
+
+启动electron开发：
+`dev-electron.bat`
 
 ### 构建
-`npm run react-build`
+构建主线程：
+`build-main.bat`
 
-`npm run electron-build`
+构建渲染程：
+`build-render.bat`
+
+构建electron应用：
+`build-electron.bat`
 
 # 许可证
-HotPE Client的自编代码基于Apache-2.0许可证开源
+HotPE Client的自编代码基于MIT License许可证开源
