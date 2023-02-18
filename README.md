@@ -1,5 +1,7 @@
 # HotPE Client
 
+**警告：此仓库为早期 WIP！**
+
 # 介绍
 
 此仓库为HotPE的聚合客户端，技术栈:Electron,React,TypeScript,Semi Design
