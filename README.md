@@ -2,6 +2,8 @@
 
 **警告：此仓库为早期 WIP！**
 
+欲下载体验请到右边的 “Releases”。
+
 # 介绍
 
 此仓库为HotPE的聚合客户端，技术栈:Electron,React,TypeScript,Semi Design
