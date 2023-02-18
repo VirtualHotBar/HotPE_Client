@@ -4,7 +4,7 @@
 
 此仓库为HotPE的聚合客户端，技术栈:Electron,React,TypeScript,Semi Design
 
-![](https://p2.myzwq.com/i/2022/11/19/637864867904d.png)
+![](https://my-img.cc/i/2023/02/18/63f022cfd37e3.png)
 
 # 使用
 
