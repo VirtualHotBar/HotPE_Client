@@ -6,7 +6,13 @@
 
 # 介绍
 
-此仓库为HotPE的聚合客户端，技术栈:Electron,React,TypeScript,Semi Design
+此仓库为HotPE的聚合客户端，
+技术栈:Electron,React,TypeScript,Semi Design
+
+![Electron.js](https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=Electron&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-%23323330.svg?style=for-the-badge&logo=TypeScript&logoColor=%23F7DF1E)
+![React](https://img.shields.io/badge/React-%2335495e.svg?style=for-the-badge&logo=React&logoColor=%234FC08D)
+![Semi Design](https://img.shields.io/badge/-SemiDesign-%230170FE?style=for-the-badge&logo=Semi-Design&logoColor=white)
 
 ![](https://my-img.cc/i/2023/02/18/63f022cfd37e3.png)
 
