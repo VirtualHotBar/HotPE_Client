@@ -1,5 +1,12 @@
 # Logs
 logs
+resources
+HotPEClientResources
+ClientTools
+build
+build-mian
+public
+
 *.log
 npm-debug.log*
 yarn-debug.log*

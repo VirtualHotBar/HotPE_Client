@@ -53,18 +53,18 @@ export default function Main_window() {
                     <Sider style={{ backgroundColor: 'var(--semi-color-bg-1)', width: '160px' }}>
 
                         <Nav style={{ height: '100%', width: '160px', outline: 'none' }} defaultOpenKeys={['Setup', 'HPM']} defaultSelectedKeys={[SelectedKey]}>
-                            <Nav.Item style={{ outline: 'none' }} itemKey={'Home'} text={'首页'} icon={<HomeOutlined />} onClick={() => { SetMenuAndPage(<HomePage SetMenuAndPage={SetMenuAndPage} SetLockMuen={SetLockMuen}/>, 'Home') }} />
-                            <Nav.Sub style={{ outline: 'none' }} itemKey={'Setup'} text="安装" icon={<UsbOutlined />} >
-                                <Nav.Item style={{ outline: 'none' }} itemKey={'SetupToSys'} text={'安装到系统'} onClick={() => { SetMenuAndPage(<SetupToSysPage SetLockMuen={SetLockMuen} />, 'SetupToSys') }} />
-                                <Nav.Item style={{ outline: 'none' }} itemKey={'SetupToUDisk'} text={'安装到U盘'} onClick={() => { SetMenuAndPage(<SetupToUDiskPage />, 'SetupToUDisk') }} />
-                                <Nav.Item style={{ outline: 'none' }} itemKey={'BuildISOFile'} text={'生成ISO镜像'} onClick={() => { SetMenuAndPage(<BuildISOFilePage />, 'BuildISOFile') }} />
+                            <Nav.Item itemKey={'Home'} text={'首页'} icon={<HomeOutlined />} onClick={() => { SetMenuAndPage(<HomePage SetMenuAndPage={SetMenuAndPage} SetLockMuen={SetLockMuen}/>, 'Home') }} />
+                            <Nav.Sub itemKey={'Setup'} text="安装" icon={<UsbOutlined />} >
+                                <Nav.Item itemKey={'SetupToSys'} text={'安装到系统'} onClick={() => { SetMenuAndPage(<SetupToSysPage SetLockMuen={SetLockMuen} />, 'SetupToSys') }} />
+                                <Nav.Item itemKey={'SetupToUDisk'} text={'安装到U盘'} onClick={() => { SetMenuAndPage(<SetupToUDiskPage />, 'SetupToUDisk') }} />
+                                <Nav.Item itemKey={'BuildISOFile'} text={'生成ISO镜像'} onClick={() => { SetMenuAndPage(<BuildISOFilePage />, 'BuildISOFile') }} />
                             </Nav.Sub>
-                            <Nav.Sub style={{ outline: 'none' }} itemKey={'HPM'} text={'模块'} icon={<AppstoreOutlined />}>
-                                <Nav.Item style={{ outline: 'none' }} itemKey={'HpmDown'} text={'模块下载'} onClick={() => { SetMenuAndPage(<HpmDownPage />, 'HpmDown') }} />
-                                <Nav.Item style={{ outline: 'none' }} itemKey={'HpmManage'} text={'模块管理'} onClick={() => { SetMenuAndPage(<HpmManagePage />, 'HpmManage') }} />
+                            <Nav.Sub itemKey={'HPM'} text={'模块'} icon={<AppstoreOutlined />}>
+                                <Nav.Item itemKey={'HpmDown'} text={'模块下载'} onClick={() => { SetMenuAndPage(<HpmDownPage />, 'HpmDown') }} />
+                                <Nav.Item itemKey={'HpmManage'} text={'模块管理'} onClick={() => { SetMenuAndPage(<HpmManagePage />, 'HpmManage') }} />
                             </Nav.Sub>
-                            <Nav.Item style={{ outline: 'none' }} itemKey={'Docs'} text={'文档'} icon={<QuestionCircleOutlined />} onClick={() => { SetMenuAndPage(<DocsPage />, 'Docs') }} />
-                            <Nav.Item style={{ outline: 'none' }} itemKey={'Setting'} text={'设置'} icon={<SettingOutlined />} onClick={() => { SetMenuAndPage(<SettingPage />, 'Setting') }} />
+                            <Nav.Item itemKey={'Docs'} text={'文档'} icon={<QuestionCircleOutlined />} onClick={() => { SetMenuAndPage(<DocsPage />, 'Docs') }} />
+                            <Nav.Item itemKey={'Setting'} text={'设置'} icon={<SettingOutlined />} onClick={() => { SetMenuAndPage(<SettingPage />, 'Setting') }} />
                             <Nav.Footer collapseButton={false} />
                         </Nav>
 
