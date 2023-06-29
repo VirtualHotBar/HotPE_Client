@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        // module: 运行于 Node 的主进程必须遵循 CommonJS 标准
+        "module": "CommonJS",
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
+        "moduleResolution": "Node",
+        "strict": true,
+        "sourceMap": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        // noEmit: 重要的配置，这里不被 Vite 接管，必须输出成 .js 文件进行打包
+        "noEmit": false,
+        "noUnusedLocals":false,
+        "noUnusedParameters": false,
+        "noImplicitReturns": true,
+        "noImplicitAny": true,
+        // outDir: 指定 .js 文件输出位置
+        "outDir": "../../dist/main"
+    },
+    "include": [
+        "./"
+    ]
+}

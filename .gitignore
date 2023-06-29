@@ -1,11 +1,13 @@
 # Logs
 logs
+
 resources
-HotPEClientResources
+
 ClientTools
-build
-build-mian
-public
+dist
+dist-bin
+tools
+node_modules
 
 *.log
 npm-debug.log*

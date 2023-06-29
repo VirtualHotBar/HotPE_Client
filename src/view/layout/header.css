@@ -1,0 +1,8 @@
+div.topbarLeft{
+    -webkit-app-region: drag;
+}
+
+Button{
+    -webkit-app-region: no-drag;
+    height: 35px;
+}

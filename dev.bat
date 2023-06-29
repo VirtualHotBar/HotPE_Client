@@ -1,0 +1,1 @@
+cmd /c "start pnpm run dev && start pnpm run dev-main  && pnpm run dev-ele"

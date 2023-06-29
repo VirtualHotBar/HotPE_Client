@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html style="height: 100%;max-height: 100%;" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline';">
+  <link rel="icon" type="image/svg+xml" href="public/img/logo45.png" />
+  <title>HotPE Client</title>
+</head>
+<body style="margin:0px; height: 100%;max-height: 100%;"  >
+  <div style="margin:0px; height: 100%;max-height: 100%;"  id="app"></div>
+
+</body>
+<script type="module" src="index.tsx"></script>
+<script>
+//设置颜色模式
+function matchMode() {
+  // detect if on dark mode
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const body = document.body;
+  if (isDarkMode) {
+    if (!body.hasAttribute('theme-mode')) {
+      body.setAttribute('theme-mode', 'dark');
+      document.body.style.backgroundColor = "#2E2E2E"
+    }
+  }
+  else {
+    body.removeAttribute('theme-mode');
+    document.body.style.backgroundColor = "#FFFFFF"
+  }
+}
+
+matchMode()
+
+ //监听颜色模式
+const mql = window.matchMedia('(prefers-color-scheme: dark)');
+mql.addListener(matchMode); 
+
+</script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+  </body>
+</html>
