@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 
-export default function Home(){
+export default function Setting(){
 
         return(
             <>
