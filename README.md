@@ -18,7 +18,7 @@
 
 # 使用
 
-develop.md
+[develop.md](https://github.com/VirtualHotBar/HotPE_Client/blob/main/develop.md)
 
 # 许可证
 HotPE Client的自编代码基于MIT License许可证开源
