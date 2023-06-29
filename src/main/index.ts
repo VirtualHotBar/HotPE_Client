@@ -1,7 +1,7 @@
 //import RunCmd from './function/runCmd'
 //import { app, BrowserWindow, ipcMain, shell } from 'electron'
 
-const { app, BrowserWindow, ipcMain} = require('electron')
+const { app, BrowserWindow, ipcMain, shell } = require('electron')
 //var path = require('path');
 import path from 'path'
 
@@ -10,11 +10,13 @@ import path from 'path'
 //const isDev = require('electron-is-dev');
 import isDev from 'electron-is-dev'
 
+
+
 app.on('ready', () => {
 
 
   //创建一个窗口
-  
+
   const mainWindow = new BrowserWindow({
     resizable: true,   //允许用户改变窗口大小
     width: 900,        //设置窗口宽高
@@ -36,13 +38,13 @@ app.on('ready', () => {
 
 
 
-  
-  //开发工具
-if (isDev == true) {
-    mainWindow.webContents.openDevTools({ mode: 'right' })
-  } 
 
-  
+  //开发工具
+  if (isDev == true) {
+    mainWindow.webContents.openDevTools({ mode: 'right' })
+  }
+
+
   //mainWindow.webContents.openDevTools({ mode: 'right' })
 
   //窗口加载html文件
@@ -60,12 +62,12 @@ if (isDev == true) {
     mainWindow.minimize();//最小化
   })
   //console.log(RunCmd("dir"))
+
+
+
+  //拦截首页打开新窗口的链接用浏览器打开  
+
+
+
 })
 
-//拦截首页打开新窗口的链接用浏览器打开
-/* app.on('web-contents-created', (e: any, webContents: { on: (arg0: string, arg1: (event: { preventDefault: () => void; }, url: any) => void) => void; }) => {
-  webContents.on('new-window', (event: { preventDefault: () => void; }, url: any) => {
-    event.preventDefault();
-    shell.openExternal(url);
-  });
-}); */
