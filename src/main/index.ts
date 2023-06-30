@@ -44,6 +44,7 @@ app.on('ready', () => {
     mainWindow.webContents.openDevTools({ mode: 'right' })
   }
 
+  
 
   //mainWindow.webContents.openDevTools({ mode: 'right' })
 
