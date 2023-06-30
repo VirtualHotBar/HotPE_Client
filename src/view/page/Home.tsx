@@ -33,7 +33,9 @@ export default function Home(){
 
 
 
-    getHardwareInfo()
+    
+    console.log(getHardwareInfo());
+    
 
 
 

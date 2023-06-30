@@ -1,23 +1,15 @@
-function getHardwareInfo() {
-    var exec = require('child_process').exec;
 
-
-    let cmd = 'cmd /c .\\ClientTools\\nwinfo\\nwinfo_x64.exe  --disk  --format=json'
-    let returnData = {}
-    let runOk = false
-
-    exec(cmd, function (error: string, stdout: string, stderr: string) {
-        // 获取命令执行的输出
-        if (!error) {
-            returnData = JSON.parse(stdout)
-            runOk = true
-            console.log(returnData);    
-        } else{
-            console.log(error);   
-        }        
-    });
-
-
-    console.log(returnData);
+//运行命令行，堵塞程序，返回结果
+export function runCmd(cmd: string) {
+    const child_process = window.require('child_process')
+    return child_process.execSync(cmd).toString();
 }
-export {getHardwareInfo};
+
+
+export function getHardwareInfo() {
+    var exec = require('child_process').exec;
+    let cmd = 'cmd /c .\\ClientTools\\nwinfo\\nwinfo_x64.exe  --disk  --format=json'
+
+    return JSON.parse(runCmd(cmd));
+}
+
