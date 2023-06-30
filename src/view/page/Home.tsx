@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { diskInfo } from '../utils/disk/diskInfo';
+import { getHardwareInfo } from '../utils/hardwareInfo';
 
 
 export default function Home(){
@@ -7,7 +8,7 @@ export default function Home(){
 
 
 
-    function printResults(disks:any) {
+/*     function printResults(disks:any) {
 
         console.log(`=========================\n`);
 
@@ -28,11 +29,11 @@ export default function Home(){
 
 
 
-    printResults(diskInfo());
+    printResults(diskInfo()); */
 
 
 
-
+    getHardwareInfo()
 
 
 
@@ -45,7 +46,6 @@ export default function Home(){
 
         return(
             <>
-            <p style={{fontSize:'25px'}}>欢迎使用HotPE客户端😊！</p>
             <h2>欢迎使用HotPE客户端😊！</h2>
             
             
