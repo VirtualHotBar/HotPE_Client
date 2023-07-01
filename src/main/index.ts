@@ -24,7 +24,7 @@ app.on('ready', () => {
     height: 640,
     minHeight: 600,
     frame: false,      //无边框窗口
-    icon: path.join(__dirname, '../build/img/logo.ico'),     //应用运行时的标题栏图标
+    icon: path.join(__dirname, '../dist/view/img/logo.ico'),     //应用运行时的标题栏图标
     webPreferences: {
       backgroundThrottling: false,   //设置应用在后台正常运行
       nodeIntegration: true,     //设置能在页面使用nodejs的API
