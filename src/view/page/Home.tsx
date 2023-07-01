@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { diskInfo } from '../utils/disk/diskInfo';
 import { getHardwareInfo } from '../utils/hardwareInfo';
-
+import { RunCmd_ } from '../utils/Command';
 
 export default function Home(){
 
@@ -34,7 +34,13 @@ export default function Home(){
 
 
     
-    console.log(getHardwareInfo());
+    //console.log(getHardwareInfo('--disk'));
+
+    RunCmd_("dir",(data:string)=>{console.log(data);
+    },(error:number)=>{console.log(error);
+    })
+
+    
     
 
 
