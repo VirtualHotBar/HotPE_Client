@@ -7,6 +7,11 @@ h1,h2,h3,h4,h5,h6,p {
     color: var(--semi-color-text-0);
 }
 
+div.loading {
+    -webkit-app-region: drag;
+}
+
+
 /* 链接美化 */
 a.linka:link {
     color: #0099ff;

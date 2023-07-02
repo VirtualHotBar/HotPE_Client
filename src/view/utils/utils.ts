@@ -1,6 +1,5 @@
 const fs = window.require('fs')
 
-
 //解析JOSN文件
 export function parseJosnFile(path: string) {
     return (JSON.parse(fs.readFileSync(path, 'utf8')))

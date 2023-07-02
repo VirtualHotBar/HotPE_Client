@@ -11,7 +11,6 @@ import path from 'path'
 import isDev from 'electron-is-dev'
 
 
-
 app.on('ready', () => {
 
 
