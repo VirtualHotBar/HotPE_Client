@@ -29,7 +29,7 @@ class Aria2 {
         
 
     };
-    start(url:string,savePath:string,thread:number = 8,callback:Function){//开始下载，回调
+    start(url:string,saveDir:string,saveName:string,thread:number = 8,callback:Function){//开始下载，回调
 
     }
     stop(){//停止下载
