@@ -6,7 +6,7 @@ export function parseJosnFile(path: string) {
 }
 
 //写入JOSN文件
-export function writeJosnFile(path: string, jsonData: string) {
+export function writeJosnFile(path: string, jsonData: object) {
     return (fs.writeFileSync(path, JSON.stringify(jsonData), 'utf8'))
 }
 
