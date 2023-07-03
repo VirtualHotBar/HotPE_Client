@@ -1,5 +1,5 @@
 import { parseJosnFile, writeJosnFile } from "../utils/utils"
-import fs from 'fs'
+const fs = window.require('fs')
 
 //全局数据库
 

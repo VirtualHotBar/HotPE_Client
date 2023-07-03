@@ -2,7 +2,6 @@
   "name": "hotpe-clientn",
   "private": true,
   "version": "0.0.1",
-  "copyright": "Copyright © 2019-Present VirtualHotBar",
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "vite",

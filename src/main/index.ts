@@ -31,6 +31,10 @@ app.on('ready', () => {
     }
   })
 
+  //remote
+  //require('@electron/remote/main').initialize()
+  //require("@electron/remote/main").enable(mainWindow.webContents)
+
   //去掉菜单栏
   mainWindow.removeMenu()
 
@@ -46,8 +50,6 @@ app.on('ready', () => {
 
   //窗口加载html文件
   //mainWindow.loadFile('./src/main.html')
-  //mainWindow.loadURL('http://localhost:3000/');
-  //mainWindow.loadURL('http://127.0.0.1/');
   mainWindow.loadURL(isDev ? 'http://localhost:5173' : `file://${path.join(__dirname, '../view/index.html')}`);
 
   ipcMain.on('exitapp', () => {
@@ -60,11 +62,7 @@ app.on('ready', () => {
   })
   //console.log(RunCmd("dir"))
 
-
-
   //拦截首页打开新窗口的链接用浏览器打开  
-
-
 
 })
 

@@ -5,6 +5,9 @@ import App from './app.tsx';
 import { Spin } from '@douyinfe/semi-ui';
 import { getHardwareInfo } from './utils/hardwareInfo.ts';
 
+
+//const {BrowserWindow}=require('@electron/remote')
+
 const root = ReactDOM.createRoot(document.querySelector('#app') as HTMLElement);
 
 
