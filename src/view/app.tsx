@@ -66,7 +66,7 @@ export default function App() {
                             height: "100%"
                         }}
                     >
-                        <Page navKey={navKey}></Page>
+                        <Page navKey={navKey} setNavKey={setNavKey}></Page>
                     </Content>
                 </Layout>
 

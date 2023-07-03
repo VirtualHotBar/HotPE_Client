@@ -1,4 +1,6 @@
 import { getHardwareInfo } from "./hardwareInfo";
 
+//环境变量：process.env
+
 //用常量声明避免重复执行
-//export const SysLetter = getHardwareInfo('--sys').System['Windows Directory'].substr(0,2)
+export const  SysLetter = process.env.SystemDrive

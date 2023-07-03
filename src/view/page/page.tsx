@@ -14,7 +14,8 @@ import Setting from './setting';
 
 export default function Page(props: any) {
     if (props.navKey == 'Home') {
-        return (<Home></Home>)
+        
+        return (<Home setNavKey={props.setNavKey} ></Home>)
 
     } else if (props.navKey == 'SetupToSys') {
         return (<SetupToSys></SetupToSys>)

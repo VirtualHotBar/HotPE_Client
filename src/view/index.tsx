@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from './app.tsx';
@@ -6,6 +6,7 @@ import { Spin } from '@douyinfe/semi-ui';
 import { getHardwareInfo } from './utils/hardwareInfo.ts';
 
 const root = ReactDOM.createRoot(document.querySelector('#app') as HTMLElement);
+
 
 //加载页面.n
 root.render(
@@ -21,8 +22,8 @@ root.render(
 
 //使用异步函数避免程序卡死
 async function appStart() {
-  const disk = await getHardwareInfo('--disk')
-  console.log(disk);
+  //const disk = await getHardwareInfo('--disk')
+  //console.log(disk);
   root.render(<App></App>,)
 }
 
