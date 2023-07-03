@@ -10,7 +10,6 @@ import path from 'path'
 //const isDev = require('electron-is-dev');
 import isDev from 'electron-is-dev'
 
-
 app.on('ready', () => {
 
 
@@ -35,13 +34,11 @@ app.on('ready', () => {
   //去掉菜单栏
   mainWindow.removeMenu()
 
-
-
-
   //开发工具
   if (isDev == true) {
     mainWindow.webContents.openDevTools({ mode: 'right' })
   }
+
 
   
 

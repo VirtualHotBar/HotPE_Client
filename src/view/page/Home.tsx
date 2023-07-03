@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { diskInfo } from '../utils/disk/diskInfo';
 import { getHardwareInfo } from '../utils/hardwareInfo';
-import { RunCmd_ } from '../utils/Command';
-import { SysLetter } from '../utils/sysEnv';
+//import { SysLetter } from '../utils/sysEnv';
 import { Button } from '@douyinfe/semi-ui';
 
 
@@ -12,7 +10,7 @@ import { Button } from '@douyinfe/semi-ui';
 
 
 async function test(){
-    console.log(SysLetter);
+    //console.log(SysLetter);
 
 
     new Promise(function (resolve, reject) {
@@ -23,7 +21,8 @@ async function test(){
     }).then(function () {
         return new Promise(function (resolve, reject) {
  
-                console.log(getHardwareInfo('--disk'));
+                console.log(getHardwareInfo('--disk').then((js_)=>{console.log(js_);
+                }));
                 
                 
                 console.log("Second");

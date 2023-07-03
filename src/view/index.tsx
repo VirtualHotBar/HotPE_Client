@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from './app.tsx';
 import { Spin } from '@douyinfe/semi-ui';
+import { getHardwareInfo } from './utils/hardwareInfo.ts';
 
 const root = ReactDOM.createRoot(document.querySelector('#app') as HTMLElement);
 
@@ -18,6 +19,17 @@ root.render(
   ,
 )
 
-setTimeout(() => {
+//使用异步函数避免程序卡死
+async function appStart() {
+  const disk = await getHardwareInfo('--disk')
+  console.log(disk);
   root.render(<App></App>,)
-}, 2000);
+}
+
+
+
+//使用setTimeout使加载界面mod渲染完
+setTimeout(() => {
+  appStart()
+}, 0);
+

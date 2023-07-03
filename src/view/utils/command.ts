@@ -1,12 +1,12 @@
 const child_process = window.require('child_process')
 
-//运行命令行，堵塞程序，返回结果
-export function runCmd(cmd: string) {
+//运行命令行，堵塞程序，返回结果。用于执行非常快的命令，不然会导致程序卡顿
+export function runCmd_ (cmd: string) {
     return child_process.execSync(cmd).toString();
 }
 
 //运行命令行，即时返回
-export function RunCmd_(cmd: string, returnstr: Function, end: Function) {
+export function runCmd(cmd: string, returnstr: Function, end: Function) {
     let result = child_process.spawn('cmd.exe',['/s','/c',cmd]);
 
     //输出正常情况下的控制台信息
