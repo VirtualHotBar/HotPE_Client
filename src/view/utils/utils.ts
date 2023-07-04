@@ -18,3 +18,30 @@ export function objectCount(o: object) {
     }
     return n;
 }
+
+// ||逻辑或
+//含 空或& 字符串加引号
+export function dealStrForCmd(str: string) {
+    let returnStr = ''
+    if (str.indexOf(' ') != -1 || str.indexOf('&') != -1) {
+        returnStr = '\"' + str + '\"'
+    } else {
+        returnStr = str
+    }
+    return returnStr
+}
+
+//取字符串中间
+export function takeMidStr(str:string,leftStr:string,rightStr:string){
+    return str.substring(str.indexOf(leftStr) + leftStr.length, str.indexOf(rightStr))
+}
+
+//取字符串左边
+export function takeLeftStr(str:string,taggedStr:string){
+    return str.substring(0, str.indexOf(taggedStr))
+}
+
+//取字符串右边
+export function takeRightStr(str:string,taggedStr:string){
+    return str.substring(str.indexOf(taggedStr) + taggedStr.length, str.length)
+}
