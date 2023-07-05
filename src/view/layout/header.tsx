@@ -3,7 +3,8 @@ import { Layout, Nav, Button, Breadcrumb, Skeleton, Avatar } from '@douyinfe/sem
 import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, IconLive, IconSetting,IconClose,IconMinus } from '@douyinfe/semi-icons';
 import "./header.css"
 
-const { shell, ipcRenderer } = window.require('electron')
+const { shell, ipcRenderer } = require('electron')
+//import {shell, ipcRenderer} from 'electron';
 
 function exitapp() {
     ipcRenderer.send('exitapp')

@@ -12,7 +12,7 @@ export default function MakeISO(){
 
     function test_(){
         
-        setTimeout(()=>{Aria2_.start('https://github.com/VirtualHotBar/HotPEToolBox/releases/download/230430/HotPE-V2.5.230430.exe','D:\\','123.EXE',4,(Aria2Attrib_:Aria2Attrib)=>{
+        setTimeout(()=>{Aria2_.start('https://github.com/VirtualHotBar/HotPEToolBox/releases/download/230430/HotPE-V2.5.230430.exe','D:\\','123.EXE',1,(Aria2Attrib_:Aria2Attrib)=>{
             setTest(Aria2Attrib_.state+' | '+Aria2Attrib_.speed+' | '+Aria2Attrib_.percentage+'% | '+Aria2Attrib_.size+' | '+Aria2Attrib_.newSize+' | '+Aria2Attrib_.remainder+' | '+Aria2Attrib_.message)
         })},1000);
         

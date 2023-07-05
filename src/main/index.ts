@@ -1,9 +1,9 @@
 //import RunCmd from './function/runCmd'
-//import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 
-const { app, BrowserWindow, ipcMain, shell } = require('electron')
+//const { app, BrowserWindow, ipcMain, shell } =require('electron');
 //var path = require('path');
-import path from 'path'
+const path = require('path');
 
 
 //是否为开发模式
@@ -26,6 +26,7 @@ app.on('ready', () => {
     webPreferences: {
       backgroundThrottling: false,   //设置应用在后台正常运行
       nodeIntegration: true,     //设置能在页面使用nodejs的API
+      //sandbox: false,//禁用沙箱
       contextIsolation: false,
       preload: path.join(__dirname, './preload.js')
     }
