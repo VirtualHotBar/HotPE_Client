@@ -1,0 +1,43 @@
+{
+    "api": "https://api.hotpe.top/",
+    "state": "noDown",
+    "environment": {
+        "HotPEDrive": {
+            "new": {
+                "isMove": false,
+                "drive": ""
+            },
+            "all": []
+        }
+    },
+    "resources": {
+        "pe": {
+            "new": "",
+            "all": [],
+            "update": {
+                "id": "230430",
+                "name": "V2.5 Final Build20230430",
+                "description": "- 更新PE内核\r\n- HPM管理适配高DPI\r\n- 更新内置软件\r\n- 更新HPM加载窗口样式\r\n- 安装程序适配高DPI\r\n- 移除资源管理器里的快速访问\r\n- 更换网络管理\r\n- 优化HPM加载器\r\n- 移除失效的“在线Edgeless插件”功能\r\n- 移除PECMD托盘图标\r\n- 美化开始菜单",
+                "url": "https://p0.hotpe.top/Package/PE/230430.iso",
+                "date": "2023-04-30T07:42:48Z"
+            }
+        },
+        "client": {
+            "new": "",
+            "all": [],
+            "update": {
+                "id": "230709",
+                "name": "V0.2.230709-preview.0",
+                "description": "test\r\n- 更新日志",
+                "url": "https://p0.hotpe.top/Package/Cilent/230709.7z",
+                "date": "2023-07-09T05:10:22Z"
+            }
+        }
+    },
+    "directory": {},
+    "notice": {
+        "show": true,
+        "type": "info",
+        "content": "提示：此版为开发预览版，并不代表最终的发布版，遇到Bug或有建议请反馈给开发者。"
+    }
+}

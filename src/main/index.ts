@@ -35,6 +35,7 @@ app.on('ready', () => {
   })
 
   
+  
   //remote
   //require('@electron/remote/main').initialize()
   //require("@electron/remote/main").enable(mainWindow.webContents)
