@@ -1,4 +1,6 @@
 import { parseJosnFile, writeJosnFile } from "../utils/utils"
+import {Config} from "../type/config"
+
 const fs = window.require('fs')
 
 //全局数据库
@@ -11,7 +13,15 @@ const roConfig = {
         github: 'https://github.com/VirtualHotBar/HotPE_Client',
         docs: 'https://docs.hotpe.top/',
         blog: 'https://blog.hotpe.top/',
-        donate: 'https://www.hotpe.top/donation/'
+        donate: 'https://www.hotpe.top/donation/',
+        update:{
+            PE:'https://api.github.com/repos/VirtualHotBar/HotPEToolBox/releases/latest',
+            client:'https://api.github.com/repos/VirtualHotBar/HotPE_Client/releases/latest'
+        },
+        package:{
+            PE:'https://p0.hotpe.top/Package/PE/{id}.iso',
+            client:'https://p0.hotpe.top/Package/Cilent/{id}.7z'
+        }
     },
     environment: {
         SysLetter: process.env.SystemDrive,
@@ -20,7 +30,38 @@ const roConfig = {
 
 //动态配置================================================================================================
 const configPath = './resources/config.json'
-let config: object = {}
+
+//默认配置
+let config: Config =  {
+    api: 'https://api.hotpe.top/',
+    state:'noDown',
+    environment: {
+        HotPEDrive: {
+            new: { isMove: false, drive: '' },
+            all: []
+        }
+
+    },
+    resources: {
+        pe: {
+            new: '',
+            all: [],
+            update:{}
+        },
+        client: {
+            new: '',
+            all: [],
+            update:{}
+        }
+    }, directory: {
+
+    },
+    notice:{
+        show:false,
+        type:'info',
+        content:''
+    }
+}
 
 
 if (fs.existsSync(configPath)) {
@@ -29,28 +70,7 @@ if (fs.existsSync(configPath)) {
 } else {
     //如果配置文件不存在，则使用默认配置
     //默认配置
-    config = {
-        api: 'https://api.hotpe.top/',
-        environment: {
-            HotPEDrive: {
-                new: { isMove: false, drive: '' },
-                all: []
-            }
 
-        },
-        resources: {
-            pe: {
-                new: '',
-                all: []
-            },
-            client: {
-                new: '',
-                all: []
-            }
-        }, directory: {
-
-        }
-    }
     saveConfig()
 }
 

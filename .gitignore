@@ -6,7 +6,6 @@ resources
 ClientTools
 dist
 dist-bin
-tools
 node_modules
 node_modules*
 

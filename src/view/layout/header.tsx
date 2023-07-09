@@ -2,11 +2,13 @@ import React from 'react';
 import { Layout, Nav, Button, Breadcrumb, Skeleton, Avatar } from '@douyinfe/semi-ui';
 import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, IconLive, IconSetting,IconClose,IconMinus } from '@douyinfe/semi-icons';
 import "./header.css"
+import { saveConfig } from '../services/config';
 
 const { shell, ipcRenderer } = require('electron')
 //import {shell, ipcRenderer} from 'electron';
 
 function exitapp() {
+    saveConfig()
     ipcRenderer.send('exitapp')
 };
 

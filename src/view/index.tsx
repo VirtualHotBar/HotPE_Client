@@ -4,6 +4,7 @@ import './index.css'
 import App from './app.tsx';
 import { Spin } from '@douyinfe/semi-ui';
 import { getHardwareInfo } from './utils/hardwareInfo.ts';
+import { initClient } from './controller/init.ts';
 
 
 //const {BrowserWindow}=require('@electron/remote')
@@ -25,8 +26,8 @@ root.render(
 
 //使用异步函数避免程序卡死
 async function appStart() {
-  //const disk = await getHardwareInfo('--disk')
-  //console.log(disk);
+  await initClient()
+
   root.render(<App></App>,)
 }
 

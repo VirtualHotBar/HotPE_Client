@@ -10,6 +10,7 @@ const path = require('path');
 //const isDev = require('electron-is-dev');
 import isDev from 'electron-is-dev'
 
+
 app.on('ready', () => {
 
 
@@ -28,6 +29,7 @@ app.on('ready', () => {
       nodeIntegration: true,     //设置能在页面使用nodejs的API
       //sandbox: false,//禁用沙箱
       contextIsolation: false,
+      webSecurity: false,//关闭浏览器安全性检查
       preload: path.join(__dirname, './preload.js')
     }
   })
