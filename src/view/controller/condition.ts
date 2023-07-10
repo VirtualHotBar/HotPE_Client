@@ -7,7 +7,6 @@ const fs = window.require('fs')
 import { config, roConfig } from "../services/config";
 import { runCmdAsync } from "../utils/command";
 import { isHotPEDrive, traverseFiles,readHotPEConfig } from "../utils/utils"
-import { SysLetter } from "../utils/sysEnv";
 import { getHardwareInfo } from "../utils/hardwareInfo"
 
 //检查PE资源
@@ -29,6 +28,7 @@ export async function checkPEDrive() {
     config.environment.HotPEDrive.all = []
 
     //系统安装的PE
+    let SysLetter = roConfig.environment.sysLetter
     if (isHotPEDrive(SysLetter)) {
         config.environment.HotPEDrive.all.push({ drive: SysLetter, isMove: false ,version:readHotPEConfig(SysLetter).information.ReleaseVersion})
     }
@@ -44,8 +44,8 @@ export async function checkPEDrive() {
                 let volumes = disk['Volumes'][iV]
                 for (let iL in volumes['Volume Path Names']) {
                     let name = volumes['Volume Path Names'][iL]['Drive Letter']
-                    if (fs.existsSync(name + 'HotPE\\') && fs.existsSync(name + 'HotPEModule\\')) {
-                        config.environment.HotPEDrive.all.push({ drive: name, isMove: true ,version:readHotPEConfig(SysLetter).information.ReleaseVersion})
+                    if (isHotPEDrive(name )) {
+                        config.environment.HotPEDrive.all.push({ drive: name, isMove: true ,version:readHotPEConfig(name).information.ReleaseVersion})
                     }
                 }
             }

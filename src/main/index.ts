@@ -1,6 +1,7 @@
 //import RunCmd from './function/runCmd'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 
+
 //const { app, BrowserWindow, ipcMain, shell } =require('electron');
 //var path = require('path');
 const path = require('path');
@@ -40,13 +41,13 @@ app.on('ready', () => {
   mainWindow.removeMenu()
 
   //开发工具
-  if (isDev == true) {
+/*   if (isDev == true) {
     mainWindow.webContents.openDevTools({ mode: 'right' })
-  }
+  } */
 
 
 
-  //mainWindow.webContents.openDevTools({ mode: 'right' })
+  mainWindow.webContents.openDevTools({ mode: 'right' })
 
   //窗口加载html文件
   //mainWindow.loadFile('./src/main.html')

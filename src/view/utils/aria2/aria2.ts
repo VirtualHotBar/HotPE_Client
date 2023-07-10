@@ -4,6 +4,7 @@ import { runCmd } from "../command"
 import { dealStrForCmd, takeMidStr, takeRightStr } from '../utils'
 
 import { Aria2Attrib } from "../../type/aria2"
+import { roConfig } from "../../services/config"
 
 //接口
 interface Aria2 {
@@ -14,7 +15,7 @@ interface Aria2 {
 }
 
 
-const sourceAria2Path = '.\\ClientTools\\aria2c.exe'
+const sourceAria2Path = roConfig.path.tools + 'aria2c.exe'
 
 
 //内部变量
@@ -27,7 +28,7 @@ class Aria2 {
 
     constructor() {//初始化，new时调用
         //创建aria2文件
-        this.#aria2Path = process.env.TEMP + '\\aria2c_' + Math.random().toString(36).substr(5) + '.exe'//temp目录+aria2c_随机字符.exe
+        this.#aria2Path = roConfig.environment.temp + '\\aria2c_' + Math.random().toString(36).substr(5) + '.exe'//temp目录+aria2c_随机字符.exe
 
         //复制
         async function copyAria2(toPath: string) {

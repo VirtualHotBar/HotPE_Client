@@ -1,5 +1,6 @@
 import { parseJosnFile, writeJosnFile } from "../utils/utils"
 import { Config } from "../type/config"
+import { runCmdSync } from "../utils/command"
 
 const fs = window.require('fs')
 
@@ -25,14 +26,16 @@ const roConfig = {
         }
     },
     path:{
+        tools:'.\\resources\\tools\\',
         resources:{
             pe:'.\\resources\\files\\pe\\'
-
         }
         
     },
     environment: {
-        SysLetter: process.env.SystemDrive,
+        sysLetter: runCmdSync('echo %SystemDrive%').substring(0,2)+'\\',
+        temp:runCmdSync('echo %temp%').replaceAll('\r\n',''),
+        userName:runCmdSync('echo %UserName%').replaceAll('\r\n','')
     }
 }
 

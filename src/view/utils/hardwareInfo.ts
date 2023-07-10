@@ -1,3 +1,4 @@
+import { roConfig } from "../services/config";
 import { runCmd } from "./command";
 
 
@@ -5,7 +6,7 @@ import { runCmd } from "./command";
 export function getHardwareInfo(parameter: string) {
     return new Promise(function (resolve, reject) {
 
-        let cmd = 'cmd /c .\\resources\\tools\\nwinfo\\nwinfo_x64.exe  ' + parameter + ' --format=json'
+        let cmd = 'cmd /c '+roConfig.path.tools+'nwinfo\\nwinfo_x64.exe  ' + parameter + ' --format=json'
 
         let result = ''
 

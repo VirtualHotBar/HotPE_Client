@@ -1,6 +1,5 @@
 import React, { useState, useReducer } from 'react';
 import { getHardwareInfo } from '../utils/hardwareInfo';
-import { SysLetter } from '../utils/sysEnv';
 import { Button, Banner, Progress, Notification, Modal, TreeSelect } from '@douyinfe/semi-ui';
 import { Help, DownloadOne, EmotionUnhappy, EmotionHappy } from '@icon-park/react'
 import { config } from '../services/config';

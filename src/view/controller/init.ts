@@ -1,4 +1,4 @@
-import { config } from "../services/config"
+import { config ,roConfig} from "../services/config"
 import { getHardwareInfo } from "../utils/hardwareInfo"
 import { checkUpdate, GetNotices } from "./update"
 import { checkPERes, checkPEDrive } from "./condition"
@@ -23,6 +23,7 @@ export async function initClient() {
 
 
     console.log(config);
+    console.log(roConfig);
 
 
 
