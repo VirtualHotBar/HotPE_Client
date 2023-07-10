@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header_ from './layout/header.tsx'
 import Page from './page/page.tsx'
 
-import { Layout, Nav, Button } from '@douyinfe/semi-ui';
+import { Layout, Nav, Button,Notification } from '@douyinfe/semi-ui';
 import { IconAppCenter, IconHelpCircle, IconPaperclip, IconHome, IconSetting } from '@douyinfe/semi-icons';
 
 const { Header, Sider, Content } = Layout;
@@ -29,12 +29,26 @@ export default function App() {
 
 
     const [navKey, setNavKey] = useState('Home');
+    const [lockMuen, setLockMuen] = useState(false);
 
     function upNavKey(navKey_:string){
         if (navKey_ != 'Setup' && navKey_ != 'HPM' && navKey_ != navKey) {
-            setNavKey(navKey_);
+
+                if(lockMuen){
+                    Notification.info({
+                        content: '请任务结束后再切换页面',
+                        duration: 2,
+                        theme: 'light',
+                    })
+
+                    //setNavKey(navKey)
+        
+                }else{
+                    setNavKey(navKey_)
+                }
+            
         }
-        console.log(navKey_);
+        console.log(lockMuen,navKey_);
     }
 
 
@@ -66,7 +80,7 @@ export default function App() {
                             height: "100%"
                         }}
                     >
-                        <Page navKey={navKey} setNavKey={setNavKey}></Page>
+                        <Page navKey={navKey} setNavKey={setNavKey} setLockMuen={setLockMuen}></Page>
                     </Content>
                 </Layout>
 

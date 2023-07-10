@@ -4,7 +4,7 @@ import { Button, Banner } from '@douyinfe/semi-ui';
 import { Aria2Attrib } from '../../type/aria2';
 
 
-const Aria2_ = new Aria2('.\\ClientTools\\aria2c.exe')
+const Aria2_ = new Aria2()
 
 export default function MakeISO(){
     

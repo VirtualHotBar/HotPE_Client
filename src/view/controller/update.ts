@@ -1,5 +1,6 @@
 import { UpdateLatest } from '../type/update'
 import { roConfig, config } from '../services/config'
+import { takeLeftStr } from '../utils/utils'
 
 //更新公告
 export async function GetNotices() {
@@ -14,8 +15,22 @@ export async function GetNotices() {
         .catch(e => Error(e))
 }
 
+//检查更新,pe and client
+export async function checkUpdate() {
+    await checkPEUpdate()
+    await checkCilentUpdate()
+
+    if (takeLeftStr(config.resources.pe.new, '.') < config.resources.pe.update.id) {
+        config.state.update = 'needUpdatePE'
+    } else if (roConfig.id < config.resources.client.update.id) {
+        config.state.update = 'needUpdateClient'
+    } else {
+        config.state.update = 'without'
+    }
+}
+
 //检查PE更新
-export function checkPEUpdate() {
+function checkPEUpdate() {
     return new Promise(function (resolve, reject) {
         fetch(roConfig.url.update.PE).then(response => response.json())
             .then(data => {
@@ -40,7 +55,7 @@ export function checkPEUpdate() {
 }
 
 //检查客户端更新
-export function checkCilentUpdate() {
+function checkCilentUpdate() {
     return new Promise(function (resolve, reject) {
         fetch(roConfig.url.update.client).then(response => response.json())
             .then(data => {

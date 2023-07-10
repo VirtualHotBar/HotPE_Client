@@ -1,22 +1,23 @@
 import { config } from "../services/config"
 import { getHardwareInfo } from "../utils/hardwareInfo"
-import { checkPEUpdate, checkCilentUpdate, GetNotices } from "./update"
+import { checkUpdate, GetNotices } from "./update"
+import { checkPERes, checkPEDrive } from "./condition"
 
 export async function initClient() {
 
+    //检查已有的PE资源
+    await checkPERes()
 
-    /* const disk = await getHardwareInfo('--disk')
-    console.log(disk); */
+    //检查已安装的分区
+    await checkPEDrive()
 
     await GetNotices()
 
-    //检查PE更新
-    await checkPEUpdate()
+    //检查更新
+    await checkUpdate()
 
-    //检查客户端更新
-    await checkCilentUpdate()
-
-
+    //更新状态
+    await updateState()
 
 
 
@@ -26,5 +27,16 @@ export async function initClient() {
 
 
 
+
 }
 
+//更新状态
+export async function updateState() {
+    if (config.resources.pe.new == '') {
+        config.state.install = 'noDown'
+    } else if (config.environment.HotPEDrive.all.length == 0) {
+        config.state.install = 'noSetup'
+    }else{
+        config.state.install = 'ready'
+    }
+}

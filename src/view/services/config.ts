@@ -1,5 +1,5 @@
 import { parseJosnFile, writeJosnFile } from "../utils/utils"
-import {Config} from "../type/config"
+import { Config } from "../type/config"
 
 const fs = window.require('fs')
 
@@ -7,7 +7,7 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id:'230708',
+    id: '230709',
     clientVer: 'V0.2.230708_preview',
     url: {
         home: 'https://www.hotpe.top/',
@@ -15,14 +15,21 @@ const roConfig = {
         docs: 'https://docs.hotpe.top/',
         blog: 'https://blog.hotpe.top/',
         donate: 'https://www.hotpe.top/donation/',
-        update:{
-            PE:'https://api.github.com/repos/VirtualHotBar/HotPEToolBox/releases/latest',
-            client:'https://api.github.com/repos/VirtualHotBar/HotPE_Client/releases/latest'
+        update: {
+            PE: 'https://api.github.com/repos/VirtualHotBar/HotPEToolBox/releases/latest',
+            client: 'https://api.github.com/repos/VirtualHotBar/HotPE_Client/releases/latest'
         },
-        package:{
-            PE:'https://p0.hotpe.top/Package/PE/{id}.iso',
-            client:'https://p0.hotpe.top/Package/Cilent/{id}.7z'
+        package: {
+            PE: 'https://p0.hotpe.top/Package/PE/{id}.7z',
+            client: 'https://p0.hotpe.top/Package/Cilent/{id}.7z'
         }
+    },
+    path:{
+        resources:{
+            pe:'.\\resources\\files\\pe\\'
+
+        }
+        
     },
     environment: {
         SysLetter: process.env.SystemDrive,
@@ -33,13 +40,19 @@ const roConfig = {
 const configPath = './resources/config.json'
 
 //默认配置
-let config: Config =  {
+let config: Config = {
     api: 'https://api.hotpe.top/',
-    state:'noDown',
+    state: {
+        install:'noDown',
+        update:'without'
+    },
     environment: {
         HotPEDrive: {
-            new: { isMove: false, drive: '' },
+            new: { drive: '', isMove: false ,version:''},
             all: []
+        },
+        ware: {
+            disks: []
         }
 
     },
@@ -47,20 +60,34 @@ let config: Config =  {
         pe: {
             new: '',
             all: [],
-            update:{}
+            update: {
+                id: '',
+                name: '',
+                description: '',
+                url: '',
+                date: ''
+            }
         },
         client: {
             new: '',
             all: [],
-            update:{}
+            update: {
+                id: '',
+                name: '',
+                description: '',
+                url: '',
+                date: ''
+            }
         }
     }, directory: {
 
     },
-    notice:{
-        show:false,
-        type:'info',
-        content:''
+    notice: {
+        show: false,
+        type: 'info',
+        content: ''
+    },download:{
+        thread:8
     }
 }
 

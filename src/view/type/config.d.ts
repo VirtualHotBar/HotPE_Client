@@ -1,12 +1,19 @@
 //import {Type} from '@douyinfe/semi-foundation/lib/es/banner/index'
+import { UpdateLatest } from "./update"
 
-interface Config{
+interface Config {
     api: string,
-    state:'noDown'|'noSetup'|'ready'|'needUpdate',
+    state: {
+        install: 'noDown' | 'noSetup' | 'ready',
+        update: 'without' | 'needUpdatePE' | 'needUpdateClient'
+    },
     environment: {
         HotPEDrive: {
-            new: { isMove: boolean, drive: string },
+            new: { drive: string, isMove: boolean, version: string },
             all: Array
+        },
+        ware: {
+            disks: Array
         }
 
     },
@@ -14,21 +21,24 @@ interface Config{
         pe: {
             new: string,
             all: Array,
-            update:UpdateLatest
+            update: UpdateLatest
         },
         client: {
             new: string,
             all: Array,
-            update:UpdateLatest
+            update: UpdateLatest
         }
     }, directory: {
 
     },
-    notice:{
-        show:boolean,
-        type:Type,
-        content:string
+    notice: {
+        show: boolean,
+        type: Type,
+        content: string
+    }, download: {
+        thread: number//下载线程数
+
     }
 }
 
-export{Config}
+export { Config }

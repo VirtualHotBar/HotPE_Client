@@ -14,7 +14,7 @@ interface Aria2 {
 }
 
 
-
+const sourceAria2Path = '.\\ClientTools\\aria2c.exe'
 
 
 //内部变量
@@ -25,13 +25,13 @@ interface Aria2 {
 class Aria2 {
     #aria2Path: string = '';
 
-    constructor(path: string) {//初始化，new时调用
+    constructor() {//初始化，new时调用
         //创建aria2文件
         this.#aria2Path = process.env.TEMP + '\\aria2c_' + Math.random().toString(36).substr(5) + '.exe'//temp目录+aria2c_随机字符.exe
 
         //复制
         async function copyAria2(toPath: string) {
-            await fs.copyFile(path, toPath, (err: any) => {
+            await fs.copyFile(sourceAria2Path, toPath, (err: any) => {
                 if (err) { Error('aria2:Copying aria2 file failed') } else (console.log('copy')
                 )
             })

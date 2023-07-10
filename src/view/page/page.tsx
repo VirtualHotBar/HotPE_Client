@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Notification } from '@douyinfe/semi-ui';
+
 import Home from './home';
 
 import SetupToSys from './setup/setupToSys';
@@ -13,9 +15,9 @@ import Docs from './docs';
 import Setting from './setting';
 
 export default function Page(props: any) {
+
     if (props.navKey == 'Home') {
-        
-        return (<Home setNavKey={props.setNavKey} ></Home>)
+        return (<Home setNavKey={props.setNavKey} setLockMuen={props.setLockMuen}></Home>)
 
     } else if (props.navKey == 'SetupToSys') {
         return (<SetupToSys></SetupToSys>)
@@ -40,7 +42,6 @@ export default function Page(props: any) {
 
     } else if (props.navKey == 'Setting') {
         return (<Setting></Setting>)
-
     }
 
 };

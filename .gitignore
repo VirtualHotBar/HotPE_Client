@@ -1,6 +1,8 @@
 # Logs
 logs
 
+*.7z
+
 ClientTools
 dist
 dist-bin
