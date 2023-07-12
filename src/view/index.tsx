@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom/client'
+import ReactDom from 'react-dom';
 import './index.css'
 import App from './app.tsx';
 import { Spin } from '@douyinfe/semi-ui';
@@ -9,11 +9,14 @@ import { initClient } from './controller/init.ts';
 
 //const {BrowserWindow}=require('@electron/remote')
 
-const root = ReactDOM.createRoot(document.querySelector('#app') as HTMLElement);
+//const root = ReactDOM.createRoot(document.querySelector('#app') as HTMLElement);
+const root = document.getElementById('app')
+
+
 
 
 //加载页面.n
-root.render(
+ReactDom.render(
   <>
     <div className='loading' style={{ textAlign: "center", display: 'block', height: '100%' }}>
       <div style={{ height: 'calc(50% - 50px)' }}></div>
@@ -21,14 +24,14 @@ root.render(
       <p>正在启动...</p>
     </div>
   </>
-  ,
+  ,root
 )
 
 //使用异步函数避免程序卡死
 async function appStart() {
   await initClient()
 
-  root.render(<App></App>,)
+  ReactDom.render(<App></App>,root)
 }
 
 
