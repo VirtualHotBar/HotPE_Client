@@ -14,7 +14,8 @@
 ![React](https://img.shields.io/badge/React-%2335495e.svg?style=for-the-badge&logo=React&logoColor=%234FC08D)
 ![Semi Design](https://img.shields.io/badge/-SemiDesign-%230170FE?style=for-the-badge&logo=Semi-Design&logoColor=white)
 
-![image](https://github.com/VirtualHotBar/HotPE_Client/assets/96966978/391cab9e-4f1d-403c-8d82-015541750221)
+![image](https://github.com/VirtualHotBar/HotPE_Client/assets/96966978/da49f6d9-edf9-45a8-9f8c-9233412d63a9)
+
 
 
 # 使用
