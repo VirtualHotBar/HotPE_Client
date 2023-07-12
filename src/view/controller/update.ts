@@ -146,8 +146,8 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
         let batPath = roConfig.path.resources.client + 'toUpdate.bat'
         let cmd = '@echo off\r\n%1 mshta vbscript:CreateObject("Shell.Application").ShellExecute("cmd.exe","/c %~s0 ::","","runas",1)(window.close)&&exit\r\n'
             //+ 'TIMEOUT /T 3 /NOBREAK\r\n'
-            +'chcp 65001\r\nmode con cols=60 lines=20\r\ncolor 03\r\ntitle HotPE客户端更新\r\n'
-            +''
+            + 'chcp 65001\r\nmode con cols=60 lines=20\r\ncolor 03\r\ntitle HotPE客户端更新\r\n'
+            + ''
             + 'TIMEOUT /T 3\r\n'
             + dealStrForCmd(path.normalize(roConfig.path.execDir + roConfig.path.resources.client + 'update.bat')) + ' '
             + dealStrForCmd(path.normalize(roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.id + '.7z')) + ' '
@@ -164,8 +164,11 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
 }
 
 //更新完成后提示
-export function updateDoneTip(){
-    if (fs.existsSync(roConfig.path.execDir+'update.mark')){//标记文件
+export function updateDoneTip() {
+    if (fs.existsSync(roConfig.path.execDir + 'update.mark')) {//标记文件
+
+        fs.unlinkSync(roConfig.path.execDir + 'update.mark')
+
         Notification.success({
             title: '更新完成',
             content: '客户端已经成功更新到最新版本！',

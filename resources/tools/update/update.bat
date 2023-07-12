@@ -31,6 +31,7 @@ rd ".\7z\" /S /Q
 ::更新标记
 echo. > "%2update.mark"
 
+cd /d "%2"
 explorer.exe "%2HotPE Client.exe"
 
 del %0 &&del toUpdate.bat&& exit
