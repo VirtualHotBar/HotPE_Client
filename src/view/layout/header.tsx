@@ -7,7 +7,7 @@ import { saveConfig } from '../services/config';
 const { shell, ipcRenderer } = require('electron')
 //import {shell, ipcRenderer} from 'electron';
 
-function exitapp() {
+export function exitapp() {
     saveConfig()
     ipcRenderer.send('exitapp')
 };

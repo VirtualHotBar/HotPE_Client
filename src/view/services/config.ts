@@ -8,7 +8,7 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '230709',
+    id: '230708',
     clientVer: 'V0.2.230708_preview',
     url: {
         home: 'https://www.hotpe.top/',
@@ -26,9 +26,11 @@ const roConfig = {
         }
     },
     path:{
+        execDir:process.cwd()+'\\',
         tools:'.\\resources\\tools\\',
         resources:{
-            pe:'.\\resources\\files\\pe\\'
+            pe:'.\\resources\\files\\pe\\',
+            client:'.\\resources\\files\\client\\'
         }
         
     },

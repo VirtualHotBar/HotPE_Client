@@ -6,25 +6,50 @@ import { updateState } from "./init";
 import { checkUpdate } from "./update";
 
 
-export function dlPERes(callback: Function) {
+export function dlPERes(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
     const aria2 = new Aria2()
 
     aria2.start(config.resources.pe.update.url, roConfig.path.resources.pe, config.resources.pe.update.id + '.7z', config.download.thread,
         async (back: Aria2Attrib) => {
-            
-
-            if(back.state=="done"){
+            if (back.state != 'error' && back.state != "done") {
+                setDlPercent(back.percentage)
+                setDlSpeed(back.speed)
+            } else if (back.state == "done") {
+                setDlPercent(-1)
                 //检查资源
                 await checkPERes()
                 //检查更新
                 await checkUpdate()
                 //更新状态
                 await updateState()
-
-
+            }else{
+                setDlPercent(-1)
             }
 
+            callback(back)
+        })
 
+}
+
+export function dlClientRes(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
+    const aria2 = new Aria2()
+
+    aria2.start(config.resources.client.update.url, roConfig.path.resources.client, config.resources.pe.update.id + '.7z', config.download.thread,
+        async (back: Aria2Attrib) => {
+            if (back.state != 'error' && back.state != "done") {
+                setDlPercent(back.percentage)
+                setDlSpeed(back.speed)
+            } else if (back.state == "done") {
+                setDlPercent(-1)
+                //检查资源
+                //await checkPERes()
+                //检查更新
+                await checkUpdate()
+                //更新状态
+                await updateState()
+            }else{
+                setDlPercent(-1)
+            }
 
             callback(back)
         })

@@ -1,6 +1,6 @@
 const child_process = window.require('child_process')
 
-//运行命令行，堵塞程序，返回结果,异步。用于执行非常快的命令，不然会导致程序卡顿
+//运行命令行，堵塞程序，返回结果,同步。用于执行非常快的命令，不然会导致程序卡顿
 export function runCmdSync(cmd: string) {
     return new TextDecoder('gbk').decode(child_process.execSync(cmd));
 }

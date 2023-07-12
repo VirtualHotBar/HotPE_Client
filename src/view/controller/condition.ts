@@ -1,7 +1,4 @@
 //状态：PE的 安装状态、下载状态
-
-
-
 const fs = window.require('fs')
 
 import { config, roConfig } from "../services/config";

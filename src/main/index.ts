@@ -1,6 +1,7 @@
 //import RunCmd from './function/runCmd'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 
+
 //const { app, BrowserWindow, ipcMain, shell } =require('electron');
 //var path = require('path');
 const path = require('path');
@@ -31,9 +32,12 @@ app.on('ready', () => {
     }
   })
 
+
   //remote
+  
   //require('@electron/remote/main').initialize()
   //require("@electron/remote/main").enable(mainWindow.webContents)
+
 
   //去掉菜单栏
   mainWindow.removeMenu()
@@ -42,7 +46,6 @@ app.on('ready', () => {
 /*   if (isDev == true) {
     mainWindow.webContents.openDevTools({ mode: 'right' })
   } */
-
 
   mainWindow.webContents.openDevTools({ mode: 'right' })
 
