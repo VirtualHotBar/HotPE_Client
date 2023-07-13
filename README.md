@@ -40,23 +40,3 @@ cmd /c "start yarn run dev && start yarn run dev-main  && yarn run dev-ele"
 ```batch
 yarn run build
 ```
-
-## 更新依赖
-
-- 更新包的版本（主版本）
-
-```coffeescript
-第一步全局安装：
-npm install -g npm-check-updates
-
-第二步运行：
-ncu -u 
-作用：升级 package.json 文件的 dependencies 和 devDependencies 中的所有版本
-
-第三步更新：
-npm update
-作用：package-lock.json 文件会被新版本填充
-```
-
-# 许可证
-HotPE Client的自编代码基于MIT License许可证开源
