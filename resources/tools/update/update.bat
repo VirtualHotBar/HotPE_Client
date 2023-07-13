@@ -1,40 +1,49 @@
-::参数一为新客户端压缩包路径，参数二为客户端路径:末带“\”
+%1 mshta vbscript:CreateObject("Shell.Application").ShellExecute("cmd.exe","/c %~s0 ::","","runas",1)(window.close)&&exit
+
+::{pack}为新客户端压缩包路径，{clientDir}为客户端路径:末带\
 @echo off
+chcp 65001
+mode con cols=60 lines=20
+color 03
+title HotPE客户端更新
+TIMEOUT /T 3
 cd /d "%~dp0"
 
-IF "%1" == "" GOTO exit
+if "%1"=="h" GOTO exit
 
 echo 释放文件
-mkdir ".\updateTemp\"
-.\7z\7z.exe x -y "-o.\updateTemp\" "%1" 
+mkdir "%~dp0updateTemp\"
+"%~dp07z.exe" x -y "-o%~dp0updateTemp\" "{pack}" 
 
 echo 清理旧文件
 ::删除根目录所有文件，不包括文件夹
-del "%2*" /F /Q
+del "{clientDir}*" /F /Q
 
-rd "%2locales\" /S /Q
+rd "{clientDir}locales\" /S /Q
 
-del "%1" /F /Q
-del "%2resources\app.asar" /F /Q
-del "%2resources\app-update.yml" /F /Q
-del "%2resources\elevate.exe" /F /Q
+del "{pack}" /F /Q
+del "{clientDir}resources\app.asar" /F /Q
+del "{clientDir}resources\app-update.yml" /F /Q
+del "{clientDir}resources\elevate.exe" /F /Q
 
-rd "%2resources\tools\" /S /Q
+rd "{clientDir}resources\tools\" /S /Q
 
 echo 替换文件
-xcopy ".\updateTemp\" "%2" /E /C /Q  /H /R /Y
+xcopy "%~dp0updateTemp\" "{clientDir}" /E /C /Q  /H /R /Y
 
 echo 清理退出
-rd ".\updateTemp\" /S /Q
-rd ".\7z\" /S /Q
+rd "%~dp0updateTemp\" /S /Q
+::rd ".\7z\" /S /Q
+del "%~dp07z.exe" /F /Q
+del "%~dp07z.dll" /F /Q
+
 
 ::更新标记
-echo. > "%2update.mark"
+echo. > "{clientDir}update.mark"
 
-cd /d "%2"
-explorer.exe "%2HotPE Client.exe"
-
-del %0 &&del toUpdate.bat&& exit
+start mshta vbscript:createobject("wscript.shell").run("""%~nx0"" h",0)(window.close)&&exit
 
 :exit
-exit
+cd /d "{clientDir}" && start /b cmd /c "{clientDir}HotPE Client.exe"
+
+del %0 && exit

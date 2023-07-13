@@ -126,14 +126,14 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
                     if (err) { Error('aria2:Copying aria2 file failed') } else (console.log('copy')
                     )
                 }); */
-        await copyDir(roConfig.path.tools + '7z\\', roConfig.path.resources.client + '7z\\')
+        //await copyDir(roConfig.path.tools + '7z\\', roConfig.path.resources.client + '7z\\')
         //, (err: any) => { if (err) { Error('update:Copying update file failed') } else (console.log('copy')) }
 
-        /* await fs.mkdir(roConfig.path.tools + '7z\\')
-        await fs.copyFile(roConfig.path.tools + '7z\\7z.exe', roConfig.path.resources.client + '7z\\7z.exe')
-        await fs.copyFile(roConfig.path.tools + '7z\\7z.dll', roConfig.path.resources.client + '7z\\7z.dll') */
+        /* await fs.mkdir(roConfig.path.tools + '7z\\') */
+        await fs.copyFile(roConfig.path.tools + '7z\\7z.exe', roConfig.path.resources.client + '7z.exe', () => { })
+        await fs.copyFile(roConfig.path.tools + '7z\\7z.dll', roConfig.path.resources.client + '7z.dll', () => { })
 
-        await fs.copyFile(roConfig.path.tools + 'update\\update.bat', roConfig.path.resources.client + 'update.bat', () => { })
+        //await fs.copyFile(roConfig.path.tools + 'update\\update.exe', roConfig.path.resources.client + 'update.exe', () => { })
 
         restartClient()
     }
@@ -143,19 +143,15 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
         updateStep = 'restart'
         callback(updateStep, tempAria2Attrib)
 
-        let batPath = roConfig.path.resources.client + 'toUpdate.bat'
-        let cmd = '@echo off\r\n%1 mshta vbscript:CreateObject("Shell.Application").ShellExecute("cmd.exe","/c %~s0 ::","","runas",1)(window.close)&&exit\r\n'
-            //+ 'TIMEOUT /T 3 /NOBREAK\r\n'
-            + 'chcp 65001\r\nmode con cols=60 lines=20\r\ncolor 03\r\ntitle HotPE客户端更新\r\n'
-            + ''
-            + 'TIMEOUT /T 3\r\n'
-            + dealStrForCmd(path.normalize(roConfig.path.execDir + roConfig.path.resources.client + 'update.bat')) + ' '
-            + dealStrForCmd(path.normalize(roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.id + '.7z')) + ' '
-            + dealStrForCmd(path.normalize(roConfig.path.execDir)) + '\r\ndel %0 && exit'
+        const updateBatSource = fs.readFileSync(roConfig.path.tools + 'update\\update.bat', 'utf8')
 
-        fs.writeFileSync(batPath, cmd, 'utf8')
+        let updateBat = updateBatSource.replaceAll('{pack}',roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.id + '.7z')
+        updateBat =updateBat.replaceAll('{clientDir}',roConfig.path.execDir)
 
-        runCmdSync(batPath)
+        let batPath =  roConfig.path.resources.client +'update.bat'
+        fs.writeFileSync(batPath, updateBat, 'utf8')
+
+        runCmdSync('start cmd /c '+batPath)
 
         //退出
         exitapp()
