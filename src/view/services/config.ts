@@ -16,13 +16,13 @@ const roConfig = {
         docs: 'https://docs.hotpe.top/',
         blog: 'https://blog.hotpe.top/',
         donate: 'https://www.hotpe.top/donation/',
-        update: {
-            PE: 'https://api.github.com/repos/VirtualHotBar/HotPEToolBox/releases/latest',
-            client: 'https://api.github.com/repos/VirtualHotBar/HotPE_Client/releases/latest'
+        update: {//githubApi:config.api.ghapi
+            PE: 'repos/VirtualHotBar/HotPEToolBox/releases/latest',
+            client: 'repos/VirtualHotBar/HotPE_Client/releases/latest'
         },
-        package: {
-            PE: 'https://p0.hotpe.top/Package/PE/{id}.7z',
-            client: 'https://p0.hotpe.top/Package/Cilent/{id}.7z'
+        package: {//config.api.dl
+            PE: 'Package/PE/{id}.7z',
+            client: 'Package/Cilent/{id}.7z'
         }
     },
     path:{
@@ -46,7 +46,12 @@ const configPath = './resources/config.json'
 
 //默认配置
 let config: Config = {
-    api: 'https://api.hotpe.top/',
+    api:{
+        api: 'https://api.hotpe.top/',
+        ghapi:'http://ghapi.hotpe.top/',
+        dl:'http://p0.hotpe.top/'
+    },
+
     state: {
         install:'noDown',
         update:'without'

@@ -12,7 +12,7 @@ const fs = window.require('fs')
 
 //更新公告
 export async function GetNotices() {
-    await fetch('https://api.hotpe.top/API/HotPE/GetNotices/').then(response => response.json())
+    await fetch(config.api.api + 'API/HotPE/GetNotices/').then(response => response.json())
         .then(data => {
             if (config.notice.content != data.data.client.content) {
                 config.notice.show = true
@@ -40,14 +40,14 @@ export async function checkUpdate() {
 //检查PE更新
 function checkPEUpdate() {
     return new Promise(function (resolve, reject) {
-        fetch(roConfig.url.update.PE).then(response => response.json())
+        fetch(config.api.ghapi + roConfig.url.update.PE).then(response => response.json())
             .then(data => {
 
                 let updateData: UpdateLatest = {
                     id: data.tag_name,
                     name: data.name,
                     description: data.body,
-                    url: roConfig.url.package.PE.replaceAll('{id}', data.tag_name),
+                    url: config.api.dl + roConfig.url.package.PE.replaceAll('{id}', data.tag_name),
                     date: data.published_at
                 }
 
@@ -65,14 +65,14 @@ function checkPEUpdate() {
 //检查客户端更新
 function checkCilentUpdate() {
     return new Promise(function (resolve, reject) {
-        fetch(roConfig.url.update.client).then(response => response.json())
+        fetch(config.api.ghapi + roConfig.url.update.client).then(response => response.json())
             .then(data => {
 
                 let updateData: UpdateLatest = {
                     id: data.tag_name,
                     name: data.name,
                     description: data.body,
-                    url: roConfig.url.package.client.replaceAll('{id}', data.tag_name),
+                    url: config.api.dl + roConfig.url.package.client.replaceAll('{id}', data.tag_name),
                     date: data.published_at
                 }
 
@@ -145,13 +145,13 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
 
         const updateBatSource = fs.readFileSync(roConfig.path.tools + 'update\\update.bat', 'utf8')
 
-        let updateBat = updateBatSource.replaceAll('{pack}',roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.id + '.7z')
-        updateBat =updateBat.replaceAll('{clientDir}',roConfig.path.execDir)
+        let updateBat = updateBatSource.replaceAll('{pack}', roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.id + '.7z')
+        updateBat = updateBat.replaceAll('{clientDir}', roConfig.path.execDir)
 
-        let batPath =  roConfig.path.resources.client +'update.bat'
+        let batPath = roConfig.path.resources.client + 'update.bat'
         fs.writeFileSync(batPath, updateBat, 'utf8')
 
-        runCmdSync('start cmd /c '+batPath)
+        runCmdSync('start cmd /c ' + batPath)
 
         //退出
         exitapp()

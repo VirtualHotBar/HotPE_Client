@@ -2,7 +2,11 @@
 import { UpdateLatest } from "./update"
 
 interface Config {
-    api: string,
+    api:{
+        api: string,
+        ghapi:string,
+        dl:string
+    },
     state: {
         install: 'noDown' | 'noSetup' | 'ready',
         update: 'without' | 'needUpdatePE' | 'needUpdateClient'
