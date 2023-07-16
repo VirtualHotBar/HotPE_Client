@@ -1,5 +1,6 @@
 const fs = window.require('fs')
-let ini = require('ini');
+//let ini = require('ini');
+import ini from 'ini'
 import { roConfig } from "../services/config";
 import { runCmd, runCmdAsync } from "./command";
 
@@ -17,6 +18,15 @@ export function writeJosnFile(path: string, jsonData: object) {
 export function readHotPEConfig(drive: string) {
     return ini.parse(fs.readFileSync(drive + "HotPE\\confi.ini").toString());
 }
+
+//读取Hotpe配置
+export function writeHotPEConfig(drive:string,obj: object) {
+     
+     return fs.writeFileSync(drive + "HotPE\\confi.ini",ini.encode(obj))
+
+
+}
+
 
 //解压文件7Z
 export function unZipFile(filePath:string,outDir:string) {
@@ -97,17 +107,77 @@ export async function traverseFiles(path: string) {
 }
 
 //复制目录
+export async function copyFiles(path: string, toPath: string) {
+
+
+    return new Promise((resolve, reject) => {
+        let cmd = 'xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y /-I'
+
+        runCmd(cmd,(back:string)=>{
+            console.log(back);
+        },(end:number)=>{
+            if (end == 0){
+                resolve(true);
+            }else{
+                reject(false)
+            }
+        })
+    })
+
+
+}
+
+//复制目录
 export async function copyDir(path: string, toPath: string) {
 
-    await runCmd('xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y', (back: string) => {
-        console.log(back);
-    }, (e: number) => {
-        if (e == 0) {
-            return true
-        } else {
-            return false
-        }
+    return new Promise((resolve, reject) => {
+        let cmd = 'xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y /I'
 
+        runCmd(cmd,(back:string)=>{
+            console.log(back);
+        },(end:number)=>{
+            if (end == 0){
+                resolve(true);
+            }else{
+                reject(false)
+            }
+        })
+    })
+
+}
+
+export async function delFiles(path: string) {
+
+    return new Promise((resolve, reject) => {
+        let cmd = 'del ' + dealStrForCmd(path) + ' /F /S /Q'
+
+        runCmd(cmd,(back:string)=>{
+            console.log(back);
+        },(end:number)=>{
+            if (end == 0){
+                resolve(true);
+            }else{
+                reject(false)
+            }
+        })
+    })
+
+}
+
+export async function delDir(path: string) {
+
+    return new Promise((resolve, reject) => {
+        let cmd = 'rd ' + dealStrForCmd(path) + ' /S /Q'
+
+        runCmd(cmd,(back:string)=>{
+            console.log(back);
+        },(end:number)=>{
+            if (end == 0){
+                resolve(true);
+            }else{
+                reject(false)
+            }
+        })
     })
 
 }

@@ -33,6 +33,8 @@ export function runCmdAsync(cmd: string) {
 
         //当程序执行完毕后的回调，那个code一般是0
         result.on("exit", function (code: number) {
+            console.log(returnStr);
+            
             resolve(returnStr)//完成返回
         })
     })

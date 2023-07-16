@@ -33,9 +33,11 @@ export async function checkPEDrive() {
     }else{
         config.state.setupToSys ='without'
     }
+    console.log('config.state.setupToSys',config.state.setupToSys);
+    
 
     //可移动的磁盘
-    config.environment.ware.disks = (await getHardwareInfo('--disk') as any).Disks
+    
     //console.log(config.environment.ware.disks);
 
     for (let i in config.environment.ware.disks) {

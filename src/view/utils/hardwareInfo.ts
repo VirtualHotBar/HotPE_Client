@@ -11,6 +11,8 @@ export function getHardwareInfo(parameter: string) {
         let result = ''
 
         runCmd(cmd, (str: string) => { result = result + str }, (e: number) => {
+            console.log(result);
+            
             resolve(JSON.parse(result))//完成返回
         })
 

@@ -4,6 +4,8 @@ import { checkUpdate, GetNotices } from "./update"
 import { checkPERes, checkPEDrive } from "./condition"
 
 export async function initClient() {
+    //获取需要的环境信息
+    await getEnvironment()
 
     //检查已有的PE资源
     await checkPERes()
@@ -40,4 +42,17 @@ export async function updateState() {
     }else{
         config.state.install = 'ready'
     }
+}
+
+//环境信息
+export async function getEnvironment() {
+
+    config.environment.ware.system =(await getHardwareInfo('--sys') as any).System
+    config.environment.ware.disks = (await getHardwareInfo('--disk') as any).Disks
+
+
+    console.log(config.environment.ware.system);
+    
+
+
 }

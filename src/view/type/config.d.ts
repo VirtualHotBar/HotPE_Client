@@ -10,7 +10,7 @@ interface Config {
     state: {
         install: 'noDown' | 'noSetup' | 'ready',
         resUpdate: 'without' | 'needUpdatePE' | 'needUpdateClient',
-        setupToSys: 'without' | number,//number:版本
+        setupToSys:  number| 'without',//number:版本
 
     },
     environment: {
@@ -19,6 +19,7 @@ interface Config {
             all: Array
         },
         ware: {
+            system:object,
             disks: Array
         }
 

@@ -1,8 +1,12 @@
 import { parseJosnFile, writeJosnFile } from "../utils/utils"
 import { Config } from "../type/config"
 import { runCmdSync } from "../utils/command"
+import { getHardwareInfo } from "../utils/hardwareInfo"
 
 const fs = window.require('fs')
+
+
+
 
 //全局数据库
 
@@ -65,6 +69,7 @@ let config: Config = {
             all: []
         },
         ware: {
+            system:{},
             disks: []
         }
 
