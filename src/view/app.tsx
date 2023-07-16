@@ -7,7 +7,6 @@ import { IconAppCenter, IconHelpCircle, IconPaperclip, IconHome, IconSetting } f
 
 const { Header, Sider, Content } = Layout;
 
-
 export default function App() {
     let naviItems = [
         { itemKey: 'Home', text: '首页', icon: <IconHome /> },
@@ -55,12 +54,12 @@ export default function App() {
 
     return (
         /* Layout 布局 */
-        <React.StrictMode>
+        
             <Layout style={{ border: '1px solid var(--semi-color-border)', height: "100%", width: "100%" }}>
                 <Header style={{ backgroundColor: 'var(--semi-color-bg-1)', height: "40px", width: "100%" }}>
                     <Header_></Header_>
                 </Header>
-                <Layout>
+                <Layout  style={{ width: '100%', height: 'calc(100vh - 41px)' }}>
                     <Sider style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
                         <Nav
                             style={{ maxWidth: 170, height: '100%' }}
@@ -85,12 +84,6 @@ export default function App() {
                 </Layout>
 
             </Layout>
-
-
-
-
-
-
-        </React.StrictMode>
+        
     )
 }

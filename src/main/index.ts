@@ -1,7 +1,6 @@
 //import RunCmd from './function/runCmd'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 
-
 //const { app, BrowserWindow, ipcMain, shell } =require('electron');
 //var path = require('path');
 const path = require('path');
@@ -10,7 +9,6 @@ const path = require('path');
 //是否为开发模式
 //const isDev = require('electron-is-dev');
 import isDev from 'electron-is-dev'
-
 
 app.on('ready', () => {
   //创建一个窗口
@@ -31,8 +29,7 @@ app.on('ready', () => {
       preload: path.join(__dirname, './preload.js')
     }
   })
-
-
+  
   //remote
   
   //require('@electron/remote/main').initialize()

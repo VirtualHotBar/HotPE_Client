@@ -41,7 +41,7 @@ export default function Page(props: any) {
         return (<Docs></Docs>)
 
     } else if (props.navKey == 'Setting') {
-        return (<Setting></Setting>)
+        return (<Setting setNavKey={props.setNavKey}></Setting>)
     }
 
     return (<></>)

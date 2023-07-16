@@ -27,7 +27,11 @@ export async function checkPEDrive() {
     //系统安装的PE
     let SysLetter = roConfig.environment.sysLetter
     if (isHotPEDrive(SysLetter)) {
+        config.state.setupToSys = Number(readHotPEConfig(SysLetter).information.ReleaseVersion)
+        
         config.environment.HotPEDrive.all.push({ drive: SysLetter, isMove: false ,version:readHotPEConfig(SysLetter).information.ReleaseVersion})
+    }else{
+        config.state.setupToSys ='without'
     }
 
     //可移动的磁盘

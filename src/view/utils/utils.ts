@@ -1,5 +1,6 @@
 const fs = window.require('fs')
 let ini = require('ini');
+import { roConfig } from "../services/config";
 import { runCmd, runCmdAsync } from "./command";
 
 //解析JOSN文件
@@ -17,13 +18,31 @@ export function readHotPEConfig(drive: string) {
     return ini.parse(fs.readFileSync(drive + "HotPE\\confi.ini").toString());
 }
 
+//解压文件7Z
+export function unZipFile(filePath:string,outDir:string) {
+    return new Promise((resolve, reject) => {
+        let cmd = roConfig.path.tools + '.\\7z\\7z.exe x -y '+dealStrForCmd('-o'+outDir)+' '+dealStrForCmd(filePath)
+
+        runCmd(cmd,(back:string)=>{
+            console.log(back);
+        },(end:number)=>{
+            if (end == 0){
+                resolve(true);
+            }else{
+                reject(false)
+            }
+        })
+    })
+
+}
+
 //判断是否为HotPE盘
 export function isHotPEDrive(drive: string) {
     return (fs.existsSync(drive + 'HotPE\\confi.ini') && fs.existsSync(drive + 'HotPEModule\\'))
 }
 
 //判断文件是否存在
-function isFileExisted(path_way: string) {
+export function isFileExisted(path_way: string) {
     return new Promise((resolve, reject) => {
         fs.access(path_way, (err: any) => {
             if (err) {
@@ -80,8 +99,9 @@ export async function traverseFiles(path: string) {
 //复制目录
 export async function copyDir(path: string, toPath: string) {
 
-    await runCmd('xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y', (back:string) => {console.log(back);
-     }, (e: number) => {
+    await runCmd('xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y', (back: string) => {
+        console.log(back);
+    }, (e: number) => {
         if (e == 0) {
             return true
         } else {

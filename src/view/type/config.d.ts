@@ -2,14 +2,16 @@
 import { UpdateLatest } from "./update"
 
 interface Config {
-    api:{
+    api: {
         api: string,
-        ghapi:string,
-        dl:string
+        ghapi: string,
+        dl: string
     },
     state: {
         install: 'noDown' | 'noSetup' | 'ready',
-        update: 'without' | 'needUpdatePE' | 'needUpdateClient'
+        resUpdate: 'without' | 'needUpdatePE' | 'needUpdateClient',
+        setupToSys: 'without' | number,//number:版本
+
     },
     environment: {
         HotPEDrive: {

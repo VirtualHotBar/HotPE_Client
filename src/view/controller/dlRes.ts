@@ -40,7 +40,7 @@ export function dlClientRes(setDlPercent: Function, setDlSpeed: Function, callba
                 setDlPercent(back.percentage)
                 setDlSpeed(back.speed)
             } else if (back.state == "done") {
-                setDlPercent(-1)
+                //setDlPercent(-1)
                 //检查资源
                 //await checkPERes()
                 //检查更新

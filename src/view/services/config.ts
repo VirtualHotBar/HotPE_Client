@@ -8,8 +8,8 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '230708',
-    clientVer: 'V0.2.230708_preview',
+    id: '230713',
+    clientVer: 'V0.2.230713_preview',
     url: {
         home: 'https://www.hotpe.top/',
         github: 'https://github.com/VirtualHotBar/HotPE_Client',
@@ -25,19 +25,20 @@ const roConfig = {
             client: 'Package/Cilent/{id}.7z'
         }
     },
-    path:{
-        execDir:process.cwd()+'\\',
-        tools:'.\\resources\\tools\\',
-        resources:{
-            pe:'.\\resources\\files\\pe\\',
-            client:'.\\resources\\files\\client\\'
+    path: {
+        execDir: process.cwd() + '\\',
+        tools: '.\\resources\\tools\\',
+        clientTemp: '.\\resources\\temp\\',
+        resources: {
+            pe: '.\\resources\\files\\pe\\',
+            client: '.\\resources\\files\\client\\'
         }
-        
+
     },
     environment: {
-        sysLetter: runCmdSync('echo %SystemDrive%').substring(0,2)+'\\',
-        temp:runCmdSync('echo %temp%').replaceAll('\r\n',''),
-        userName:runCmdSync('echo %UserName%').replaceAll('\r\n','')
+        sysLetter: runCmdSync('echo %SystemDrive%').substring(0, 2) + '\\',
+        temp: runCmdSync('echo %temp%').replaceAll('\r\n', ''),
+        userName: runCmdSync('echo %UserName%').replaceAll('\r\n', '')
     }
 }
 
@@ -46,19 +47,21 @@ const configPath = './resources/config.json'
 
 //默认配置
 let config: Config = {
-    api:{
+    api: {
         api: 'https://api.hotpe.top/',
-        ghapi:'http://ghapi.hotpe.top/',
-        dl:'http://p0.hotpe.top/'
+        ghapi: 'http://ghapi.hotpe.top/',
+        dl: 'http://p0.hotpe.top/'
     },
 
     state: {
-        install:'noDown',
-        update:'without'
+        install: 'noDown',
+        resUpdate: 'without',
+        setupToSys: 'without',
+
     },
     environment: {
         HotPEDrive: {
-            new: { drive: '', isMove: false ,version:''},
+            new: { drive: '', isMove: false, version: '' },
             all: []
         },
         ware: {
@@ -96,8 +99,8 @@ let config: Config = {
         show: false,
         type: 'info',
         content: ''
-    },download:{
-        thread:8
+    }, download: {
+        thread: 16
     }
 }
 

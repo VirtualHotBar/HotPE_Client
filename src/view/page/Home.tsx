@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import { getHardwareInfo } from '../utils/hardwareInfo';
-import { Button, Banner, Progress, Notification, Modal, TreeSelect } from '@douyinfe/semi-ui';
+import { Button, Banner, Progress, Notification, Modal, TreeSelect, Descriptions } from '@douyinfe/semi-ui';
 import { Help, DownloadOne, EmotionUnhappy, EmotionHappy, Refresh, UpdateRotation } from '@icon-park/react'
 import { config } from '../services/config';
 import { dlPERes } from '../controller/dlRes';
@@ -91,17 +91,17 @@ export default function Home(props: any) {
         })
     }
 
-    
+
     //处理副作用
     useEffect(() => {
 
         //更新完成后提示
         updateDoneTip()
-        
+
 
 
         //更新处理
-        if (updatePromptOk == false && config.state.update != 'without' && config.state.install != "noDown") {
+        if (updatePromptOk == false && config.state.resUpdate != 'without' && config.state.install != "noDown") {
             updatePromptOk = true
 
             let updateModalTitle = ''
@@ -113,28 +113,47 @@ export default function Home(props: any) {
                 date: ''
             }
 
-            if (config.state.update == 'needUpdatePE') {
-                updateModalTitle = '检测到PE资源有新版本发布，是否更新？'
+            if (config.state.resUpdate == 'needUpdatePE') {
+                updateModalTitle = '🎉PE资源有新版本发布，是否更新？'
                 updateData = config.resources.pe.update
-            } else if (config.state.update == 'needUpdateClient') {
-                updateModalTitle = '检测到客户端有新版本发布，是否更新？'
+            } else if (config.state.resUpdate == 'needUpdateClient') {
+                updateModalTitle = '🎉客户端有新版本发布，是否更新？'
                 updateData = config.resources.client.update
             }
 
             const updateModalContent = <>
-                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>🎉{updateData.name} (id{updateData.id}) :</span>
-                <p>更新日志：<ReactMarkdown>{updateData.description}</ReactMarkdown></p>
-                <p>发布日期：{updateData.date}</p>
+                <Descriptions>
+                    <Descriptions.Item itemKey="更新版本">{updateData.name} (id{updateData.id})</Descriptions.Item>
+                    <Descriptions.Item itemKey="更新日志"><ReactMarkdown>{updateData.description}</ReactMarkdown></Descriptions.Item>
+                    <Descriptions.Item itemKey="发布日期">{updateData.date}</Descriptions.Item>
+                </Descriptions>
+
             </>
 
             Modal.confirm({
                 title: updateModalTitle, content: updateModalContent, centered: true, async onOk() {
 
-                    if (config.state.update == 'needUpdatePE') {
+                    if (config.state.resUpdate == 'needUpdatePE') {
                         toDlPERes()
-                    }else if (config.state.update == 'needUpdateClient'){
-                        updateCilent(setDlPercent,setDlSpeed,(aria2Back:Aria2Attrib,updateStep:string)=>{
+                    } else if (config.state.resUpdate == 'needUpdateClient') {
+                        //锁定菜单
+                        props.setLockMuen(true)
+                        updateCilent(setDlPercent, setDlSpeed, (aria2Back: Aria2Attrib, updateStep: string) => {
                             console.log(updateStep);
+                            if (aria2Back.state == 'error') {//下载错误
+
+                                setDlPercent(-1)
+
+                                //解锁菜单
+                                props.setLockMuen(false)
+
+                                Notification.error({
+                                    title: '下载失败',
+                                    content: '文件下载失败，请检查网络。',
+                                    duration: 3,
+                                })
+
+                            }
                         })
                     }
 

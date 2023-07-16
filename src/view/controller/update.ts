@@ -29,11 +29,11 @@ export async function checkUpdate() {
     await checkCilentUpdate()
 
     if (takeLeftStr(config.resources.pe.new, '.') < config.resources.pe.update.id) {
-        config.state.update = 'needUpdatePE'
+        config.state.resUpdate = 'needUpdatePE'
     } else if (roConfig.id < config.resources.client.update.id) {
-        config.state.update = 'needUpdateClient'
+        config.state.resUpdate = 'needUpdateClient'
     } else {
-        config.state.update = 'without'
+        config.state.resUpdate = 'without'
     }
 }
 
@@ -111,6 +111,7 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
         callback(updateStep, tempAria2Attrib)
 
         if (tempAria2Attrib.state == 'done') {
+
             //isDlOk = true
             fitClient()
         }
@@ -119,6 +120,8 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
     //设置客户端
     async function fitClient() {
         updateStep = 'fit'
+        setDlPercent(100)
+        setDlSpeed('正在部署更新，请等待软件重启')
         callback(updateStep, tempAria2Attrib)
 
 

@@ -29,12 +29,10 @@ ReactDom.render(
 
 //使用异步函数避免程序卡死
 async function appStart() {
-  await initClient()
+  await initClient()//初始化功能
 
-  ReactDom.render(<App></App>,root)
+  ReactDom.render(<React.StrictMode><App></App></React.StrictMode>,root)//React.StrictMode:严格模式检查组件副作用
 }
-
-
 
 //使用setTimeout使加载界面mod渲染完
 setTimeout(() => {
