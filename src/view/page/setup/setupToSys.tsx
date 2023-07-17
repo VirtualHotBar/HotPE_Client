@@ -11,45 +11,6 @@ export default function SetupToSys() {
     const [stepStr, setStepStr] = useState("")//步骤文本
     const [isUninstalling, setIsUninstalling] = useState(false)
 
-
-
-
-    useEffect(() => {
-
-
-        async function test() {
-            console.log();
-
-        }
-        test()
-
-
-        if (config.state.setupToSys != 'without') {
-
-
-            //检查更新
-            if (config.state.setupToSys) {
-
-
-            }
-        }
-
-
-
-
-    })
-
-
-
-
-
-
-
-
-
-
-
-
     return (
         <>{currentStep == -1
             ? <>
@@ -59,7 +20,7 @@ export default function SetupToSys() {
                         <h2 >安装到系统</h2>
                         <h3>将HotPE安装到本地的硬盘中，方便日常维护使用</h3>
 
-                        <Button onClick={() => {installToSystem(setCurrentStep, setStepStr)}} type='primary'>开始安装</Button>
+                        <Button onClick={() => { installToSystem(setCurrentStep, setStepStr) }} type='primary'>开始安装</Button>
                     </div>
                     : <>
 
@@ -68,15 +29,9 @@ export default function SetupToSys() {
                                 <CheckOne theme="outline" size="90" fill="var(--semi-color-text-0)" />
                                 <h2 >已安装到系统</h2>
                                 <h3>你已将HotPE安装到系统中，你可以进行</h3>
-                                <Button onClick={() => {
-
-                                    uninstallToSystem(setIsUninstalling)
-
-                                }} type='danger'>卸载</Button>{
-                                    //更新按钮
-                                    config.state.setupToSys < Number( takeLeftStr(config.resources.pe.new, '.'))?<Button onClick={() => { updatePEForSys(setIsUninstalling,setCurrentStep, setStepStr)}} type='primary' style={{ marginLeft: 8 }}>更新</Button>:<></>
-
-                                }
+                                {//更新按钮
+                                    config.state.setupToSys < Number(takeLeftStr(config.resources.pe.new, '.')) ? <Button onClick={() => { updatePEForSys(setIsUninstalling, setCurrentStep, setStepStr) }} type='primary' style={{ marginLeft: 8 }}>更新</Button> : <></>}
+                                <Button onClick={() => { uninstallToSystem(setIsUninstalling) }} type='danger'>卸载</Button>
                             </div>
                             : <div style={{ textAlign: "center", marginTop: "70px", width: "100%" }}>
                                 <br /><br /><br /><br /><br /><br />

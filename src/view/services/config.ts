@@ -65,11 +65,17 @@ let config: Config = {
     },
     environment: {
         HotPEDrive: {
-            new: { drive: '', isMove: false, version: '' },
+            new: {diskIndex:-1,letter: '', isMove: false, version: '' },
             all: []
         },
         ware: {
-            system:{},
+            system: {
+                os: '',
+                buildNumber: '',
+                userName: '',
+                architecture: '',
+                firmware: '',
+            },
             disks: []
         }
 

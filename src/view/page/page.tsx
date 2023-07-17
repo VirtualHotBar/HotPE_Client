@@ -23,7 +23,7 @@ export default function Page(props: any) {
         return (<SetupToSys></SetupToSys>)
 
     } else if (props.navKey == 'SetupToUDisk') {
-        return (<SetupToUDisk></SetupToUDisk>)
+        return (<SetupToUDisk setLockMuen={props.setLockMuen}></SetupToUDisk>)
 
     } else if (props.navKey == 'MakeISO') {
         return (<MakeISO></MakeISO>)

@@ -13,6 +13,7 @@ const GUID2 = '{3a5d9b25-3e56-7c1a-0162-d1bfe6b14acc}'
 
 const bcdeditPath = roConfig.path.tools + 'bcdedit.exe'
 
+const tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
 
 //更新标记
 let isUpdate =false
@@ -24,8 +25,6 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     setStepStr('正在解压HotPE源')
 
 
-
-    let tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
 
     //创建临时目录
     //if (await isFileExisted(tempPath) == false) {
@@ -46,11 +45,11 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //await fs.mkdir(roConfig.environment.sysLetter + 'HotPEModule\\', (back: any) => { console.log(back) })
 
     //复制文件
-    await copyFiles(tempPath + 'HotPE\\kernel.wim', roConfig.environment.sysLetter + 'HotPE\\kernel.wim')
-    await copyFiles(tempPath + 'HotPE\\confi.ini', roConfig.environment.sysLetter + 'HotPE\\confi.ini')
-    await copyFiles(tempPath + 'HotPE\\HotPE.ini', roConfig.environment.sysLetter + 'HotPE\\HotPE.ini')
-    await copyFiles(tempPath + 'HotPE\\Data\\', roConfig.environment.sysLetter + 'HotPE\\Data\\')
-    await copyFiles(tempPath + 'HotPEModule\\', roConfig.environment.sysLetter + 'HotPEModule\\')
+    await copyFiles(tempPath + 'EFI\\HotPE\\kernel.wim', roConfig.environment.sysLetter + 'HotPE\\kernel.wim')
+    await copyFiles(tempPath + 'Data\\HotPE\\confi.ini', roConfig.environment.sysLetter + 'HotPE\\confi.ini')
+    await copyFiles(tempPath + 'EFI\\HotPE\\HotPE.ini', roConfig.environment.sysLetter + 'HotPE\\HotPE.ini')
+    await copyFiles(tempPath + 'EFI\\HotPE\\Data\\', roConfig.environment.sysLetter + 'HotPE\\Data\\')
+    await copyFiles(tempPath + 'Data\\HotPEModule\\', roConfig.environment.sysLetter + 'HotPEModule\\')
 
     //pe配置文件
     let HotPEConfig = readHotPEConfig(roConfig.environment.sysLetter)
@@ -74,7 +73,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
     await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' device ramdisk=[' + installLetter + ']\\HotPE\\Kernel.WIM,' + GUID2)
 
-    if ((config.environment.ware.system as any)['Firmware'] = 'UEFI') {
+    if (config.environment.ware.system.firmware = 'UEFI') {
         await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' path \\windows\\system32\\boot\\winload.efi')
     } else {
         await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' path \\windows\\system32\\boot\\winload.exe')

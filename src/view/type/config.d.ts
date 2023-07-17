@@ -15,12 +15,18 @@ interface Config {
     },
     environment: {
         HotPEDrive: {
-            new: { drive: string, isMove: boolean, version: string },
+            new: {diskIndex:number, letter: string, isMove: boolean, version: string },
             all: Array
         },
         ware: {
-            system:object,
-            disks: Array
+            system:{
+                os:string,
+                buildNumber:string,
+                userName:string,
+                architecture:string,//架构：x64
+                firmware:string,//固件：UEFI
+            },
+            disks:Array<disksInfo>
         }
 
     },
@@ -48,4 +54,18 @@ interface Config {
     }
 }
 
-export { Config }
+interface disksInfo{
+    index:number,
+    name:string,
+    type:string,
+    removable:boolean,
+    size:number,
+    partitions:Array<partitionInfo>
+}
+
+interface partitionInfo{
+    index:number,
+    letter:string
+}
+
+export { Config,disksInfo,partitionInfo }

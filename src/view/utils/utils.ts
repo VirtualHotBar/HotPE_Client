@@ -1,8 +1,9 @@
 const fs = window.require('fs')
 //let ini = require('ini');
 import ini from 'ini'
-import { roConfig } from "../services/config";
+import { config, roConfig } from "../services/config";
 import { runCmd, runCmdAsync } from "./command";
+import { disksInfo, partitionInfo } from '../type/config';
 
 //解析JOSN文件
 export function parseJosnFile(path: string) {
@@ -20,25 +21,25 @@ export function readHotPEConfig(drive: string) {
 }
 
 //读取Hotpe配置
-export function writeHotPEConfig(drive:string,obj: object) {
-     
-     return fs.writeFileSync(drive + "HotPE\\confi.ini",ini.encode(obj))
+export function writeHotPEConfig(drive: string, obj: object) {
+
+    return fs.writeFileSync(drive + "HotPE\\confi.ini", ini.encode(obj))
 
 
 }
 
 
 //解压文件7Z
-export function unZipFile(filePath:string,outDir:string) {
+export function unZipFile(filePath: string, outDir: string) {
     return new Promise((resolve, reject) => {
-        let cmd = roConfig.path.tools + '.\\7z\\7z.exe x -y '+dealStrForCmd('-o'+outDir)+' '+dealStrForCmd(filePath)
+        let cmd = roConfig.path.tools + '.\\7z\\7z.exe x -y ' + dealStrForCmd('-o' + outDir) + ' ' + dealStrForCmd(filePath)
 
-        runCmd(cmd,(back:string)=>{
+        runCmd(cmd, (back: string) => {
             console.log(back);
-        },(end:number)=>{
-            if (end == 0){
+        }, (end: number) => {
+            if (end == 0) {
                 resolve(true);
-            }else{
+            } else {
                 reject(false)
             }
         })
@@ -113,12 +114,12 @@ export async function copyFiles(path: string, toPath: string) {
     return new Promise((resolve, reject) => {
         let cmd = 'xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y /-I'
 
-        runCmd(cmd,(back:string)=>{
+        runCmd(cmd, (back: string) => {
             console.log(back);
-        },(end:number)=>{
-            if (end == 0){
+        }, (end: number) => {
+            if (end == 0) {
                 resolve(true);
-            }else{
+            } else {
                 reject(false)
             }
         })
@@ -133,12 +134,12 @@ export async function copyDir(path: string, toPath: string) {
     return new Promise((resolve, reject) => {
         let cmd = 'xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y /I'
 
-        runCmd(cmd,(back:string)=>{
+        runCmd(cmd, (back: string) => {
             console.log(back);
-        },(end:number)=>{
-            if (end == 0){
+        }, (end: number) => {
+            if (end == 0) {
                 resolve(true);
-            }else{
+            } else {
                 reject(false)
             }
         })
@@ -151,12 +152,12 @@ export async function delFiles(path: string) {
     return new Promise((resolve, reject) => {
         let cmd = 'del ' + dealStrForCmd(path) + ' /F /S /Q'
 
-        runCmd(cmd,(back:string)=>{
+        runCmd(cmd, (back: string) => {
             console.log(back);
-        },(end:number)=>{
-            if (end == 0){
+        }, (end: number) => {
+            if (end == 0) {
                 resolve(true);
-            }else{
+            } else {
                 reject(false)
             }
         })
@@ -169,15 +170,71 @@ export async function delDir(path: string) {
     return new Promise((resolve, reject) => {
         let cmd = 'rd ' + dealStrForCmd(path) + ' /S /Q'
 
-        runCmd(cmd,(back:string)=>{
+        runCmd(cmd, (back: string) => {
             console.log(back);
-        },(end:number)=>{
-            if (end == 0){
+        }, (end: number) => {
+            if (end == 0) {
                 resolve(true);
-            }else{
+            } else {
                 reject(false)
             }
         })
     })
 
+}
+
+export async function moveFiles(path: string, toPath: string) {
+
+    return new Promise((resolve, reject) => {
+        let cmd = 'move /Y ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath)
+        runCmd(cmd, (back: string) => {
+            console.log(back);
+        }, (end: number) => {
+            if (end == 0) {
+                resolve(true);
+            } else {
+                reject(false)
+            }
+        })
+    })
+
+}
+
+//取所有盘符
+export async function getAllLetter() {
+    let allLetter: Array<string> = []
+    config.environment.ware.disks.map((disk: disksInfo) => {
+        disk.partitions.map((partition: partitionInfo) => {
+            if (partition.letter != '') {
+                allLetter.push(partition.letter)
+            }
+        })
+    })
+
+    return allLetter
+}
+
+//盘符是否存在
+export async function letterIsExist(letter: string) {
+    let allLetter: Array<string> = await getAllLetter()
+    for (let i in allLetter) {
+        if (allLetter[i].substring(0,1) == letter.substring(0,1)) {
+            return true
+        }
+    }
+    return false
+}
+
+
+//取可用盘符
+export async function getUsableLetter() {
+    let letters: Array<string> = 'DEFGHIJKLMNOPQRSTUVWXYZABC'.split('')
+
+    for (let i in letters) {
+        if (!await letterIsExist(letters[i] + ':\\')) {
+            return letters[i] + ':\\'
+        }
+    }
+
+    Error('No available drive letter!')
 }

@@ -1,7 +1,6 @@
 //import RunCmd from './function/runCmd'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 
-
 //const { app, BrowserWindow, ipcMain, shell } =require('electron');
 //var path = require('path');
 const path = require('path');
@@ -30,9 +29,8 @@ app.on('ready', () => {
       preload: path.join(__dirname, './preload.js')
     }
   })
-  
+
   //remote
-  
   //require('@electron/remote/main').initialize()
   //require("@electron/remote/main").enable(mainWindow.webContents)
 

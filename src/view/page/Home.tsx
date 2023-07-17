@@ -22,14 +22,14 @@ function HotPEDriveChoose() {
         HotPEDriveChooseOk = true
 
         let driveData = config.environment.HotPEDrive.all.map(function callback(currentValue: any, index: number) {
-            return { label: currentValue.drive, value: currentValue.drive, key: index.toString() }
+            return { label: currentValue.letter, value: currentValue.letter, key: index.toString() }
         })
 
         let modalContent = <>
             <p>请选择要操作的HotPE安装：</p>
 
             <TreeSelect
-                defaultValue={config.environment.HotPEDrive.new.drive}//选择默认的
+                defaultValue={config.environment.HotPEDrive.new.letter}//选择默认的
                 style={{ width: '100%' }}
                 dropdownStyle={{ overflow: 'auto' }}
                 treeData={driveData}

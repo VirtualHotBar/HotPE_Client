@@ -24,16 +24,20 @@ export async function checkPEDrive() {
     //清空
     config.environment.HotPEDrive.all = []
 
+    config.state.setupToSys ='without'
+
+
     //系统安装的PE
-    let SysLetter = roConfig.environment.sysLetter
+    /* let SysLetter = roConfig.environment.sysLetter
     if (isHotPEDrive(SysLetter)) {
-        config.state.setupToSys = Number(readHotPEConfig(SysLetter).information.ReleaseVersion)
         
-        config.environment.HotPEDrive.all.push({ drive: SysLetter, isMove: false ,version:readHotPEConfig(SysLetter).information.ReleaseVersion})
+        
+        config.environment.HotPEDrive.all.push({diskIndex:, letter: SysLetter, isMove: false ,version:readHotPEConfig(SysLetter).information.ReleaseVersion})
     }else{
         config.state.setupToSys ='without'
     }
-    console.log('config.state.setupToSys',config.state.setupToSys);
+    console.log('config.state.setupToSys',config.state.setupToSys); */
+    
     
 
     //可移动的磁盘
@@ -42,17 +46,22 @@ export async function checkPEDrive() {
 
     for (let i in config.environment.ware.disks) {
         let disk = config.environment.ware.disks[i]
-        if (disk['Type'] == 'USB') {//可移动
-            for (let iV in disk['Volumes']) {
-                let volumes = disk['Volumes'][iV]
-                for (let iL in volumes['Volume Path Names']) {
-                    let name = volumes['Volume Path Names'][iL]['Drive Letter']
-                    if (isHotPEDrive(name )) {
-                        config.environment.HotPEDrive.all.push({ drive: name, isMove: true ,version:readHotPEConfig(name).information.ReleaseVersion})
+        //if (disk.type == 'USB') {//可移动
+            for (let iP in disk.partitions) {
+                let partition = disk.partitions[iP]
+                if(partition.letter!= ''){
+                    if (isHotPEDrive(partition.letter)) {
+                        config.environment.HotPEDrive.all.push({ diskIndex:disk.index, letter:  partition.letter, isMove: disk.type == 'USB' ,version:readHotPEConfig(partition.letter).information.ReleaseVersion})
+
+                        //判断是否为系统安装的PE
+                        if (partition.letter==roConfig.environment.sysLetter){
+                            config.state.setupToSys = Number(readHotPEConfig(partition.letter).information.ReleaseVersion)
+                        }
                     }
                 }
+                    
             }
-        }
+        //}
     }
 
     /*     //只有一个PE盘符时，选择此盘符

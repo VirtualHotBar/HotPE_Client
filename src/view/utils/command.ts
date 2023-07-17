@@ -23,6 +23,8 @@ export function runCmd(cmd: string, returnstr: Function, end: Function) {
 //运行命令行，完成返回,异步
 export function runCmdAsync(cmd: string) {
     return new Promise(function (resolve, reject) {
+        console.log(cmd);
+        
         const result = child_process.spawn('cmd.exe', ['/s', '/c', cmd]);
 
         let returnStr: string = ''
