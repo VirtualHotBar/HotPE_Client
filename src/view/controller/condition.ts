@@ -5,6 +5,7 @@ import { config, roConfig } from "../services/config";
 import { runCmdAsync } from "../utils/command";
 import { isHotPEDrive, traverseFiles,readHotPEConfig } from "../utils/utils"
 import { getHardwareInfo } from "../utils/hardwareInfo"
+import { getEnvironment } from "./init";
 
 //检查PE资源
 export async function checkPERes() {
@@ -21,6 +22,11 @@ export async function checkPERes() {
 
 //检查本地的PE
 export async function checkPEDrive() {
+
+    //刷新一下DiskList
+    await getEnvironment()
+
+
     //清空
     config.environment.HotPEDrive.all = []
 

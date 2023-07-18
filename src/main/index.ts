@@ -1,6 +1,6 @@
 //import RunCmd from './function/runCmd'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
-
+import { dialog } from 'electron';
 //const { app, BrowserWindow, ipcMain, shell } =require('electron');
 //var path = require('path');
 const path = require('path');
@@ -8,7 +8,6 @@ const path = require('path');
 //是否为开发模式
 //const isDev = require('electron-is-dev');
 import isDev from 'electron-is-dev'
-
 
 app.on('ready', () => {
   //创建一个窗口
@@ -30,10 +29,10 @@ app.on('ready', () => {
     }
   })
 
+
   //remote
   //require('@electron/remote/main').initialize()
   //require("@electron/remote/main").enable(mainWindow.webContents)
-
 
   //去掉菜单栏
   mainWindow.removeMenu()
@@ -49,10 +48,10 @@ app.on('ready', () => {
   //mainWindow.loadFile('./src/main.html')
   mainWindow.loadURL(isDev ? 'http://localhost:5173' : `file://${path.join(__dirname, '../view/index.html')}`);
 
+  
   ipcMain.on('exitapp', () => {
     app.exit()//退出 
   })
-
 
   ipcMain.on('windows:mini', () => {
     mainWindow.minimize();//最小化
@@ -61,5 +60,25 @@ app.on('ready', () => {
 
   //拦截首页打开新窗口的链接用浏览器打开  
 
+  //test()
+
+
+  ipcMain.on('file:getSavePath', (event, message) => {
+    console.log(`receive message from render: `)
+    event.returnValue = dialog.showSaveDialogSync({
+      title: "请选择文件保存位置",
+      buttonLabel: "保存",
+      defaultPath:message.toString(),
+      filters: [
+          { name: '镜像文件', extensions: ['iso'] },
+        ]
+    })
+  
+  })
+
+
 })
 
+async function test(){
+  console.log();
+}

@@ -20,13 +20,13 @@ export default function Page(props: any) {
         return (<Home setNavKey={props.setNavKey} setLockMuen={props.setLockMuen}></Home>)
 
     } else if (props.navKey == 'SetupToSys') {
-        return (<SetupToSys></SetupToSys>)
+        return (<SetupToSys setLockMuen={props.setLockMuen}></SetupToSys>)
 
     } else if (props.navKey == 'SetupToUDisk') {
         return (<SetupToUDisk setLockMuen={props.setLockMuen}></SetupToUDisk>)
 
     } else if (props.navKey == 'MakeISO') {
-        return (<MakeISO></MakeISO>)
+        return (<MakeISO setLockMuen={props.setLockMuen}></MakeISO>)
 
     } else if (props.navKey == 'HPMDl') {
         return (<HPMDl></HPMDl>)

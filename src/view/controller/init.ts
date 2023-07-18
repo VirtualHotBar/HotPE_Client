@@ -5,6 +5,8 @@ import { checkPERes, checkPEDrive } from "./condition"
 import { takeRightStr } from "../utils/utils"
 import { disksInfo, partitionInfo } from "../type/config"
 
+let isInitDone = false
+
 export async function initClient() {
     //获取需要的环境信息
     await getEnvironment()
@@ -33,6 +35,7 @@ export async function initClient() {
 
 
 
+    isInitDone = true
 }
 
 //更新状态
@@ -58,7 +61,7 @@ export async function getEnvironment() {
     config.environment.ware.system.architecture = temp['Processor Architecture']
 
     //disk
-    config.environment.ware.disks=[]
+    config.environment.ware.disks = []
     temp = (await getHardwareInfo('--disk') as any).Disks as Array<any>
 
     temp.map(function callback(disk: any, index: number) {
@@ -103,4 +106,13 @@ export async function getEnvironment() {
 
 
 
+}
+
+//客户端是否准备就绪（客户端启动完成 and PE包是否下载
+export function isClientReady() {
+    if (!isInitDone || config.resources.pe.new == '') {
+        return false
+    }
+
+    return true
 }

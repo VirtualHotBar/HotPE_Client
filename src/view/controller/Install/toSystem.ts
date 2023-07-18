@@ -4,6 +4,7 @@ import { copyFiles, delDir, delFiles, isFileExisted, readHotPEConfig, takeLeftSt
 import { Notification } from "@douyinfe/semi-ui";
 import ini from 'ini'
 import { checkPEDrive } from "../condition";
+import { checkIsReady } from "./check";
 //import fs from "fs";
 
 const fs = window.require('fs')
@@ -18,7 +19,11 @@ const tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
 //更新标记
 let isUpdate =false
 
-export async function installToSystem(setCurrentStep: Function, setStepStr: Function) {
+export async function installToSystem(setCurrentStep: Function, setStepStr: Function,setLockMuen:Function) {
+
+    if(!checkIsReady()){return};// 检查是否准备就绪 
+
+    setLockMuen(true)
 
     console.log('installToSystem');
     setCurrentStep(0)
@@ -101,8 +106,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
     //更新PE安装状态
     await checkPEDrive()
-    setCurrentStep(-1)
-    console.log('安装完成！');
+
 
     if(!isUpdate){
         Notification.success({
@@ -112,8 +116,10 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
         })
 
     }
-    
 
+
+    setCurrentStep(-1)
+    setLockMuen(false)
 
 }
 
@@ -121,8 +127,9 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
 
 
-export async function uninstallToSystem(setIsUninstalling: Function) {
+export async function uninstallToSystem(setIsUninstalling: Function,setLockMuen:Function) {
     setIsUninstalling(true)
+    setLockMuen(true)
 
     await runCmdAsync(bcdeditPath + ' /delete '+GUID2+' /f')
     await runCmdAsync(bcdeditPath + ' /delete '+GUID1+' /f')
@@ -141,21 +148,19 @@ export async function uninstallToSystem(setIsUninstalling: Function) {
         })
     }
     
-
+    setLockMuen(false)
     setIsUninstalling(false)
 }
 
-export async function updatePEForSys(setIsUninstalling: Function,setCurrentStep: Function, setStepStr: Function){
+export async function updatePEForSys(setIsUninstalling: Function,setCurrentStep: Function, setStepStr: Function,setLockMuen:Function){
+    if(!checkIsReady()){return};// 检查是否准备就绪 
 
+    setLockMuen(true)
     isUpdate = true
 
-    await uninstallToSystem(setIsUninstalling)
+    await uninstallToSystem(setIsUninstalling,setLockMuen)
 
-    await installToSystem(setCurrentStep, setStepStr)
-
-
-    isUpdate = false
-
+    await installToSystem(setCurrentStep, setStepStr,setLockMuen)
 
     //更新PE安装状态
     await checkPEDrive()
@@ -166,4 +171,6 @@ export async function updatePEForSys(setIsUninstalling: Function,setCurrentStep:
         duration: 5,
     })
 
+    isUpdate = false
+    setLockMuen(false)
 }

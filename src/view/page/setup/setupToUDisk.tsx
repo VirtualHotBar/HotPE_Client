@@ -2,11 +2,11 @@ import { Button, Spin, Steps, TreeSelect } from '@douyinfe/semi-ui';
 import { UsbMemoryStick } from '@icon-park/react';
 import React, { useState, useReducer } from 'react';
 import { config } from '../../services/config';
-import { getUsableLetter, takeRightStr } from '../../utils/utils';
+import { getUsableLetter, takeLeftStr, takeRightStr } from '../../utils/utils';
 import { Config, partitionInfo } from '../../type/config';
 import { IconRefresh } from '@douyinfe/semi-icons';
 import { getEnvironment } from '../../controller/init';
-import { installToUDisk } from '../../controller/Install/toUDisk';
+import { UnInstallToUDisk, installToUDisk, updatePEForUDisk } from '../../controller/Install/toUDisk';
 import { checkPEDrive } from '../../controller/condition';
 
 
@@ -111,14 +111,11 @@ export default function SetupToUDisk(props: any) {
                 <br /><br />
                 {selectUDiskIndex != '' ?//操作按钮
                     <>{selectPEVersion == '' ? <Button theme='solid' type='primary' disabled={uDiskRefreshing} onClick={() => {
-                        if (selectUDiskIndex != '') { installToUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) } else {
-                            console.log('请选择U盘');
-                        }
-
+                        if (selectUDiskIndex != '') { installToUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }
                         console.log(selectPEVersion, selectUDiskIndex, selectPEVersion);
                     }}>开始安装</Button> : <>
-                        <Button type='primary' disabled={uDiskRefreshing} onClick={() => { console.log(selectUDiskIndex, selectPEVersion); }}>更新PE</Button>
-                        <Button disabled={uDiskRefreshing} style={{ marginLeft: 8 }} onClick={() => { }} type='danger'>还原U盘</Button>
+                        {/* 更新按钮，更新判断 */Number(selectPEVersion) < Number(takeLeftStr(config.resources.pe.new, '.')) ? <Button type='primary' disabled={uDiskRefreshing} onClick={() => { updatePEForUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }}>免格更新</Button> : <></>}
+                        <Button disabled={uDiskRefreshing} style={{ marginLeft: 8 }} onClick={() => { UnInstallToUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }} type='danger'>还原U盘</Button>
                     </>}</> : <></>}
 
             </div>

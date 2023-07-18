@@ -12,8 +12,8 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '230713',
-    clientVer: 'V0.2.230713_preview',
+    id: '230717',
+    clientVer: 'V0.2.230717_preview',
     url: {
         home: 'https://www.hotpe.top/',
         github: 'https://github.com/VirtualHotBar/HotPE_Client',
@@ -42,7 +42,8 @@ const roConfig = {
     environment: {
         sysLetter: runCmdSync('echo %SystemDrive%').substring(0, 2) + '\\',
         temp: runCmdSync('echo %temp%').replaceAll('\r\n', ''),
-        userName: runCmdSync('echo %UserName%').replaceAll('\r\n', '')
+        userName: runCmdSync('echo %UserName%').replaceAll('\r\n', ''),
+        desktopDir:runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\').replaceAll('\r\n', '')
     }
 }
 

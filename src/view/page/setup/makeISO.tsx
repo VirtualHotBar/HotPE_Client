@@ -1,34 +1,34 @@
 import React, { useState } from 'react';
-import {Aria2} from '../../utils/aria2/aria2.ts'
-import { Button, Banner } from '@douyinfe/semi-ui';
-import { Aria2Attrib } from '../../type/aria2';
+import { Button, Banner, Spin } from '@douyinfe/semi-ui';
+import { Cd } from '@icon-park/react';
+
+import { makeISOFile } from '../../controller/Install/makeISO';
+
+export default function MakeISO(props:any) {
+    const [step, setStep] = useState(-1)//步骤   -1:无操作，>-1:正在操作
+    const [stepStr, setStepStr] = useState(-1)//步骤文本
 
 
-const Aria2_ = new Aria2()
 
-export default function MakeISO(){
-    
-    const [test,setTest] = useState ('')
 
-    function test_(){
-        
-        setTimeout(()=>{Aria2_.start('https://github.com/VirtualHotBar/HotPEToolBox/releases/download/230430/HotPE-V2.5.230430.exe','D:\\','123.EXE',1,(Aria2Attrib_:Aria2Attrib)=>{
-            setTest(Aria2Attrib_.state+' | '+Aria2Attrib_.speed+' | '+Aria2Attrib_.percentage+'% | '+Aria2Attrib_.size+' | '+Aria2Attrib_.newSize+' | '+Aria2Attrib_.remainder+' | '+Aria2Attrib_.message)
-        })},1000);
-        
 
-    }
-    
-        return(
-            <>
-            😊
-            <Button onClick={test_} type='primary' style={{ marginRight: 8 }}>生成ISO镜像</Button>
-            <Button onClick={()=>{Aria2_.stop((tepy:boolean)=>{console.log(tepy);
-            })}} type='primary' style={{ marginRight: 8 }}>生成ISO镜像</Button>
-            <p>{test}</p>
-            </>
-        )
-        
+    return (
+        <>{step == -1
+            ? <div style={{ textAlign: "center", marginTop: "100px" }}>
+                <Cd theme="outline" size="90" fill="var(--semi-color-text-0)" />
+                <h2 >  生成ISO镜像</h2>
 
-    
+                <h3>生成HotPE的ISO镜像文件，用于刻录光盘或写入U盘</h3>
+                <Button type='primary' onClick={()=>{makeISOFile(setStep,setStepStr,props.setLockMuen)}}>开始生成</Button>
+
+            </div>
+            : <div style={{ textAlign: "center", marginTop: "190px", width: "100%" }}>
+                <Spin size="large" />
+                <h3>{stepStr}</h3>
+            </div>}
+        </>
+    )
+
+
+
 };

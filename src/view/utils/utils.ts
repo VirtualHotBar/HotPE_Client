@@ -31,7 +31,7 @@ export function writeHotPEConfig(drive: string, obj: object) {
 
 //解压文件7Z
 export function unZipFile(filePath: string, outDir: string) {
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
         let cmd = roConfig.path.tools + '.\\7z\\7z.exe x -y ' + dealStrForCmd('-o' + outDir) + ' ' + dealStrForCmd(filePath)
 
         runCmd(cmd, (back: string) => {
@@ -40,7 +40,9 @@ export function unZipFile(filePath: string, outDir: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                reject(false)
+                Error('Command execution failed:' + cmd)
+                resolve(false);
+                //reject(false)
             }
         })
     })
@@ -54,10 +56,11 @@ export function isHotPEDrive(drive: string) {
 
 //判断文件是否存在
 export function isFileExisted(path_way: string) {
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
         fs.access(path_way, (err: any) => {
             if (err) {
-                reject(false);//"不存在"
+                resolve(false);//"不存在"
+                //reject(false);//"不存在"
             } else {
                 resolve(true);//"存在"
             }
@@ -109,9 +112,7 @@ export async function traverseFiles(path: string) {
 
 //复制目录
 export async function copyFiles(path: string, toPath: string) {
-
-
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
         let cmd = 'xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y /-I'
 
         runCmd(cmd, (back: string) => {
@@ -120,7 +121,9 @@ export async function copyFiles(path: string, toPath: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                reject(false)
+                Error('Command execution failed:' + cmd)
+                resolve(false);
+                //reject(false)
             }
         })
     })
@@ -140,7 +143,9 @@ export async function copyDir(path: string, toPath: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                reject(false)
+                Error('Command execution failed:' + cmd)
+                resolve(false);
+                //reject(false)
             }
         })
     })
@@ -158,7 +163,9 @@ export async function delFiles(path: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                reject(false)
+                Error('Command execution failed:' + cmd)
+                resolve(false);
+                //reject(false)
             }
         })
     })
@@ -176,7 +183,9 @@ export async function delDir(path: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                reject(false)
+                Error('Command execution failed:' + cmd)
+                resolve(false);
+                //reject(false)
             }
         })
     })
@@ -185,7 +194,7 @@ export async function delDir(path: string) {
 
 export async function moveFiles(path: string, toPath: string) {
 
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
         let cmd = 'move /Y ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath)
         runCmd(cmd, (back: string) => {
             console.log(back);
@@ -193,7 +202,28 @@ export async function moveFiles(path: string, toPath: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                reject(false)
+                Error('Command execution failed:' + cmd)
+                resolve(false);
+                //reject(false)
+            }
+        })
+    })
+
+}
+
+export async function makeDir(path: string) {
+
+    return new Promise<boolean>((resolve, reject) => {
+        let cmd = 'mkdir ' + dealStrForCmd(path) 
+        runCmd(cmd, (back: string) => {
+            console.log(back);
+        }, (end: number) => {
+            if (end == 0) {
+                resolve(true);
+            } else {
+                Error('Command execution failed:' + cmd)
+                resolve(false);
+                //reject(false)
             }
         })
     })
@@ -218,7 +248,7 @@ export async function getAllLetter() {
 export async function letterIsExist(letter: string) {
     let allLetter: Array<string> = await getAllLetter()
     for (let i in allLetter) {
-        if (allLetter[i].substring(0,1) == letter.substring(0,1)) {
+        if (allLetter[i].substring(0, 1) == letter.substring(0, 1)) {
             return true
         }
     }
