@@ -6,14 +6,12 @@ import { getHardwareInfo } from "../utils/hardwareInfo"
 const fs = window.require('fs')
 
 
-
-
 //全局数据库
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '230717',
-    clientVer: 'V0.2.230717_preview',
+    id: '230719',
+    clientVer: 'V0.2.230719_preview',
     url: {
         home: 'https://www.hotpe.top/',
         github: 'https://github.com/VirtualHotBar/HotPE_Client',

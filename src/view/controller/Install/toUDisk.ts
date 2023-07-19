@@ -34,7 +34,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     setStep(0)
 
     //当前操作是否成功
-    let isSuccess = true
+    let isSucceed = true
 
 
     //解压
@@ -59,20 +59,20 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 
     setStepStr('正在创建EFI分区')
     //创建EFI分区，激活，写引导
-    isSuccess = isSuccess && await runPacmd(' /hd:' + diskIndex + ' /cre /size:1024 /pri /end /act /hide /align /fs:fat32 /label:EFI')
+    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:1024 /pri /end /act /hide /align /fs:fat32 /label:EFI')
     await runCmdAsync(booticePath + ' /DEVICE=' + diskIndex + ' /mbr /type=usbhdd+ /install /quiet')
     await runCmdAsync(booticePath + ' /DEVICE=' + diskIndex + ':0 /pbr /type=bootmgr /install /quiet')
 
     setStepStr('正在写入文件')
     //写EFI分区文件
-    isSuccess = isSuccess && await runPacmd(' /hd:' + diskIndex + ' /whide:0 /src:' + roConfig.path.execDir + tempEFIPath.substring(2, tempEFIPath.length - 1))//去路径末'\'
+    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /whide:0 /src:' + roConfig.path.execDir + tempEFIPath.substring(2, tempEFIPath.length - 1))//去路径末'\'
 
     setStepStr('正在创建数据分区')
     //创建数据分区，EXFAT
     let dataLetter = (await getUsableLetter() as string).substring(0, 2)
     console.log(dataLetter);
 
-    isSuccess = isSuccess && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
+    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
     await runCmdAsync(pecmdPath + ' DFMT ' + dataLetter + ',exFAT,HotPE工具箱')
 
     //复制数据区文件
@@ -110,7 +110,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     setStep(-1)
     setLockMuen(false)
 
-    if (isSuccess) {
+    if (isSucceed) {
         Notification.success({
             title: '安装到U盘成功！',
             content: '每次重启都有3S的等待时间。',
@@ -138,7 +138,7 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
     setLockMuen(true)
 
     //当前操作是否成功
-    let isSuccess = true
+    let isSucceed = true
 
     setStepStr('正在解除占用')
     //解除占用(数据分区强制分配盘符)
@@ -160,7 +160,7 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
     let dataLetter = (await getUsableLetter() as string).substring(0, 2)
     console.log(dataLetter);
 
-    isSuccess = isSuccess && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
+    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
     await runCmdAsync(pecmdPath + ' DFMT ' + dataLetter + ',exFAT,')
 
 
@@ -175,7 +175,7 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
     setStep(-1)
     setLockMuen(false)
 
-    if (isSuccess) {
+    if (isSucceed) {
         Notification.success({
             title: 'U盘还原成功！',
             content: 'qaq，期待你的回归。',
@@ -200,7 +200,7 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
     setStep(0)
 
     //当前操作是否成功
-    let isSuccess = true
+    let isSucceed = true
 
     //解压
     setStepStr('正在解压文件')
@@ -218,7 +218,7 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
 
     //写EFI分区文件
     setStepStr('正在更新EFI分区')
-    isSuccess = isSuccess && await runPacmd(' /hd:' + diskIndex + ' /whide:1 /src:' + roConfig.path.execDir + tempEFIPath.substring(2, tempEFIPath.length - 1))//去路径末'\'
+    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /whide:1 /src:' + roConfig.path.execDir + tempEFIPath.substring(2, tempEFIPath.length - 1))//去路径末'\'
 
     setStepStr('正在更新数据分区')
 
@@ -249,7 +249,7 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
     //更新PE安装状态
     await checkPEDrive()
 
-    if (isSuccess) {
+    if (isSucceed) {
         Notification.success({
             title: '更新成功！',
             content: '使用最新版本的HotPE以获得最好的体验。',

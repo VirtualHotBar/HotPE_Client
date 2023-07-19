@@ -197,7 +197,7 @@ export default function Home(props: any) {
 
 
     return (
-        <>
+        <div style={{padding: '24px'}}>
 
             <div style={{ width: '100%' }}>
                 {welcomeStr != '' ? <h2>{welcomeStr}</h2> : <></>}
@@ -212,7 +212,7 @@ export default function Home(props: any) {
                 </>}
             </div>
 
-        </>
+        </div>
     )
 
 };

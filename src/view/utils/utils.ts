@@ -154,7 +154,7 @@ export async function copyDir(path: string, toPath: string) {
 
 export async function delFiles(path: string) {
 
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
         let cmd = 'del ' + dealStrForCmd(path) + ' /F /S /Q'
 
         runCmd(cmd, (back: string) => {
@@ -174,7 +174,7 @@ export async function delFiles(path: string) {
 
 export async function delDir(path: string) {
 
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
         let cmd = 'rd ' + dealStrForCmd(path) + ' /S /Q'
 
         runCmd(cmd, (back: string) => {
@@ -214,7 +214,7 @@ export async function moveFiles(path: string, toPath: string) {
 export async function makeDir(path: string) {
 
     return new Promise<boolean>((resolve, reject) => {
-        let cmd = 'mkdir ' + dealStrForCmd(path) 
+        let cmd = 'mkdir ' + dealStrForCmd(path)
         runCmd(cmd, (back: string) => {
             console.log(back);
         }, (end: number) => {
@@ -267,4 +267,37 @@ export async function getUsableLetter() {
     }
 
     Error('No available drive letter!')
+}
+
+//文件重命名
+export async function reNameFile(filePath: string, newFilePath: string) {
+    let isSucceed = true
+
+    await fs.rename(filePath, newFilePath, function (err: any) {
+        if (err) {
+            isSucceed = false
+            throw err
+        } else {
+            isSucceed = true
+        }
+    })
+
+    return isSucceed
+}
+
+//  格式化文件大小
+export function formatSize(v: number) {
+    let UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'ZB'];
+    let prev = 0, i = 0;
+    while (Math.floor(v) > 0 && i < UNITS.length) {
+        prev = v;
+        v /= 1024;
+        i += 1;
+    }
+
+    if (i > 0 && i < UNITS.length) {
+        v = prev;
+        i -= 1;
+    }
+    return Math.round(v * 100) / 100 + ' ' + UNITS[i];
 }

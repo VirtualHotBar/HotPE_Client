@@ -1,13 +1,22 @@
 import { config, roConfig } from "../services/config"
 import { getHardwareInfo } from "../utils/hardwareInfo"
-import { checkUpdate, GetNotices } from "./update"
+import { checkUpdate } from "./update"
 import { checkPERes, checkPEDrive } from "./condition"
 import { takeRightStr } from "../utils/utils"
 import { disksInfo, partitionInfo } from "../type/config"
+import { Modal } from "@douyinfe/semi-ui"
+import { ReactNode } from "react"
+import { getHPMList, getNotices } from "./online/online"
+import { checkHPMFiles } from "./hpm/checkHpmFiles"
 
 let isInitDone = false
 
+
 export async function initClient() {
+
+    //环境检查，不达标堵塞
+    await checkEnvironment()
+
     //获取需要的环境信息
     await getEnvironment()
 
@@ -17,7 +26,8 @@ export async function initClient() {
     //检查已安装的分区
     await checkPEDrive()
 
-    await GetNotices()
+    //获取公告
+    await getNotices()
 
     //检查更新
     await checkUpdate()
@@ -25,9 +35,11 @@ export async function initClient() {
     //更新状态
     await updateState()
 
+    //获取HPM分类和列表
+    await getHPMList()
 
-
-
+    //获取本地HPM列表
+    checkHPMFiles()
     console.log(config);
     console.log(roConfig);
 
@@ -48,6 +60,20 @@ export async function updateState() {
         config.state.install = 'ready'
     }
 }
+
+//环境检查，启动时
+async function checkEnvironment() {
+
+    //联网检查
+    while (!window.navigator.onLine) {
+        await errorDialog('已离线', '请检查网络，点击[确定]重试。')
+    }
+
+}
+
+
+
+
 
 //环境信息
 export async function getEnvironment() {
@@ -107,6 +133,27 @@ export async function getEnvironment() {
 
 
 }
+
+
+//错误对话框
+function errorDialog(title: string, content: ReactNode) {
+    return new Promise((resolve, reject) => {
+        Modal.error(
+            {
+                title: title,
+                content: content,
+                onOk: (e: any) => { resolve(true) },
+                onCancel: (e: any) => { resolve(false) },
+                centered: true,
+                hasCancel: false,
+                maskClosable: false,
+                closable: false
+            }
+        )
+    })
+}
+
+
 
 //客户端是否准备就绪（客户端启动完成 and PE包是否下载
 export function isClientReady() {

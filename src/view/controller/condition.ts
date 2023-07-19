@@ -3,9 +3,9 @@ const fs = window.require('fs')
 
 import { config, roConfig } from "../services/config";
 import { runCmdAsync } from "../utils/command";
-import { isHotPEDrive, traverseFiles,readHotPEConfig } from "../utils/utils"
+import { isHotPEDrive, traverseFiles, readHotPEConfig } from "../utils/utils"
 import { getHardwareInfo } from "../utils/hardwareInfo"
-import { getEnvironment } from "./init";
+import { getEnvironment, updateState } from "./init";
 
 //检查PE资源
 export async function checkPERes() {
@@ -29,8 +29,9 @@ export async function checkPEDrive() {
 
     //清空
     config.environment.HotPEDrive.all = []
+    config.environment.HotPEDrive.new = { diskIndex: -1, letter: '', isMove: false, version: '' }
 
-    config.state.setupToSys ='without'
+    config.state.setupToSys = 'without'
 
 
     //系统安装的PE
@@ -43,30 +44,30 @@ export async function checkPEDrive() {
         config.state.setupToSys ='without'
     }
     console.log('config.state.setupToSys',config.state.setupToSys); */
-    
-    
+
+
 
     //可移动的磁盘
-    
+
     //console.log(config.environment.ware.disks);
 
     for (let i in config.environment.ware.disks) {
         let disk = config.environment.ware.disks[i]
         //if (disk.type == 'USB') {//可移动
-            for (let iP in disk.partitions) {
-                let partition = disk.partitions[iP]
-                if(partition.letter!= ''){
-                    if (isHotPEDrive(partition.letter)) {
-                        config.environment.HotPEDrive.all.push({ diskIndex:disk.index, letter:  partition.letter, isMove: disk.type == 'USB' ,version:readHotPEConfig(partition.letter).information.ReleaseVersion})
+        for (let iP in disk.partitions) {
+            let partition = disk.partitions[iP]
+            if (partition.letter != '') {
+                if (isHotPEDrive(partition.letter)) {
+                    config.environment.HotPEDrive.all.push({ diskIndex: disk.index, letter: partition.letter, isMove: disk.type == 'USB', version: readHotPEConfig(partition.letter).information.ReleaseVersion })
 
-                        //判断是否为系统安装的PE
-                        if (partition.letter==roConfig.environment.sysLetter){
-                            config.state.setupToSys = Number(readHotPEConfig(partition.letter).information.ReleaseVersion)
-                        }
+                    //判断是否为系统安装的PE
+                    if (partition.letter == roConfig.environment.sysLetter) {
+                        config.state.setupToSys = Number(readHotPEConfig(partition.letter).information.ReleaseVersion)
                     }
                 }
-                    
             }
+
+        }
         //}
     }
 
@@ -81,4 +82,9 @@ export async function checkPEDrive() {
     }
 
     console.log('HotPEDrive:', config.environment.HotPEDrive);
+
+    //更新安装状态(首页
+    await updateState()
 }
+
+

@@ -37,12 +37,13 @@ app.on('ready', () => {
   //去掉菜单栏
   mainWindow.removeMenu()
 
-  //开发工具
-/*   if (isDev == true) {
-    mainWindow.webContents.openDevTools({ mode: 'right' })
-  } */
 
-  mainWindow.webContents.openDevTools({ mode: 'right' })
+  //开发工具
+  if (isDev == true) {
+    mainWindow.webContents.openDevTools({ mode: 'right' })
+  } 
+
+  //mainWindow.webContents.openDevTools({ mode: 'right' })
 
   //窗口加载html文件
   //mainWindow.loadFile('./src/main.html')

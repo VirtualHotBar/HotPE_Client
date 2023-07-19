@@ -5,10 +5,10 @@ import { Card, Button, Row, Col,Typography } from '@douyinfe/semi-ui';
 export default function Setting(props:any) {
     const { Text } = Typography;
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <Card title='PE设置' style={{ width: '100%', marginBottom: "20px" }} footerLine={true}
+        <div style={{padding:24}}>
+            <Card title='PE设置' style={{  marginBottom: "20px" }} footerLine={true}
                 footerStyle={{ display: 'flex', justifyContent: 'flex-end' }}
-                footer={<Button theme='solid' type='primary'>保存更改</Button>}>
+                footer={<Button type='primary'>保存更改</Button>}>
 
                 PE设置
 
@@ -16,7 +16,7 @@ export default function Setting(props:any) {
 
             <Card title='客户端设置' style={{ width: '100%', marginBottom: "20px" }} footerLine={true}
                 footerStyle={{ display: 'flex', justifyContent: 'flex-end' }}
-                footer={<Button theme='solid' type='primary'>保存更改</Button>}>
+                footer={<Button type='primary'>保存更改</Button>}>
 
                 客户端设置
 

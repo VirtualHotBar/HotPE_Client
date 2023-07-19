@@ -14,7 +14,9 @@
   "dependencies": {
     "electron-is-dev": "^2.0.0",
     "ini": "^4.1.1",
-    "react-markdown": "^8.0.7"
+    "react-markdown": "^8.0.7",
+    "react-virtualized": "^9.22.5",
+    "react-window": "^1.8.9"
   },
   "devDependencies": {
     "@douyinfe/semi-icons": "^2.39.0",
@@ -25,6 +27,8 @@
     "@types/node": "^20.3.2",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
+    "@types/react-virtualized": "^9.21.22",
+    "@types/react-window": "^1.8.5",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "@vitejs/plugin-react-swc": "^3.3.2",
@@ -38,7 +42,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "typescript": "^5.1.6",
-    "vite": "^4.3.9"
+    "vite": "^4.3.9",
+    "vite-plugin-react-virtualized": "^1.0.4"
   },
   "build": {
     "files": [

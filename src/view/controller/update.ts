@@ -10,19 +10,6 @@ import { Notification } from '@douyinfe/semi-ui'
 const path = window.require('path')
 const fs = window.require('fs')
 
-//更新公告
-export async function GetNotices() {
-    await fetch(config.api.api + 'API/HotPE/GetNotices/').then(response => response.json())
-        .then(data => {
-            if (config.notice.content != data.data.client.content) {
-                config.notice.show = true
-                config.notice.content = data.data.client.content
-                config.notice.type = data.data.client.type
-            }
-        })
-        .catch(e => Error(e))
-}
-
 //检查更新,pe and client
 export async function checkUpdate() {
     await checkPEUpdate()
@@ -86,8 +73,6 @@ function checkCilentUpdate() {
     }
     )
 }
-
-
 
 //更新客户端
 export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
