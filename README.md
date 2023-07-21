@@ -40,3 +40,6 @@ cmd /c "start yarn run dev && start yarn run dev-main  && yarn run dev-ele"
 ```batch
 yarn run build
 ```
+
+## 许可证
+HotPE Client的自编代码基于Apache 2.0许可证开源。
