@@ -17,11 +17,11 @@ const bcdeditPath = roConfig.path.tools + 'bcdedit.exe'
 const tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
 
 //更新标记
-let isUpdate =false
+let isUpdate = false
 
-export async function installToSystem(setCurrentStep: Function, setStepStr: Function,setLockMuen:Function) {
+export async function installToSystem(setCurrentStep: Function, setStepStr: Function, setLockMuen: Function) {
 
-    if(!checkIsReady()){return};// 检查是否准备就绪 
+    if (!checkIsReady()) { return };// 检查是否准备就绪 
 
     setLockMuen(true)
 
@@ -67,9 +67,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     setCurrentStep(2)
     setStepStr('正在添加HotPE引导')
 
-
     let installLetter = roConfig.environment.sysLetter.substring(0, 2)
-    
 
     await runCmdAsync(bcdeditPath + ' /create ' + GUID1 + ' /d HotPE工具箱 /application osloader')
     await runCmdAsync(bcdeditPath + ' /create ' + GUID2 + ' /d HotPE工具箱 /device')
@@ -92,7 +90,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' winpe Yes')
     await runCmdAsync(bcdeditPath + ' /displayorder ' + GUID1 + ' /addlast')
 
-    await runCmdAsync(bcdeditPath + ' /timeout 3')
+    await runCmdAsync(bcdeditPath + ' /timeout ' + config.setting.pe.bootWaitTime)
 
     //下面两项跟开机动画实现有关
     //await runCmdAsync(bcdeditPath + ' /set {bootmgr} nointegritychecks yes')//禁用数字签名检查
@@ -109,7 +107,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     await checkPEDrive()
 
 
-    if(!isUpdate){
+    if (!isUpdate) {
         Notification.success({
             title: '安装到系统完成！',
             content: '每次重启都有3S的等待时间。',
@@ -128,12 +126,12 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
 
 
-export async function uninstallToSystem(setIsUninstalling: Function,setLockMuen:Function) {
+export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen: Function) {
     setIsUninstalling(true)
     setLockMuen(true)
 
-    await runCmdAsync(bcdeditPath + ' /delete '+GUID2+' /f')
-    await runCmdAsync(bcdeditPath + ' /delete '+GUID1+' /f')
+    await runCmdAsync(bcdeditPath + ' /delete ' + GUID2 + ' /f')
+    await runCmdAsync(bcdeditPath + ' /delete ' + GUID1 + ' /f')
 
     await delDir(roConfig.environment.sysLetter + 'HotPE\\')
     await delDir(roConfig.environment.sysLetter + 'HotPEModule\\')
@@ -141,27 +139,27 @@ export async function uninstallToSystem(setIsUninstalling: Function,setLockMuen:
     //更新PE安装状态
     await checkPEDrive()
 
-    if(!isUpdate){
+    if (!isUpdate) {
         Notification.success({
             title: 'HotPE卸载完成！',
             content: '感谢你的使用！我会改进不足，等待你的回归。',
             duration: 5,
         })
     }
-    
+
     setLockMuen(false)
     setIsUninstalling(false)
 }
 
-export async function updatePEForSys(setIsUninstalling: Function,setCurrentStep: Function, setStepStr: Function,setLockMuen:Function){
-    if(!checkIsReady()){return};// 检查是否准备就绪 
+export async function updatePEForSys(setIsUninstalling: Function, setCurrentStep: Function, setStepStr: Function, setLockMuen: Function) {
+    if (!checkIsReady()) { return };// 检查是否准备就绪 
 
     setLockMuen(true)
     isUpdate = true
 
-    await uninstallToSystem(setIsUninstalling,setLockMuen)
+    await uninstallToSystem(setIsUninstalling, setLockMuen)
 
-    await installToSystem(setCurrentStep, setStepStr,setLockMuen)
+    await installToSystem(setCurrentStep, setStepStr, setLockMuen)
 
     //更新PE安装状态
     await checkPEDrive()

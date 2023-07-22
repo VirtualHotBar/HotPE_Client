@@ -6,26 +6,26 @@ import { takeLeftStr, takeRightStr } from "../../utils/utils"
 const fs = window.require('fs')
 
 //通过文件名，和路径获取HPMInfo
-export function getHPMinfoLocal(HPMFilePath:string,HPMFileName: string) {
+export function getHPMinfoLocal(HPMFilePath: string, HPMFileName: string) {
 
-    let hpmFileInfo= fs.statSync(HPMFilePath+HPMFileName)
+    let hpmFileInfo = fs.statSync(HPMFilePath + HPMFileName)
 
     let hpmInfo = HPMFileName.split('_')
-    let HPM:HPM = {
+    let HPM: HPM = {
         fileName: HPMFileName,
-        size:hpmFileInfo.size,
+        size: hpmFileInfo.size,
         name: hpmInfo[0],
         maker: hpmInfo[1],
         version: hpmInfo[2],
-        description: takeLeftStr(hpmInfo[3],'.'),
-        time:hpmFileInfo.ctime
+        description: takeLeftStr(hpmInfo[3], '.'),
+        time: hpmFileInfo.ctime
     }
     return HPM
 }
 
 //检查是否有模块文件夹，可进行模块操作
-export function isHPMReady(){
-    if(config.environment.HotPEDrive.new.letter !=''){
+export function isHPMReady() {
+    if (config.environment.HotPEDrive.new.letter != '') {
         return true
     }
     Notification.info({

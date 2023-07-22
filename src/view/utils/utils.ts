@@ -7,6 +7,7 @@ import { disksInfo, partitionInfo } from '../type/config';
 
 //解析JOSN文件
 export function parseJosnFile(path: string) {
+
     return (JSON.parse(fs.readFileSync(path, 'utf8')))
 }
 
@@ -15,13 +16,43 @@ export function writeJosnFile(path: string, jsonData: object) {
     return (fs.writeFileSync(path, JSON.stringify(jsonData), 'utf8'))
 }
 
+
+//string是否为json格式
+export function isJSON(str: string) {
+    if (typeof str == 'string') {
+        try {
+            var obj = JSON.parse(str);
+            if (typeof obj == 'object' && obj) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (e) {
+            console.log('error：' + str + '!!!' + e);
+            return false;
+        }
+    }
+}
+
 //读取Hotpe配置
 export function readHotPEConfig(drive: string) {
     return ini.parse(fs.readFileSync(drive + "HotPE\\confi.ini").toString());
 }
 
-//读取Hotpe配置
+
+//保存Hotpe配置
 export function writeHotPEConfig(drive: string, obj: object) {
+    return fs.writeFileSync(drive + "HotPE\\confi.ini", ini.encode(obj))
+}
+
+//读取Hotpe设置
+export function readHotPESetting(drive: string) {
+    return ini.parse(fs.readFileSync(drive + "HotPE\\confi.ini").toString());
+}
+
+//读取Hotpe设置
+export function writeHotPESetting(drive: string, obj: object) {
     return fs.writeFileSync(drive + "HotPE\\confi.ini", ini.encode(obj))
 }
 
@@ -75,10 +106,10 @@ export function objectCount(o: object) {
 }
 
 // ||逻辑或，&&逻辑且
-//处理命令行参数：含 空或& 字符串加引号
+//处理命令行参数：含 空或&或, 字符串加引号
 export function dealStrForCmd(str: string) {
     let returnStr = ''
-    if (str.indexOf(' ') != -1 || str.indexOf('&') != -1) {
+    if (str.includes(' ') || str.includes('&') || str.includes(',')) {
         returnStr = '\"' + str + '\"'
     } else {
         returnStr = str

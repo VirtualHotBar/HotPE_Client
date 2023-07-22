@@ -27,13 +27,11 @@ export async function checkPEDrive() {
     //刷新一下DiskList
     await getEnvironment()
 
+    config.state.setupToSys = 'without'
 
     //清空
     config.environment.HotPEDrive.all = []
     config.environment.HotPEDrive.new = { diskIndex: -1, letter: '', isMove: false, version: '' }
-
-    config.state.setupToSys = 'without'
-
 
     //系统安装的PE
     /* let SysLetter = roConfig.environment.sysLetter
@@ -59,7 +57,11 @@ export async function checkPEDrive() {
             let partition = disk.partitions[iP]
             if (partition.letter != '') {
                 if (isHotPEDrive(partition.letter)) {
-                    config.environment.HotPEDrive.all.push({ diskIndex: disk.index, letter: partition.letter, isMove: disk.type == 'USB', version: readHotPEConfig(partition.letter).information.ReleaseVersion })
+                    let HotPEDriveInfoTemp = { diskIndex: disk.index, letter: partition.letter, isMove: disk.type == 'USB', version: readHotPEConfig(partition.letter).information.ReleaseVersion }
+                    if(!config.environment.HotPEDrive.all.includes(HotPEDriveInfoTemp)){
+                        config.environment.HotPEDrive.all.push(HotPEDriveInfoTemp)
+                    }
+                    
 
                     //判断是否为系统安装的PE
                     if (partition.letter == roConfig.environment.sysLetter) {
@@ -76,16 +78,17 @@ export async function checkPEDrive() {
         if (config.environment.HotPEDrive.all.length == 1) {
             config.environment.HotPEDrive.new = config.environment.HotPEDrive.all[0]
         } */
+    console.log('HotPEDrive:', config.environment.HotPEDrive);
+    config.environment.HotPEDrive.all = Array.from(new Set(config.environment.HotPEDrive.all))//去重
+    console.log('HotPEDrive:', config.environment.HotPEDrive);
 
     //选择最后一个PE盘符
     if (config.environment.HotPEDrive.all.length > 0) {
         config.environment.HotPEDrive.new = config.environment.HotPEDrive.all[config.environment.HotPEDrive.all.length - 1]
 
         //更新HPM列表本地
-        checkHPMFiles()
+        await checkHPMFiles()
     }
-
-    console.log('HotPEDrive:', config.environment.HotPEDrive);
 
     //更新安装状态(首页
     await updateState()

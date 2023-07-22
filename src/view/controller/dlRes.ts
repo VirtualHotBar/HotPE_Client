@@ -11,9 +11,15 @@ export function dlPERes(setDlPercent: Function, setDlSpeed: Function, callback: 
 
     aria2.start(config.resources.pe.update.url, roConfig.path.resources.pe, config.resources.pe.update.id + '.7z', config.download.thread,
         async (back: Aria2Attrib) => {
+            
             if (back.state != 'error' && back.state != "done") {
                 setDlPercent(back.percentage)
-                setDlSpeed(back.speed)
+                if(back.state=='doing'){
+                    setDlSpeed(`${back.speed}(${back.newSize}\\${back.size},${back.remainder})`)
+                }else{
+                    setDlSpeed('请求中...')
+                }
+                
             } else if (back.state == "done") {
                 setDlPercent(-1)
                 //检查资源
@@ -38,7 +44,11 @@ export function dlClientRes(setDlPercent: Function, setDlSpeed: Function, callba
         async (back: Aria2Attrib) => {
             if (back.state != 'error' && back.state != "done") {
                 setDlPercent(back.percentage)
-                setDlSpeed(back.speed)
+                if(back.state=='doing'){
+                    setDlSpeed(`${back.speed}(${back.newSize}\\${back.size},${back.remainder})`)
+                }else{
+                    setDlSpeed('请求中...')
+                }
             } else if (back.state == "done") {
                 //setDlPercent(-1)
                 //检查资源

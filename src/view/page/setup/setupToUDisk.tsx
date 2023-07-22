@@ -1,6 +1,6 @@
 import { Button, Spin, Steps, TreeSelect } from '@douyinfe/semi-ui';
 import { UsbMemoryStick } from '@icon-park/react';
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import { config } from '../../services/config';
 import { getUsableLetter, takeLeftStr, takeRightStr } from '../../utils/utils';
 import { Config, partitionInfo } from '../../type/config';
@@ -18,15 +18,28 @@ async function UDiskRefres(steUDiskRefreshing: Function, setLockMuen: Function) 
     setLockMuen(true)
 
     //更新环境信息(disk)
-    await getEnvironment()
+    //await getEnvironment()
 
     //更新PE安装
-    await checkPEDrive()
+    await checkPEDrive()//getEnvironment()
+
+    console.log(config.environment.ware.disks);
 
     steUDiskRefreshing(false)
     setLockMuen(false)
+}
 
+//获取PE版本
+function getHotPEDriveVer(diskIndex: Number) {
+    console.log(config.environment.HotPEDrive.all);
 
+    for (let i in config.environment.HotPEDrive.all) {
+        if (config.environment.HotPEDrive.all[i].diskIndex == diskIndex) {
+            return config.environment.HotPEDrive.all[i].version
+        }
+    }
+
+    return ''
 }
 
 export default function SetupToUDisk(props: any) {
@@ -36,29 +49,10 @@ export default function SetupToUDisk(props: any) {
     const [step, setStep] = useState(-1)//步骤   -1:无操作，-2：加载(还原)
     const [stepStr, setStepStr] = useState(-1)//步骤文本
 
-
-
-
-    //const [selectValue,setSelectValue] = useState('')
-
-    /*     function steUDiskRefreshing(value:boolean){
-            uDiskRefreshing =value
-            forceUpdate()
-        } */
-
-
-
     //选择的U盘索引
-    //let selectValue = ''
-    const [selectUDiskIndex, setSelectUDiskIndex] = useState('')
+    let temp = ''
 
-    const [selectPEVersion, setSelectPEVersion] = useState('')//选择的U盘是PEu盘的版本，为空不是PEu盘
-
-
-    let driveData: Array<any> = []
-    let defaultDriveValue = ''
-
-
+    let driveDataTemp: Array<any> = []
     for (let i in config.environment.ware.disks) {
         let disk = config.environment.ware.disks[i]
 
@@ -72,14 +66,31 @@ export default function SetupToUDisk(props: any) {
         let label = disk.index + ':' + disk.name + '(' + (disk.size / 1000 / 1000 / 1000).toFixed(2) + 'GB,' + letter.toString() + ')'
 
         if (disk.type == 'USB') {//可移动
-            driveData.push({ label: label, value: disk.index, key: i })
+            driveDataTemp.push({ label: label, value: disk.index, key: i })
         }
     }
-    if (driveData.length > 0) {
-        defaultDriveValue = driveData[0].value.toString()
-        console.log('defaultDriveValue', defaultDriveValue);
-    }
+    /*     if (driveDataTemp.length > 0) {
+            temp = driveDataTemp[0].value.toString()
+        } */
 
+    const [selectUDiskIndex, setSelectUDiskIndex] = useState(temp)
+    const [selectPEVersion, setSelectPEVersion] = useState(getHotPEDriveVer(Number(selectUDiskIndex)))//选择的U盘是PEu盘的版本，为空不是HotPEu盘
+
+    console.log(selectUDiskIndex, selectPEVersion);
+
+    useEffect(() => {
+        if (selectUDiskIndex == '' && driveDataTemp.length > 0) {
+            setSelectUDiskIndex(driveDataTemp[0].value.toString())
+        }
+
+        if (getHotPEDriveVer(Number(selectUDiskIndex)) != selectPEVersion) {
+            setSelectPEVersion(getHotPEDriveVer(Number(selectUDiskIndex)))
+        }
+
+        if (driveDataTemp.length == 0) {
+            setSelectUDiskIndex('')
+        }
+    })
 
     return (
         <>{step == -1//未操作，默认页面
@@ -88,26 +99,20 @@ export default function SetupToUDisk(props: any) {
                 <h2 >  安装到U盘</h2>
                 <h3>将HotPE安装到U盘中，随身携带</h3>
                 <TreeSelect
-                    placeholder={'请选择U盘'}
+                    placeholder={'请插入U盘'}
+                    //defaultValue={[]}
+                    value={[selectUDiskIndex]}
                     style={{ width: '400px' }}
                     dropdownStyle={{ overflow: 'auto' }}
-                    treeData={driveData}
+                    treeData={driveDataTemp}
                     disabled={uDiskRefreshing}
-                    onSelect={(value: string) => {
-                        config.environment.HotPEDrive.all.map((HotPEDrive: any) => {
-                            if (value == HotPEDrive.diskIndex) {
-                                setSelectPEVersion(HotPEDrive.version)
-                            } else {
-                                setSelectPEVersion('')
-                            }
-                        })
-
+                    onChange={(value: any) => {
+                        setSelectPEVersion(getHotPEDriveVer(Number(value)))
                         setSelectUDiskIndex(value)
-                        console.log(selectPEVersion);
-
+                        console.log(value, selectPEVersion);
                     }} />
 
-                {!uDiskRefreshing ? <Button type="primary" icon={<IconRefresh />} style={{ marginLeft: 8, marginTop: -4 }} aria-label="刷新" onClick={() => { UDiskRefres(steUDiskRefreshing, props.setLockMuen); }} /> : <Spin size="middle" />}
+                {!uDiskRefreshing ? <Button type="primary" icon={<IconRefresh />} style={{ marginLeft: 8, marginTop: -4 }} aria-label="刷新" onClick={async () => { await UDiskRefres(steUDiskRefreshing, props.setLockMuen); }} /> : <Spin size="middle" />}
                 <br /><br />
                 {selectUDiskIndex != '' ?//操作按钮
                     <>{selectPEVersion == '' ? <Button theme='solid' type='primary' disabled={uDiskRefreshing} onClick={() => {

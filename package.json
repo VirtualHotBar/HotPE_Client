@@ -4,7 +4,7 @@
   "version": "0.0.2",
   "main": "dist/main/index.js",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite  --force",
     "dev-main": "tsc -w --p ./src/main",
     "dev-ele": "nodemon --watch ./dist/main/* --exec electron .",
     "build": "tsc && vite build && tsc -p ./src/main && electron-builder --ia32 --dir",

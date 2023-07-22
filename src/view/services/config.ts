@@ -1,4 +1,4 @@
-import { parseJosnFile, writeJosnFile } from "../utils/utils"
+import { delFiles, isJSON, parseJosnFile, writeJosnFile } from "../utils/utils"
 import { Config } from "../type/config"
 import { runCmdSync } from "../utils/command"
 import { getHardwareInfo } from "../utils/hardwareInfo"
@@ -10,8 +10,8 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '230720',
-    clientVer: 'V0.2.230720_preview',
+    id: '230722',
+    clientVer: 'V0.2.230722_preview',
     url: {
         home: 'https://www.hotpe.top/',
         github: 'https://github.com/VirtualHotBar/HotPE_Client',
@@ -35,18 +35,18 @@ const roConfig = {
             pe: '.\\resources\\files\\pe\\',
             client: '.\\resources\\files\\client\\'
         }
-
     },
     environment: {
         sysLetter: runCmdSync('echo %SystemDrive%').substring(0, 2) + '\\',
         temp: runCmdSync('echo %temp%').replaceAll('\r\n', ''),
         userName: runCmdSync('echo %UserName%').replaceAll('\r\n', ''),
-        desktopDir:runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\').replaceAll('\r\n', '')
+        desktopDir: runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\').replaceAll('\r\n', '')
     }
 }
 
 //动态配置================================================================================================
 const configPath = './resources/config.json'
+
 
 //默认配置
 let config: Config = {
@@ -64,7 +64,7 @@ let config: Config = {
     },
     environment: {
         HotPEDrive: {
-            new: {diskIndex:-1,letter: '', isMove: false, version: '' },
+            new: { diskIndex: -1, letter: '', isMove: false, version: '' },
             all: []
         },
         ware: {
@@ -109,15 +109,24 @@ let config: Config = {
         show: false,
         type: 'info',
         content: ''
-    }, download: {
+    },
+     download: {
         thread: 16
+    },
+    setting:{
+        pe:{
+            bootWaitTime:3
+        }
     }
 }
 
 
-if (fs.existsSync(configPath)) {
-    //如果配置文件存在，则读取配置
+if (fs.existsSync(configPath) && isJSON(fs.readFileSync(configPath, 'utf8'))) {
+    //如果配置文件存在且为json，则读取配置
+
     config = parseJosnFile(configPath)
+
+
 } else {
     //如果配置文件不存在，则使用默认配置
     //默认配置

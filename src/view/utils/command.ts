@@ -12,7 +12,7 @@ export function runCmd(cmd: string, returnstr: Function, end: Function) {
     result.stdout.on("data", function (data: Buffer) { returnstr(new TextDecoder('gbk').decode(data)); });
     //当程序执行完毕后的回调，那个code一般是0
     result.on("exit", function (code: number) {
-        console.info(code + ' Command:' + cmd )
+        console.info(code + ' Command:' + cmd)
         /* if (code != 0) {
             console.info(code + ' Command:' + cmd)
         } */
@@ -23,18 +23,10 @@ export function runCmd(cmd: string, returnstr: Function, end: Function) {
 //运行命令行，完成返回,异步
 export function runCmdAsync(cmd: string) {
     return new Promise(function (resolve, reject) {
-        const result = child_process.spawn('cmd.exe', ['/c', cmd]);
         let returnStr: string = ''
-        //输出正常情况下的控制台信息
-        result.stdout.on("data", function (data: Buffer) { returnStr = returnStr + new TextDecoder('gbk').decode(data) }
-        );
-        //当程序执行完毕后的回调，那个code一般是0
-        result.on("exit", function (code: number) {
-            console.info(code + ' Command:' + cmd + ':' + returnStr)
-            /* if (code != 0) {
-                console.info(code + ' Command:' + cmd + ':' + returnStr)
-            } */
-
+        runCmd(cmd, (back: string) => {
+            returnStr = returnStr + back
+        }, (code: number) => {
             resolve(returnStr)//完成返回
         })
     })

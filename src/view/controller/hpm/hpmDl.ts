@@ -99,7 +99,7 @@ export async function cancelDlTask(hpmDl: HPMDl) {
 //判断模块是否在下载队列
 export function isHPMinDlList(HPMInfo: HPM) {
     for (let i in HPMDlList) {
-        if (HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {
+        if (HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {            
             return true//结束函数体返回值
         }
     }
@@ -128,9 +128,6 @@ function delHPMDlFromList(HPMInfo: HPM) {
     }
     return
 }
-
-
-
 
 
 //更新界面实时

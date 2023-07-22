@@ -5,7 +5,6 @@ import path from 'path'
 //是否为开发模式
 import isDev from 'electron-is-dev'
 
-
 app.on('ready', () => {
   //创建一个窗口
   const mainWindow = new BrowserWindow({
@@ -25,6 +24,7 @@ app.on('ready', () => {
       preload: path.join(__dirname, './preload.js')
     }
   })
+
 
   //窗口加载html文件
   //mainWindow.loadFile('./src/main.html')
@@ -68,6 +68,16 @@ app.on('ready', () => {
     })
   })
 
+  ipcMain.on('file:getOpenPath', (event, message) => {
+    event.returnValue = dialog.showOpenDialogSync({
+      title: "请选择壁纸文件",
+      buttonLabel: "打开",
+      defaultPath: message.toString(),
+      filters: [
+        { name: 'jpg图片文件', extensions: ['jpg','jpeg'] },
+      ]
+    })
+  })
 
 
 })

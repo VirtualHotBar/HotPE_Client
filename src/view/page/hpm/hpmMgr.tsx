@@ -20,7 +20,7 @@ export default function HPMMgr() {
     return (
         <>
             <Collapse defaultActiveKey = {['on','off']}>
-                <Collapse.Panel header={"已启用("+HPMListLocal.on.length+")："} itemKey="on">
+                <Collapse.Panel header={"已启用："} itemKey="on"  extra={HPMListLocal.on.length}>
                     <List
                         dataSource={HPMListLocal.on}
                         renderItem={onHPM => (
@@ -49,7 +49,7 @@ export default function HPMMgr() {
                         )}
                     />
                 </Collapse.Panel>
-                <Collapse.Panel header={"已禁用("+HPMListLocal.off.length+")："} itemKey="off">
+                <Collapse.Panel header={"已禁用："} itemKey="off" extra={HPMListLocal.off.length}>
                     <List
                         dataSource={HPMListLocal.off}
                         renderItem={offHPM => (

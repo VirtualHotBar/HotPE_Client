@@ -20,10 +20,10 @@ export async function checkHPMFiles() {
     })
 
     //排除没有下载完成的
-    for(let i in HPMListLocal.on){
-        if(await isFileExisted(HPMDirPath+HPMListLocal.on[i].fileName+'.aria2')){
+    for (let i in HPMListLocal.on) {
+        if (await isFileExisted(HPMDirPath + HPMListLocal.on[i].fileName + '.aria2')) {
             //alert(HPMListLocal.on[1].fileName)
-            HPMListLocal.on.splice(Number(i),1)
+            HPMListLocal.on.splice(Number(i), 1)
         }
     }
 
@@ -32,8 +32,8 @@ export async function checkHPMFiles() {
         return getHPMinfoLocal(HPMDirPath, fileName)
     })
 
-    HPMListLocal.on =onHPMTemp
-    HPMListLocal.off =offHPMTemp
+    HPMListLocal.on = onHPMTemp
+    HPMListLocal.off = offHPMTemp
     console.log(HPMListLocal);
 
     isCheckingHPMFiles = false

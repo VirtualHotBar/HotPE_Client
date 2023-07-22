@@ -48,9 +48,14 @@ interface Config {
         show: boolean,
         type: Type,
         content: string
-    }, download: {
+    },
+     download: {
         thread: number//下载线程数
-
+    },
+    setting:{
+        pe:{
+            bootWaitTime:number//启动选择超时
+        }
     }
 }
 

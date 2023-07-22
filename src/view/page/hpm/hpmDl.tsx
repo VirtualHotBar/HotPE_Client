@@ -80,7 +80,7 @@ function HPMTab(props: HPMTab) {
     return <div style={props.Row.style}>
         <div style={{ height: '100%', display: 'flex', border: '1px solid var(--semi-color-border)' }} >
             <div style={{ width: "calc(100% - 115px)", textAlign: 'left', padding: 10 }}>
-                <a style={{whiteSpace:'nowrap' }}>
+                <a style={{ whiteSpace: 'nowrap' }}>
                     <a style={{ color: 'var(--semi-color-text-0)', fontWeight: 'bold', verticalAlign: 'middle' }}>{props.HPM.name}</a>
                     <Text style={{ color: 'var(--semi-color-text-1)', marginLeft: '10px', verticalAlign: 'middle' }} ellipsis={{ showTooltip: true }}>{`${props.HPM.version} | ${props.HPM.maker} | ${formatSize(props.HPM.size)}`}</Text>
                 </a>
@@ -100,14 +100,13 @@ function HPMTab(props: HPMTab) {
                                 forceUpdate()
                             }}>下载</Button>
                             : <>{
-                                getHPMDlPercent(props.HPM) > -1 ? <Spin style={{ marginTop: "40%", width: '100%', marginRight: '-20px' }} tip={getHPMDlPercent(props.HPM) + '%'} />
-                                    :
-                                    <Text style={{ marginTop: "40%", width: '100%', marginRight: '-14px' }} type="danger" >出错</Text>
+                                getHPMDlPercent(props.HPM) > -1
+                                    ? <Spin style={{ marginTop: "40%", width: '100%', marginRight: '-20px' }} tip={getHPMDlPercent(props.HPM) + '%'} />
+                                    : <Text style={{ marginTop: "40%", width: '100%', marginRight: '-14px' }} type="danger" >出错</Text>
                             }
 
-                            </>
-
-                        }</>}
+                            </>}
+                    </>}
 
             </div>
 

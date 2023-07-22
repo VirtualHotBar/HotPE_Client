@@ -35,7 +35,10 @@ ReactDom.render(
 )
 
 //使用异步函数避免程序卡死
+let appStarting =false
 async function appStart(setStartStr: Function) {
+  if(appStarting){return}//避免重新执行
+  appStarting=true
   await initClient(setStartStr)//初始化功能
 
   ReactDom.render(<React.StrictMode><App></App></React.StrictMode>, root)//React.StrictMode:严格模式检查组件副作用

@@ -34,40 +34,33 @@ export default function TaskMgr() {
                             <div style={{ width: "calc(100% - 150px)" }}>
                                 <a style={{ color: 'var(--semi-color-text-0)', fontWeight: 600 }}>{HPMDlInfo.HPMInfo.name}</a>
                                 <br />
-                                < Text style={{ marginTop: '5px',color: 'var(--semi-color-text-1)' }} ellipsis={{ showTooltip: true }}>
+                                <a style={{ marginTop: '5px',color: 'var(--semi-color-text-1)' }}>
 
                                 {
                                     HPMDlInfo.dlInfo.state == 'request' ? <>请求中...</>
                                         : HPMDlInfo.dlInfo.state == 'doing' ? <>下载中：{HPMDlInfo.dlInfo.percentage}%({HPMDlInfo.dlInfo.speed})|剩余时间:{HPMDlInfo.dlInfo.remainder} | {HPMDlInfo.dlInfo.newSize}/{HPMDlInfo.dlInfo.size}</>
-                                            : HPMDlInfo.dlInfo.state == 'error' ? <>下载出错:{HPMDlInfo.dlInfo.message}</> : <></>
+                                            : HPMDlInfo.dlInfo.state == 'error' ? <Text  ellipsis={{ showTooltip: true }}>{`下载出错:${HPMDlInfo.dlInfo.message}`}</Text> : <></>
 
 
 
                                 }
-                                </Text>
+                                </a>
 
                             </div>
 
                             <div style={{ width: "150px",textAlign:'right'}}>
-                                {HPMDlInfo.dlInfo.state != 'error' ?
-                                    <Button style={{ marginRight: 8,marginLeft:'auto' }} type="danger" onClick={async () => {
-                                        await cancelDlTask(HPMDlInfo)
-                                        forceUpdate()
-
-                                    }}>取消</Button>
-                                    : <><Button style={{ marginRight: 8 }} type='primary' onClick={async () => {
+                                {HPMDlInfo.dlInfo.state == 'error' ?
+                                    <Button style={{ marginRight: 8 }} type='primary' onClick={async () => {
                                         newHPMDl(HPMDlInfo.HPMInfo)
-
                                         forceUpdate()
-
-                                    }}>重试</Button><Button style={{ marginRight: 8 }} type="danger" onClick={async () => {
-                                        await cancelDlTask(HPMDlInfo)
-
-                                        forceUpdate()
-
-                                    }}>取消</Button></>
+                                    }}>重试</Button>
+                                    :<></>
                                 }
 
+                                <Button style={{ marginRight: 8 }} type="danger" onClick={async () => {
+                                        await cancelDlTask(HPMDlInfo)
+                                        forceUpdate()
+                                    }}>取消</Button>
 
                             </div>
                         </div>

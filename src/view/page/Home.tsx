@@ -19,6 +19,9 @@ let dlSpeed = 'OKB/S'//下载速度
 
 //多个pe安装时选择
 function HotPEDriveChoose() {
+    //config.environment.HotPEDrive.all = Array.from(new Set(config.environment.HotPEDrive.all))//去重
+    console.log(config.environment.HotPEDrive.all);
+    
     if (config.environment.HotPEDrive.all.length > 1 && HotPEDriveChooseOk == false) {
         HotPEDriveChooseOk = true
 

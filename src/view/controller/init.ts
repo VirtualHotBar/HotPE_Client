@@ -9,6 +9,7 @@ import { ReactNode } from "react"
 import { getHPMList, getNotices } from "./online/online"
 import { checkHPMFiles } from "./hpm/checkHpmFiles"
 import { errorDialog} from "./log"
+import { exitapp } from "../layout/header"
 
 let isInitDone = false
 
@@ -24,7 +25,7 @@ export async function initClient(setStartStr:Function) {
     await getEnvironment()
 
     //检查已有的PE资源
-    await checkPERes()
+    await checkPERes()// 
 
     //检查已安装的分区
     await checkPEDrive()//默认选择最后一个，并获取获取本地HPM列表
@@ -70,6 +71,12 @@ async function checkEnvironment() {
     //联网检查
     while (!window.navigator.onLine) {
         await errorDialog('已离线', '请检查网络，点击[确定]重试。')
+    }
+
+    //路径检查
+    if(roConfig.path.execDir.includes(' ')){
+        await errorDialog('错误', '请在无空格路径下运行！')
+        exitapp()
     }
 
 }
