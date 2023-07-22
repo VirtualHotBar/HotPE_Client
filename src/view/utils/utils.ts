@@ -22,10 +22,7 @@ export function readHotPEConfig(drive: string) {
 
 //读取Hotpe配置
 export function writeHotPEConfig(drive: string, obj: object) {
-
     return fs.writeFileSync(drive + "HotPE\\confi.ini", ini.encode(obj))
-
-
 }
 
 
@@ -40,7 +37,7 @@ export function unZipFile(filePath: string, outDir: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                Error('Command execution failed:' + cmd)
+                console.error(Error('Command execution failed:' + cmd))
                 resolve(false);
                 //reject(false)
             }
@@ -106,48 +103,61 @@ export function takeRightStr(str: string, taggedStr: string) {
 
 //遍历文件,通过dir命令行
 export async function traverseFiles(path: string) {
+    //if (!await isFileExisted(path)) {return [] }
     let returnStr = await runCmdAsync('dir ' + dealStrForCmd(path) + ' /b') as string
     return returnStr.split("\r\n").filter((s) => { return s && s.trim() }).reverse()
 }
 
-//复制目录
-export async function copyFiles(path: string, toPath: string) {
+//复制文件
+export async function copyFile(path: string, toPath: string) {
     return new Promise<boolean>((resolve, reject) => {
-        let cmd = 'xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y /-I'
+        fs.cp(path, toPath, (err: any) => {
 
-        runCmd(cmd, (back: string) => {
-            console.log(back);
-        }, (end: number) => {
-            if (end == 0) {
-                resolve(true);
-            } else {
-                Error('Command execution failed:' + cmd)
-                resolve(false);
-                //reject(false)
-            }
-        })
+            if (err) { console.error(err) }
+            resolve(!err)
+        });
+        /*         let cmd = 'copy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /Y'
+        
+                runCmd(cmd, (back: string) => {
+                    console.log(back);
+                }, (end: number) => {
+                    if (end == 0) {
+                        resolve(true);
+                    } else {
+                        console.error(Error('Command execution failed:' + cmd));
+                        resolve(false);
+                        //reject(false)
+                    }
+                }) */
     })
-
-
 }
+
+
 
 //复制目录
 export async function copyDir(path: string, toPath: string) {
+    return new Promise<boolean>((resolve, reject) => {
+        // 复制目录
+        fs.cp(path, toPath, { recursive: true }, (err: any) => {
+            if (err) { console.error(err) }
+            resolve(!err)
+        });
 
-    return new Promise((resolve, reject) => {
-        let cmd = 'xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E /C /Q /H /R /Y /I'
 
-        runCmd(cmd, (back: string) => {
-            console.log(back);
-        }, (end: number) => {
-            if (end == 0) {
-                resolve(true);
-            } else {
-                Error('Command execution failed:' + cmd)
-                resolve(false);
-                //reject(false)
-            }
-        })
+
+
+        /*         let cmd = 'robocopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E'
+        
+                runCmd(cmd, (back: string) => {
+                    console.log(back);
+                }, (end: number) => {
+                    if (end == 0) {
+                        resolve(true);
+                    } else {
+                        
+                        //reject(false)
+                    }
+                }) */
     })
 
 }
@@ -163,7 +173,7 @@ export async function delFiles(path: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                Error('Command execution failed:' + cmd)
+                console.error(Error('Command execution failed:' + cmd));
                 resolve(false);
                 //reject(false)
             }
@@ -183,7 +193,7 @@ export async function delDir(path: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                Error('Command execution failed:' + cmd)
+                console.error(Error('Command execution failed:' + cmd))
                 resolve(false);
                 //reject(false)
             }
@@ -202,7 +212,7 @@ export async function moveFiles(path: string, toPath: string) {
             if (end == 0) {
                 resolve(true);
             } else {
-                Error('Command execution failed:' + cmd)
+                console.error(Error('Command execution failed:' + cmd))
                 resolve(false);
                 //reject(false)
             }
@@ -214,18 +224,19 @@ export async function moveFiles(path: string, toPath: string) {
 export async function makeDir(path: string) {
 
     return new Promise<boolean>((resolve, reject) => {
-        let cmd = 'mkdir ' + dealStrForCmd(path)
-        runCmd(cmd, (back: string) => {
-            console.log(back);
-        }, (end: number) => {
-            if (end == 0) {
-                resolve(true);
-            } else {
-                Error('Command execution failed:' + cmd)
-                resolve(false);
-                //reject(false)
-            }
-        })
+        resolve(fs.mkdirSync(path, { recursive: true }) != undefined)
+        /*         let cmd = 'mkdir ' + dealStrForCmd(path)
+                runCmd(cmd, (back: string) => {
+                    console.log(back);
+                }, (end: number) => {
+                    if (end == 0) {
+                        resolve(true);
+                    } else {
+                        console.error(Error('Command execution failed:' + cmd))
+                        resolve(false);
+                        //reject(false)
+                    }
+                }) */
     })
 
 }

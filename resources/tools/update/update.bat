@@ -1,13 +1,15 @@
-%1 mshta vbscript:CreateObject("Shell.Application").ShellExecute("cmd.exe","/c %~s0 ::","","runas",1)(window.close)&&exit
+﻿%1 mshta vbscript:CreateObject("Shell.Application").ShellExecute("cmd.exe","/c %~s0 ::","","runas",1)(window.close)&&exit
 
 ::{pack}为新客户端压缩包路径，{clientDir}为客户端路径:末带\
 @echo off
 chcp 65001
 mode con cols=60 lines=20
 color 03
-title HotPE客户端更新中，请稍等...
-TIMEOUT /T 3
 cd /d "%~dp0"
+title HotPE客户端更新中，请稍等...
+taskkill /IM "HotPE Client.exe" /F  > tmp
+TIMEOUT /T 3
+
 
 if "%1"=="h" GOTO exit
 
@@ -29,7 +31,8 @@ del "{clientDir}resources\elevate.exe" /F /Q > tmp
 rd "{clientDir}resources\tools\" /S /Q > tmp
 
 echo 替换文件
-xcopy "%~dp0updateTemp\" "{clientDir}" /E /C /Q  /H /R /Y > tmp
+xcopy "%~dp0updateTemp\*" "{clientDir}*" /E /C /Q  /H /R /Y > tmp
+
 
 echo 清理退出
 rd "%~dp0updateTemp\" /S /Q > tmp

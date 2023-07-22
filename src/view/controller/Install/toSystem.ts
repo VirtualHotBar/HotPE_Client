@@ -1,6 +1,6 @@
 import { config, roConfig } from "../../services/config";
 import { runCmdAsync } from "../../utils/command";
-import { copyFiles, delDir, delFiles, isFileExisted, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils";
+import { copyDir, copyFile, delDir, delFiles, isFileExisted, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils";
 import { Notification } from "@douyinfe/semi-ui";
 import ini from 'ini'
 import { checkPEDrive } from "../condition";
@@ -50,11 +50,12 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //await fs.mkdir(roConfig.environment.sysLetter + 'HotPEModule\\', (back: any) => { console.log(back) })
 
     //复制文件
-    await copyFiles(tempPath + 'EFI\\HotPE\\kernel.wim', roConfig.environment.sysLetter + 'HotPE\\kernel.wim')
-    await copyFiles(tempPath + 'Data\\HotPE\\confi.ini', roConfig.environment.sysLetter + 'HotPE\\confi.ini')
-    await copyFiles(tempPath + 'EFI\\HotPE\\HotPE.ini', roConfig.environment.sysLetter + 'HotPE\\HotPE.ini')
-    await copyFiles(tempPath + 'EFI\\HotPE\\Data\\', roConfig.environment.sysLetter + 'HotPE\\Data\\')
-    await copyFiles(tempPath + 'Data\\HotPEModule\\', roConfig.environment.sysLetter + 'HotPEModule\\')
+    await copyFile(tempPath + 'EFI\\HotPE\\kernel.wim', roConfig.environment.sysLetter + 'HotPE\\kernel.wim')
+    await copyFile(tempPath + 'EFI\\HotPE\\kernel.sdi', roConfig.environment.sysLetter + 'HotPE\\kernel.sdi')
+    await copyFile(tempPath + 'Data\\HotPE\\confi.ini', roConfig.environment.sysLetter + 'HotPE\\confi.ini')
+    await copyFile(tempPath + 'EFI\\HotPE\\HotPE.ini', roConfig.environment.sysLetter + 'HotPE\\HotPE.ini')
+    await copyDir(tempPath + 'EFI\\HotPE\\Data\\', roConfig.environment.sysLetter + 'HotPE\\Data\\')
+    await copyDir(tempPath + 'Data\\HotPEModule\\', roConfig.environment.sysLetter + 'HotPEModule\\')
 
     //pe配置文件
     let HotPEConfig = readHotPEConfig(roConfig.environment.sysLetter)

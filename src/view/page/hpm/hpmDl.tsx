@@ -8,7 +8,7 @@ import { AutoSizer } from 'react-virtualized';
 import { Typography } from '@douyinfe/semi-ui';
 import { FixedSizeList } from 'react-window';
 import { formatSize } from '../../utils/utils';
-import { HPMisDling, getHPMDlPercent, newHPMDl } from '../../controller/hpm/hpmDl';
+import { isHPMinDlList, getHPMDlPercent, newHPMDl } from '../../controller/hpm/hpmDl';
 import { isHPMHaveLocal } from '../../controller/hpm/checkHpmFiles';
 
 const { Text } = Typography;
@@ -25,6 +25,9 @@ export default function HPMDl() {
         forceUpdate()
     }
 
+    //清空刷新队列
+    HPMDLRender.callRefreshDlTab = []
+
     return (
         <div style={{ height: '100% ', display: 'flex' }} >
 
@@ -33,7 +36,7 @@ export default function HPMDl() {
                     defaultSelectedKeys={[selectHPMClassIndex]}
                     //selectedKeys={[selectHPMClassIndex]}
                     style={{ height: '100%', width: '120px' }}
-                    bodyStyle={{ height: '100%' }}
+                    bodyStyle={{ height: 'calc(100% - 15px)', }}
                     defaultOpenKeys={[]}
                     items={HPMListOnline.map((HPMList: HPMClass, index) => { return { itemKey: index, text: HPMList.class } }) as any}
                     onSelect={data => setSelectHPMClassIndex(Number(data.itemKey))}
@@ -65,39 +68,46 @@ export default function HPMDl() {
 function HPMTab(props: HPMTab) {
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
 
-
-
-
     useEffect(() => {
-        HPMDLRender.length = 0
-        HPMDLRender.push( forceUpdate)
-    })
 
+        //正在下载的项目，加入刷新队列（不重复
+        if (isHPMinDlList(props.HPM) && !HPMDLRender.callRefreshDlTab.includes(forceUpdate)) {
+            HPMDLRender.callRefreshDlTab.push(forceUpdate)
+        }
+
+    })
 
     return <div style={props.Row.style}>
         <div style={{ height: '100%', display: 'flex', border: '1px solid var(--semi-color-border)' }} >
             <div style={{ width: "calc(100% - 115px)", textAlign: 'left', padding: 10 }}>
-                <a style={{ color: 'var(--semi-color-text-0)', fontSize: '15px', fontWeight: 'bold' }}>{props.HPM.name}</a>
+                <a style={{whiteSpace:'nowrap' }}>
+                    <a style={{ color: 'var(--semi-color-text-0)', fontWeight: 'bold', verticalAlign: 'middle' }}>{props.HPM.name}</a>
+                    <Text style={{ color: 'var(--semi-color-text-1)', marginLeft: '10px', verticalAlign: 'middle' }} ellipsis={{ showTooltip: true }}>{`${props.HPM.version} | ${props.HPM.maker} | ${formatSize(props.HPM.size)}`}</Text>
+                </a>
 
-                < a style={{ color: 'var(--semi-color-text-1)', marginLeft: '10px' }} >{props.HPM.version} | {props.HPM.maker} | {formatSize(props.HPM.size)}</a>
                 <br />
-                < Text style={{ marginTop: '5px' }} ellipsis={{ showTooltip: true }}>{props.HPM.description}</Text>
+                <Text style={{ marginTop: '5px' }} ellipsis={{ showTooltip: true }}>{props.HPM.description}</Text>
                 <br />
             </div>
 
             <div style={{ display: 'flex', textAlign: 'right', justifyContent: 'flex-end', width: "55px", padding: '0px' }}>
                 {isHPMHaveLocal(props.HPM) ? <>
                     <Text style={{ marginTop: "40%", width: '100%', marginRight: '-14px' }} >已安装</Text></>
-                    :<>
-                    
-                    
-                    
-                    {!HPMisDling(props.HPM)
-                        ? <Button style={{ marginTop: "35%", marginRight: '-20px' }} onClick={() => {
-                            newHPMDl(props.HPM)
-                            forceUpdate()
-                        }}>下载</Button>
-                        : <Spin style={{ marginTop: "40%", width: '100%', marginRight: '-20px' }} tip="下载中" />}</>}
+                    : <>
+                        {!isHPMinDlList(props.HPM)
+                            ? <Button style={{ marginTop: "35%", marginRight: '-20px' }} onClick={() => {
+                                newHPMDl(props.HPM)
+                                forceUpdate()
+                            }}>下载</Button>
+                            : <>{
+                                getHPMDlPercent(props.HPM) > -1 ? <Spin style={{ marginTop: "40%", width: '100%', marginRight: '-20px' }} tip={getHPMDlPercent(props.HPM) + '%'} />
+                                    :
+                                    <Text style={{ marginTop: "40%", width: '100%', marginRight: '-14px' }} type="danger" >出错</Text>
+                            }
+
+                            </>
+
+                        }</>}
 
             </div>
 

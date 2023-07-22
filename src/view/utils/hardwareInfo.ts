@@ -1,25 +1,26 @@
 import { roConfig } from "../services/config";
-import { runCmd } from "./command";
-
-
+import { runCmd, runCmdAsync } from "./command";
 
 export function getHardwareInfo(parameter: string) {
-    return new Promise(function (resolve, reject) {
-
+    return new Promise(async function (resolve, reject) {
         let cmd = 'cmd /c '+roConfig.path.tools+'nwinfo\\nwinfo.exe  ' + parameter + ' --format=json'
-
-        let result = ''
+        resolve(JSON.parse(await runCmdAsync(cmd) as string))//完成返回
+/*         let result = ''
 
         runCmd(cmd, (str: string) => { result = result + str }, (e: number) => {
-            console.log(e);
+            
             if(e == 0){
+                console.log(result)
+                
                 resolve(JSON.parse(result))//完成返回
             }else{
-                Error(e+' getHardwareInfo error')
+                console.log(Error(e+' getHardwareInfo error'));
+                reject(e)
+
             }
             
             
-        })
+        }) */
 
     }
     )

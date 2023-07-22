@@ -8,12 +8,15 @@ import { Modal } from "@douyinfe/semi-ui"
 import { ReactNode } from "react"
 import { getHPMList, getNotices } from "./online/online"
 import { checkHPMFiles } from "./hpm/checkHpmFiles"
+import { errorDialog} from "./log"
 
 let isInitDone = false
 
+export async function initClient(setStartStr:Function) {
+    //记录日志
+    //await logInit()
 
-export async function initClient() {
-
+    setStartStr('检查环境')
     //环境检查，不达标堵塞
     await checkEnvironment()
 
@@ -24,8 +27,9 @@ export async function initClient() {
     await checkPERes()
 
     //检查已安装的分区
-    await checkPEDrive()
+    await checkPEDrive()//默认选择最后一个，并获取获取本地HPM列表
 
+    setStartStr('检查更新')
     //获取公告
     await getNotices()
 
@@ -39,15 +43,14 @@ export async function initClient() {
     await getHPMList()
 
     //获取本地HPM列表
-    checkHPMFiles()
-    console.log(config);
-    console.log(roConfig);
-
-
-
+    //await checkHPMFiles()
 
 
     isInitDone = true
+
+
+    console.log(config);
+    console.log(roConfig);
 }
 
 //更新状态
@@ -132,25 +135,6 @@ export async function getEnvironment() {
 
 
 
-}
-
-
-//错误对话框
-function errorDialog(title: string, content: ReactNode) {
-    return new Promise((resolve, reject) => {
-        Modal.error(
-            {
-                title: title,
-                content: content,
-                onOk: (e: any) => { resolve(true) },
-                onCancel: (e: any) => { resolve(false) },
-                centered: true,
-                hasCancel: false,
-                maskClosable: false,
-                closable: false
-            }
-        )
-    })
 }
 
 

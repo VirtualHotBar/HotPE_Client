@@ -9,6 +9,7 @@ import { updateState } from '../controller/init';
 import ReactMarkdown from 'react-markdown'
 import { UpdateLatest } from '../type/update';
 import { updateCilent, updateDoneTip } from '../controller/update';
+import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
 
 let HotPEDriveChooseOk = false
 let updatePromptOk = false//更新提示
@@ -33,8 +34,11 @@ function HotPEDriveChoose() {
                 style={{ width: '100%' }}
                 dropdownStyle={{ overflow: 'auto' }}
                 treeData={driveData}
-                onSelect={(value: string) => {
+                onSelect={async (value: string) => {
                     config.environment.HotPEDrive.new = config.environment.HotPEDrive.all[value]
+
+                    //获取本地HPM列表,刷新一下
+                    await checkHPMFiles()
 
                     console.log(value, config.environment.HotPEDrive.all[value]);
 

@@ -24,8 +24,12 @@ interface HPMDl{
     dlInfo:Aria2Attrib
 }
 
-/* interface HPMDLRender{
-    callRender:Function
-} */
+ interface HPMDLRender{
+    callRefreshPage:Function,
+    callRefreshNav:Function,
+    callRefreshResult:Function,//任务结束时更新
+    callRefreshDlTab:Array<Function>
+    
+} 
 
-export { HPMClass,  HPM ,HPMDl/* ,HPMDLRender */}
+export { HPMClass,  HPM ,HPMDl ,HPMDLRender }

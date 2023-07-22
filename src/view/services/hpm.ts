@@ -1,4 +1,4 @@
-import { HPM, HPMClass, /* HPMDLRender, */ HPMDl } from "../type/hpm";
+import { HPM, HPMClass,  HPMDLRender,  HPMDl } from "../type/hpm";
 
 //在线的HPM列表
 let HPMListOnline: Array<HPMClass> = []
@@ -17,7 +17,12 @@ let HPMDlList: Array<HPMDl> = []
     callRender: () => { }
 } */
 
-let HPMDLRender:Array<Function>=[]
+let HPMDLRender:HPMDLRender={
+    callRefreshNav:()=>{},
+    callRefreshPage:()=>{},
+    callRefreshResult:()=>{},
+    callRefreshDlTab:[]
+}
 
 function setHPMListOnline(data: Array<HPMClass>) {
     HPMListOnline = data

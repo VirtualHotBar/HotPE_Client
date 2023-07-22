@@ -1,7 +1,7 @@
 import { Notification } from '@douyinfe/semi-ui';
 import { config, roConfig } from '../../services/config';
 import { runCmdAsync } from '../../utils/command';
-import { copyFiles, dealStrForCmd, delDir, isFileExisted, takeLeftStr, unZipFile } from '../../utils/utils';
+import { copyDir, copyFile, dealStrForCmd, delDir, isFileExisted, takeLeftStr, unZipFile } from '../../utils/utils';
 import { checkIsReady } from './check';
 
 const { shell, ipcRenderer } = require('electron')
@@ -26,11 +26,11 @@ export async function makeISOFile(setStep: Function, setStepStr: Function,setLoc
     isSucceed = isSucceed && await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPathSource)
 
     setStepStr('正在复制HotPE文件')
-    isSucceed = isSucceed && await copyFiles(tempPathSource + 'EFI\\*', tempPathISO)
-    isSucceed = isSucceed && await copyFiles(tempPathSource + 'Data\\*', tempPathISO)
+    isSucceed = isSucceed && await copyDir(tempPathSource + 'EFI\\', tempPathISO)
+    isSucceed = isSucceed && await copyDir(tempPathSource + 'Data\\', tempPathISO)
 
     setStepStr('正在生成ISO文件')
-    await runCmdAsync(roConfig.path.tools + 'oscdimg\\oscdimg.exe -m -o -u2 -udfver102 -h -bootdata:2#p0,e,b' + dealStrForCmd(roConfig.path.tools + 'oscdimg\\Etfsboot.com') + '#pEF,e,b' + dealStrForCmd(roConfig.path.tools + 'oscdimg\\Efisys.bin') + ' -l HotPEToolBox ' + dealStrForCmd(tempPathISO) + ' ' + dealStrForCmd(ISOSavePath))
+    await runCmdAsync(roConfig.path.tools + 'oscdimg\\oscdimg.exe -m -o -u2 -udfver102 -h -bootdata:2#p0,e,b' + dealStrForCmd(roConfig.path.tools + 'oscdimg\\Etfsboot.com') + '#pEF,e,b' + dealStrForCmd(roConfig.path.tools + 'oscdimg\\Efisys.bin') + ' -lHotPEToolBox ' + dealStrForCmd(tempPathISO) + ' ' + dealStrForCmd(ISOSavePath))
 
     isSucceed = isSucceed && await isFileExisted(ISOSavePath)
 

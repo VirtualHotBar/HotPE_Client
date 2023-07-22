@@ -1,7 +1,7 @@
 import { Modal, Notification } from "@douyinfe/semi-ui"
 import { config, roConfig } from "../../services/config"
 import { runCmdAsync } from "../../utils/command"
-import { copyFiles, delDir, delFiles, getUsableLetter, isHotPEDrive, letterIsExist, moveFiles, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils"
+import { copyDir, copyFile, delDir, delFiles, getUsableLetter, isHotPEDrive, letterIsExist, moveFiles, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils"
 import { checkPEDrive } from "../condition"
 import { checkIsReady } from "./check"
 import { ReactNode } from "react"
@@ -76,7 +76,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     await runCmdAsync(pecmdPath + ' DFMT ' + dataLetter + ',exFAT,HotPE工具箱')
 
     //复制数据区文件
-    await copyFiles(tempDataPath, dataLetter + '\\')
+    await copyDir(tempDataPath, dataLetter + '\\')
 
     //pe配置文件
     let HotPEConfig = readHotPEConfig(dataLetter + '\\')
@@ -227,7 +227,7 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
 
     //if (await letterIsExist(dataLetter)) {
     //复制数据区文件
-    await copyFiles(tempDataPath, dataLetter + '\\')
+    await copyDir(tempDataPath, dataLetter + '\\')
 
     //pe配置文件
     let HotPEConfig = readHotPEConfig(dataLetter + '\\')

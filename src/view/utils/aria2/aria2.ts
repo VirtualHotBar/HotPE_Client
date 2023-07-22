@@ -1,7 +1,7 @@
 const fs = window.require('fs')
 const path = window.require('path')
 import { runCmd } from "../command"
-import { dealStrForCmd, takeMidStr, takeRightStr } from '../utils'
+import { dealStrForCmd, delFiles, takeMidStr, takeRightStr } from '../utils'
 
 import { Aria2Attrib } from "../../type/aria2"
 import { roConfig } from "../../services/config"
@@ -25,6 +25,7 @@ const sourceAria2Path = roConfig.path.tools + 'aria2c.exe'
 
 class Aria2 {
     #aria2Path: string = '';
+    #FilePath: string = ''
 
     constructor() {//初始化，new时调用
         //创建aria2文件
@@ -44,6 +45,8 @@ class Aria2 {
 
     start(url: string, saveDir: string, saveName: string, thread: number = 8, callback: Function) {//开始下载，回调
 
+        this.#FilePath = saveDir + saveName
+
         let cmd = dealStrForCmd(this.#aria2Path)
         cmd = cmd + ' ' + dealStrForCmd(url)
         cmd = cmd + ' -d' + dealStrForCmd(saveDir) + ' -o' + dealStrForCmd(saveName)
@@ -51,6 +54,7 @@ class Aria2 {
         cmd = cmd + ' --file-allocation=none'//文件预分配方式
         cmd = cmd + ' -c'//断点续传
         cmd = cmd + ' --check-certificate=false'//关闭ssl检查
+        cmd = cmd + ' --force-save=false'//不保存下载记录，不创建.aria2文件
         console.log(cmd);
 
 
@@ -118,15 +122,23 @@ class Aria2 {
 
         runCmd(cmd, (print: string) => {
             console.log(print);
-        }, (e: number) => {
+        }, async (e: number) => {
+
             //结束返回
-            if (e == 0) {//0:成功
+            //删除下载的文件
+            await delFiles(this.#FilePath + '.aria2')
+            callback(await delFiles(this.#FilePath))
+
+
+
+            /* if (e == 0) {//0:成功
                 callback(true)
                 console.log('成功', e);
             } else {
                 callback(false)
                 console.log('失败', e);
-            }
+            } */
+
 
         })
 

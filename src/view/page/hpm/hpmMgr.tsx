@@ -1,9 +1,10 @@
-import { Button, Collapse, List, TabPane, Tabs } from '@douyinfe/semi-ui';
+import { Button, Collapse, List, TabPane, Tabs, Typography } from '@douyinfe/semi-ui';
 import React, { useState, useReducer } from 'react';
 import { delHPM, disableHPM, enableHPM } from '../../controller/hpm/setHpm';
 import { HPMListLocal } from '../../services/hpm';
 import { formatSize } from '../../utils/utils';
 
+const { Text } = Typography;
 
 export default function HPMMgr() {
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
@@ -19,19 +20,20 @@ export default function HPMMgr() {
     return (
         <>
             <Collapse defaultActiveKey = {['on','off']}>
-                <Collapse.Panel header="已启用：" itemKey="on">
+                <Collapse.Panel header={"已启用("+HPMListLocal.on.length+")："} itemKey="on">
                     <List
                         dataSource={HPMListLocal.on}
                         renderItem={onHPM => (
                             <List.Item style={style}>
-                                <div style={{ display: 'flex', width: "100%" }}>
-                                    <div style={{ width: "100%" }}>
+                                <div style={{  display: 'flex', width: "100%" }}>
+                                    <div style={{  width: "calc(100% - 150px)"  }}>
+                                        
                                         <a style={{ color: 'var(--semi-color-text-0)', fontWeight: 600 }}>{onHPM.name}</a>
                                         <br />
-                                        <a style={{ color: 'var(--semi-color-text-1)' }}>{onHPM.version} | {onHPM.maker} | {formatSize(onHPM.size)}</a>
+                                        <Text style={{ color: 'var(--semi-color-text-1)' }} ellipsis={{ showTooltip: true }}>{`${onHPM.version} | ${onHPM.maker} | ${formatSize(onHPM.size)}`}</Text>
                                     </div>
 
-                                    <div style={{ display: 'flex', textAlign: 'right', justifyContent: 'flex-end', width: "100%" }}>
+                                    <div style={{ width: "150px",textAlign:'right'}}>
                                         <Button style={{ marginRight: 8 }} type='warning' onClick={async () => {
                                             await disableHPM(onHPM.fileName)
                                             forceUpdate()
@@ -47,7 +49,7 @@ export default function HPMMgr() {
                         )}
                     />
                 </Collapse.Panel>
-                <Collapse.Panel header="已禁用：" itemKey="off">
+                <Collapse.Panel header={"已禁用("+HPMListLocal.off.length+")："} itemKey="off">
                     <List
                         dataSource={HPMListLocal.off}
                         renderItem={offHPM => (

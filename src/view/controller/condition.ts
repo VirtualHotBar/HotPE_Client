@@ -6,6 +6,7 @@ import { runCmdAsync } from "../utils/command";
 import { isHotPEDrive, traverseFiles, readHotPEConfig } from "../utils/utils"
 import { getHardwareInfo } from "../utils/hardwareInfo"
 import { getEnvironment, updateState } from "./init";
+import { checkHPMFiles } from "./hpm/checkHpmFiles";
 
 //检查PE资源
 export async function checkPERes() {
@@ -79,6 +80,9 @@ export async function checkPEDrive() {
     //选择最后一个PE盘符
     if (config.environment.HotPEDrive.all.length > 0) {
         config.environment.HotPEDrive.new = config.environment.HotPEDrive.all[config.environment.HotPEDrive.all.length - 1]
+
+        //更新HPM列表本地
+        checkHPMFiles()
     }
 
     console.log('HotPEDrive:', config.environment.HotPEDrive);

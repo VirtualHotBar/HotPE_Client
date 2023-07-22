@@ -7,36 +7,34 @@ export function runCmdSync(cmd: string) {
 
 //运行命令行，即时返回
 export function runCmd(cmd: string, returnstr: Function, end: Function) {
-    const result = child_process.spawn('cmd.exe', ['/s', '/c', cmd]);
-
+    const result = child_process.spawn('cmd.exe', ['/c', cmd]);
     //输出正常情况下的控制台信息
-    result.stdout.on("data", function (data: Buffer) { returnstr(new TextDecoder('gbk').decode(data)); }
-    );
-
+    result.stdout.on("data", function (data: Buffer) { returnstr(new TextDecoder('gbk').decode(data)); });
     //当程序执行完毕后的回调，那个code一般是0
     result.on("exit", function (code: number) {
+        console.info(code + ' Command:' + cmd )
+        /* if (code != 0) {
+            console.info(code + ' Command:' + cmd)
+        } */
         end(code);
     })
 }
 
-
 //运行命令行，完成返回,异步
 export function runCmdAsync(cmd: string) {
     return new Promise(function (resolve, reject) {
-        console.log(cmd);
-        
-        const result = child_process.spawn('cmd.exe', ['/s', '/c', cmd]);
-
+        const result = child_process.spawn('cmd.exe', ['/c', cmd]);
         let returnStr: string = ''
-
         //输出正常情况下的控制台信息
         result.stdout.on("data", function (data: Buffer) { returnStr = returnStr + new TextDecoder('gbk').decode(data) }
         );
-
         //当程序执行完毕后的回调，那个code一般是0
         result.on("exit", function (code: number) {
-            console.log(returnStr);
-            
+            console.info(code + ' Command:' + cmd + ':' + returnStr)
+            /* if (code != 0) {
+                console.info(code + ' Command:' + cmd + ':' + returnStr)
+            } */
+
             resolve(returnStr)//完成返回
         })
     })

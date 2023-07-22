@@ -1,13 +1,10 @@
-//import RunCmd from './function/runCmd'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { dialog } from 'electron';
-//const { app, BrowserWindow, ipcMain, shell } =require('electron');
-//var path = require('path');
-const path = require('path');
+import path from 'path'
 
 //是否为开发模式
-//const isDev = require('electron-is-dev');
 import isDev from 'electron-is-dev'
+
 
 app.on('ready', () => {
   //创建一个窗口
@@ -29,27 +26,22 @@ app.on('ready', () => {
     }
   })
 
-
-  //remote
-  //require('@electron/remote/main').initialize()
-  //require("@electron/remote/main").enable(mainWindow.webContents)
-
-  //去掉菜单栏
-  mainWindow.removeMenu()
-
-
-  //开发工具
-  if (isDev == true) {
-    mainWindow.webContents.openDevTools({ mode: 'right' })
-  } 
-
-  //mainWindow.webContents.openDevTools({ mode: 'right' })
-
   //窗口加载html文件
   //mainWindow.loadFile('./src/main.html')
   mainWindow.loadURL(isDev ? 'http://localhost:5173' : `file://${path.join(__dirname, '../view/index.html')}`);
 
-  
+  //去掉菜单栏
+  mainWindow.removeMenu()
+
+  //开发工具
+  if (isDev == true) {
+    mainWindow.webContents.openDevTools({ mode: 'right' })
+  }
+  ipcMain.on('windows:openDevTools', () => {
+    mainWindow.webContents.openDevTools({ mode: 'right' })
+  })
+
+
   ipcMain.on('exitapp', () => {
     app.exit()//退出 
   })
@@ -57,29 +49,26 @@ app.on('ready', () => {
   ipcMain.on('windows:mini', () => {
     mainWindow.minimize();//最小化
   })
-  //console.log(RunCmd("dir"))
 
   //拦截首页打开新窗口的链接用浏览器打开  
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }//取消创建新窗口
+  })
 
-  //test()
-
-
+  //选择文件保存位置
   ipcMain.on('file:getSavePath', (event, message) => {
-    console.log(`receive message from render: `)
     event.returnValue = dialog.showSaveDialogSync({
       title: "请选择文件保存位置",
       buttonLabel: "保存",
-      defaultPath:message.toString(),
+      defaultPath: message.toString(),
       filters: [
-          { name: '镜像文件', extensions: ['iso'] },
-        ]
+        { name: '镜像文件', extensions: ['iso'] },
+      ]
     })
-  
   })
+
 
 
 })
 
-async function test(){
-  console.log();
-}
