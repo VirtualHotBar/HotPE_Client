@@ -1,9 +1,4 @@
 # HotPE Client
-
-**警告：此仓库为早期 WIP！**
-
-欲下载体验请到右边的 “Releases”。
-
 # 介绍
 
 此仓库为HotPE的聚合客户端
@@ -19,26 +14,26 @@
 
 
 # 使用
-
+包管理器：cnpm
 ## 开发服务器
 ```batch
 rem 启动渲染进程调试
-yarn run dev 
+cnpm run dev 
 
 rem 启动主进程调试
-yarn run dev-main 
+cnpm run dev-main 
 
 rem 启动electron调试
-yarn run dev-ele 
+cnpm run dev-ele 
 
 rem 一键启动
-cmd /c "start yarn run dev && start yarn run dev-main  && yarn run dev-ele"
+cmd /c "start cnpm run dev && start cnpm run dev-main  && cnpm run dev-ele"
 ```
 
 ## 构建
 直接输出二进制可执行文件
 ```batch
-yarn run build
+cnpm run build
 ```
 
 ## 许可证
