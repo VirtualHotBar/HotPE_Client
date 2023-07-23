@@ -2,15 +2,19 @@ import { Notification, Toast } from "@douyinfe/semi-ui";
 import { config, roConfig } from "../../services/config";
 import { setting } from "../../services/setting";
 import { runCmdAsync } from "../../utils/command";
-import { copyFile } from "../../utils/utils";
+import { copyFile, isFileExisted } from "../../utils/utils";
 
 const bcdeditPath = roConfig.path.tools + 'bcdedit.exe'
 
 
 export async function checkPESetting(){
 
+    if (config.environment.HotPEDrive.new.letter == '') {return }
 
-
+    
+if(await isFileExisted(config.environment.HotPEDrive.new.letter+'HotPE\\wallpaper.jpg')){
+    setting.pe.wallpaper=config.environment.HotPEDrive.new.letter+'HotPE\\wallpaper.jpg'
+}
 }
 
 
@@ -18,8 +22,11 @@ export async function savePESetting(){
     //检查是否已有可设置的HotPE安装
     if(!isSettingReady()){return}
 
-    config.setting.pe.bootWaitTime = setting.pe.bootWaitTime
-    await runCmdAsync(bcdeditPath + ' /timeout ' + config.setting.pe.bootWaitTime)
+    if(config.environment.HotPEDrive.new.isMove == false){
+        config.setting.pe.bootWaitTime = setting.pe.bootWaitTime
+        await runCmdAsync(bcdeditPath + ' /timeout ' + config.setting.pe.bootWaitTime)
+    }
+
 
     await copyFile(setting.pe.wallpaper,config.environment.HotPEDrive.new.letter+'HotPE\\wallpaper.jpg')
 

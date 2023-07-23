@@ -12,11 +12,15 @@ window.onerror = async function (msg, url, lineNo, columnNo, error) {
         'Error object: ' + JSON.stringify(error)
     ].join(' - ');
 
+/* if(message.includes('Message: ResizeObserver loop limit exceeded')){
+    return
+} */
+
     await errorThrowToUser(message)
     return false;
 };
 
-window.addEventListener('unhandledrejection', async function (event) {
+window.addEventListener('unhandledrejection', async function (event) {    
     await errorThrowToUser(event.reason)
 });
 
@@ -24,10 +28,9 @@ window.addEventListener('error', async (event) => {
     await errorThrowToUser(event.message)
 }, true);
 
-//
 async function errorThrowToUser(message: string) {
     //排除这个错误
-    //if (message.includes('ResizeObserver loop limit exceeded')) { return }
+    if (message.toString().includes('ResizeObserver loop limit exceeded')) { return }
 
     let content = '请尝试重启程序，并记录控制台错误信息向开发者反馈，' + '错误信息：' + message
 

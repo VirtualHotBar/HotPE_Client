@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown'
 import { UpdateLatest } from '../type/update';
 import { updateCilent, updateDoneTip } from '../controller/update';
 import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
+import { checkPESetting } from '../controller/setting/setting';
 
 let HotPEDriveChooseOk = false
 let updatePromptOk = false//更新提示
@@ -42,6 +43,9 @@ function HotPEDriveChoose() {
 
                     //获取本地HPM列表,刷新一下
                     await checkHPMFiles()
+
+                    //获取设置
+                    await checkPESetting()
 
                     console.log(value, config.environment.HotPEDrive.all[value]);
 
@@ -204,7 +208,7 @@ export default function Home(props: any) {
 
 
     return (
-        <div style={{padding: '24px'}}>
+        <div style={{padding: '24px',height:'calc(100%-84px)',position:'relative'}}>
 
             <div style={{ width: '100%' }}>
                 {welcomeStr != '' ? <h2>{welcomeStr}</h2> : <></>}
@@ -217,7 +221,14 @@ export default function Home(props: any) {
                     <h3>{dlSpeed}</h3>
                     <Progress style={{ margin: "0px 100px 0px 100px" }} percent={dlPercent} showInfo aria-label="disk usage" size="small" />
                 </>}
-            </div>
+            </div >
+
+{/*             <div style={{position:'absolute',textAlign:'center',backgroundColor:'white',width:'100%', left: 0,bottom: 0}}>
+                6
+
+            </div> */}
+
+
 
         </div>
     )

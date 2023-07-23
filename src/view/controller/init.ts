@@ -8,14 +8,16 @@ import { Modal } from "@douyinfe/semi-ui"
 import { ReactNode } from "react"
 import { getHPMList, getNotices } from "./online/online"
 import { checkHPMFiles } from "./hpm/checkHpmFiles"
-import { errorDialog} from "./log"
+import { errorDialog } from "./log"
 import { exitapp } from "../layout/header"
 
 let isInitDone = false
 
-export async function initClient(setStartStr:Function) {
+export async function initClient(setStartStr: Function) {
     //记录日志
     //await logInit()
+    //系统信息
+    await getSystemInfo()
 
     setStartStr('检查环境')
     //环境检查，不达标堵塞
@@ -67,6 +69,11 @@ export async function updateState() {
 
 //环境检查，启动时
 async function checkEnvironment() {
+    //架构
+    if (config.environment.ware.system.architecture != 'x64') {
+        await errorDialog('错误', '请在64位系统下运行！')
+        exitapp()
+    }
 
     //联网检查
     while (!window.navigator.onLine) {
@@ -74,20 +81,15 @@ async function checkEnvironment() {
     }
 
     //路径检查
-    if(roConfig.path.execDir.includes(' ')){
+    if (roConfig.path.execDir.includes(' ')) {
         await errorDialog('错误', '请在无空格路径下运行！')
         exitapp()
     }
 
 }
 
-
-
-
-
-//环境信息
-export async function getEnvironment() {
-
+//系统信息
+export async function getSystemInfo() {
     //system
     let temp = (await getHardwareInfo('--sys') as any).System
     config.environment.ware.system.os = temp['OS']
@@ -95,11 +97,15 @@ export async function getEnvironment() {
     config.environment.ware.system.buildNumber = temp['Build Number']
     config.environment.ware.system.firmware = temp['Firmware']
     config.environment.ware.system.architecture = temp['Processor Architecture']
+}
 
+
+//环境信息(磁盘)
+export async function getEnvironment() {
     //disk
-    config.environment.ware.disks = []
-    temp = (await getHardwareInfo('--disk') as any).Disks as Array<any>
+    let temp = (await getHardwareInfo('--disk') as any).Disks as Array<any>
 
+    config.environment.ware.disks = []
     temp.map(function callback(disk: any, index: number) {
 
         //分区
@@ -119,10 +125,6 @@ export async function getEnvironment() {
                 return partitionInfo
             })
 
-
-
-
-
         let diskInfo: disksInfo = {
             index: Number(takeRightStr(disk['Path'], 'Drive')),
             name: disk['HW Name'],
@@ -131,17 +133,8 @@ export async function getEnvironment() {
             removable: Boolean(disk['Removable']),
             partitions: partitionInfos
         }
-
-
         config.environment.ware.disks.push(diskInfo)
     })
-
-
-
-    console.log(config.environment.ware.disks);
-
-
-
 }
 
 

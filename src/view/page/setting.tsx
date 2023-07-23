@@ -42,7 +42,7 @@ export default function Setting(props: any) {
 
 
                                 <div style={{ height: '140px', textAlign: 'center', overflow: 'hidden' }}>
-                                    {wallpaper == '' ? <>请选择</> : <Image height={'100%'} src={"file://" + wallpaper}
+                                    {wallpaper == '' ? <Text>未自定义，请选择</Text> : <Image height={'100%'} src={"file://" + wallpaper}
                                     />}
 
 

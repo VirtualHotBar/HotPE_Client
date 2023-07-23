@@ -1,7 +1,6 @@
 import { delFiles, isJSON, parseJosnFile, writeJosnFile } from "../utils/utils"
 import { Config } from "../type/config"
 import { runCmdSync } from "../utils/command"
-import { getHardwareInfo } from "../utils/hardwareInfo"
 
 const fs = window.require('fs')
 
@@ -10,8 +9,8 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '230722',
-    clientVer: 'V0.2.230722_preview',
+    id: '230724',
+    clientVer: 'V0.2.230724_bate',
     url: {
         home: 'https://www.hotpe.top/',
         github: 'https://github.com/VirtualHotBar/HotPE_Client',
@@ -40,7 +39,8 @@ const roConfig = {
         sysLetter: runCmdSync('echo %SystemDrive%').substring(0, 2) + '\\',
         temp: runCmdSync('echo %temp%').replaceAll('\r\n', ''),
         userName: runCmdSync('echo %UserName%').replaceAll('\r\n', ''),
-        desktopDir: runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\').replaceAll('\r\n', '')
+        desktopDir: runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\').replaceAll('\r\n', ''),
+        /* arch:runCmdSync('echo %PROCESSOR_ARCHITECTURE%').replaceAll('\r\n', ''),//系统架构 */
     }
 }
 
@@ -120,12 +120,10 @@ let config: Config = {
     }
 }
 
-
 if (fs.existsSync(configPath) && isJSON(fs.readFileSync(configPath, 'utf8'))) {
     //如果配置文件存在且为json，则读取配置
 
-    config = parseJosnFile(configPath)
-
+    config =  Object.assign(config,parseJosnFile(configPath))//合并
 
 } else {
     //如果配置文件不存在，则使用默认配置

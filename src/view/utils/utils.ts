@@ -142,11 +142,17 @@ export async function traverseFiles(path: string) {
 //复制文件
 export async function copyFile(path: string, toPath: string) {
     return new Promise<boolean>((resolve, reject) => {
-        fs.cp(path, toPath, (err: any) => {
+        if (path != toPath) {
+            fs.cp(path, toPath, (err: any) => {
+                if (err) { console.error(err) }
+                resolve(!err)
+            });
+        } else {
+            resolve(true)
+        }
 
-            if (err) { console.error(err) }
-            resolve(!err)
-        });
+
+
         /*         let cmd = 'copy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /Y'
         
                 runCmd(cmd, (back: string) => {

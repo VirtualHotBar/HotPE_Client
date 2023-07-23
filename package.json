@@ -13,11 +13,8 @@
   },
   "dependencies": {
     "electron-is-dev": "^2.0.0",
-    "electron-log": "^4.4.8",
     "ini": "^4.1.1",
-    "react-markdown": "^8.0.7",
-    "react-virtualized": "^9.22.5",
-    "react-window": "^1.8.9"
+    "react-markdown": "^8.0.7"
   },
   "devDependencies": {
     "@douyinfe/semi-icons": "^2.39.0",
@@ -44,7 +41,9 @@
     "react-dom": "^17.0.2",
     "typescript": "^5.1.6",
     "vite": "^4.3.9",
-    "vite-plugin-react-virtualized": "^1.0.4"
+    "vite-plugin-react-virtualized": "^1.0.4",
+    "react-virtualized": "^9.22.5",
+    "react-window": "^1.8.9"
   },
   "build": {
     "files": [

@@ -7,6 +7,7 @@ import { isHotPEDrive, traverseFiles, readHotPEConfig } from "../utils/utils"
 import { getHardwareInfo } from "../utils/hardwareInfo"
 import { getEnvironment, updateState } from "./init";
 import { checkHPMFiles } from "./hpm/checkHpmFiles";
+import { checkPESetting } from "./setting/setting";
 
 //检查PE资源
 export async function checkPERes() {
@@ -88,6 +89,9 @@ export async function checkPEDrive() {
 
         //更新HPM列表本地
         await checkHPMFiles()
+
+        //获取设置
+        await checkPESetting()
     }
 
     //更新安装状态(首页

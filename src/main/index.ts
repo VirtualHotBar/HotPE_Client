@@ -50,6 +50,7 @@ app.on('ready', () => {
     mainWindow.minimize();//最小化
   })
 
+
   //拦截首页打开新窗口的链接用浏览器打开  
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
