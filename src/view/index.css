@@ -1,38 +1,29 @@
+
 body {
-    color: 'var(--semi-color-text-0)';
-    background-color: 'var( --semi-color-bg-0)';
-    overflow-x: auto;
+  color: 'var(--semi-color-text-0)';
+  background-color: 'var( --semi-color-bg-0)';
+  overflow-x: auto;
 }
 
 h1,h2,h3,h4,h5,h6,p {
-    color: var(--semi-color-text-0);
+  color: var(--semi-color-text-0);
 }
 
 div.loading {
-    -webkit-app-region: drag;
+  -webkit-app-region: drag;
 }
 
-
-/* 链接美化 */
-a.linka:link {
-    color: #0099ff;
-    text-decoration: none;
+/* 字体 */
+@font-face {
+  font-family: "Inter";
+  src: url("./public/font/HarmonyOS_Sans_Regular.ttf") format("truetype");
 }
 
-a.linka:visited {
-    color: #00aeff;
-    text-decoration: none;
+@font-face {
+  font-family: "Inter-Bold";
+  src: url("./public/font/HarmonyOS_Sans_Bold.ttf") format("truetype");
 }
 
-a.linka:hover {
-    color: #95deff;
-    text-decoration: none;
-}
-
-a.linka:active {
-    color: #9655ff;
-    text-decoration: none;
-}
 
 /*  美化滚动条 */
 ::-webkit-scrollbar {

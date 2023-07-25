@@ -31,7 +31,7 @@ async function UDiskRefres(steUDiskRefreshing: Function, setLockMuen: Function) 
 
 //获取PE版本
 function getHotPEDriveVer(diskIndex: Number) {
-    console.log(config.environment.HotPEDrive.all);
+    //console.log(config.environment.HotPEDrive.all);
 
     for (let i in config.environment.HotPEDrive.all) {
         if (config.environment.HotPEDrive.all[i].diskIndex == diskIndex) {
@@ -95,9 +95,9 @@ export default function SetupToUDisk(props: any) {
     return (
         <>{step == -1//未操作，默认页面
             ? <div style={{ textAlign: "center", marginTop: "100px" }}>
-                <UsbMemoryStick theme="outline" size="90" fill="var(--semi-color-text-0)" />
+                <UsbMemoryStick theme="outline" size="90" fill="var( --semi-color-secondary)" />
                 <h2 >  安装到U盘</h2>
-                <h3>将HotPE安装到U盘中，随身携带</h3>
+                <h3 style={{color:'var(--semi-color-text-1)'}}>将HotPE安装到U盘中，随身携带</h3>
                 <TreeSelect
                     placeholder={'请插入U盘'}
                     //defaultValue={[]}

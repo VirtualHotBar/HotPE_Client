@@ -9,8 +9,8 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '230724',
-    clientVer: 'V0.2.230724_bate',
+    id: '230725',
+    clientVer: 'V0.2.230725_bate',
     url: {
         home: 'https://www.hotpe.top/',
         github: 'https://github.com/VirtualHotBar/HotPE_Client',
@@ -23,7 +23,7 @@ const roConfig = {
         },
         package: {//config.api.dl
             PE: 'Package/PE/{id}.7z',
-            client: 'Package/Cilent/{id}.7z'
+            client: 'Package/Client/{id}.7z'
         }
     },
     path: {

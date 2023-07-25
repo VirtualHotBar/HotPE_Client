@@ -15,10 +15,10 @@ export default function MakeISO(props:any) {
     return (
         <>{step == -1
             ? <div style={{ textAlign: "center", marginTop: "100px" }}>
-                <Cd theme="outline" size="90" fill="var(--semi-color-text-0)" />
+                <Cd theme="outline" size="90" fill="var( --semi-color-secondary)" />
                 <h2 >  生成ISO镜像</h2>
 
-                <h3>生成HotPE的ISO镜像文件，用于刻录光盘或写入U盘</h3>
+                <h3 style={{color:'var(--semi-color-text-1)'}}>生成HotPE的ISO镜像文件，用于刻录光盘或写入U盘</h3>
                 <Button type='primary' onClick={()=>{makeISOFile(setStep,setStepStr,props.setLockMuen)}}>开始生成</Button>
 
             </div>

@@ -32,6 +32,7 @@ export async function checkHPMFiles() {
         return getHPMinfoLocal(HPMDirPath, fileName)
     })
 
+
     HPMListLocal.on = onHPMTemp
     HPMListLocal.off = offHPMTemp
     console.log(HPMListLocal);

@@ -21,13 +21,14 @@ export function dlPERes(setDlPercent: Function, setDlSpeed: Function, callback: 
                 }
                 
             } else if (back.state == "done") {
-                setDlPercent(-1)
                 //检查资源
                 await checkPERes()
                 //检查更新
                 await checkUpdate()
                 //更新状态
                 await updateState()
+
+                setDlPercent(-1)
             }else{
                 setDlPercent(-1)
             }

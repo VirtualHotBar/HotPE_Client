@@ -261,7 +261,13 @@ export async function moveFiles(path: string, toPath: string) {
 export async function makeDir(path: string) {
 
     return new Promise<boolean>((resolve, reject) => {
-        resolve(fs.mkdirSync(path, { recursive: true }) != undefined)
+        if (fs.existsSync(path)) {
+            resolve(true)
+        } else {
+            resolve(fs.mkdirSync(path, { recursive: true }) != undefined)
+        }
+
+
         /*         let cmd = 'mkdir ' + dealStrForCmd(path)
                 runCmd(cmd, (back: string) => {
                     console.log(back);

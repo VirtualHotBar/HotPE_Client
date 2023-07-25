@@ -1,26 +1,31 @@
 import { roConfig } from "../services/config";
 import { runCmd, runCmdAsync } from "./command";
+import { delFiles, isFileExisted } from "./utils";
+const fs = window.require('fs')
+
 
 export function getHardwareInfo(parameter: string) {
     return new Promise(async function (resolve, reject) {
-        let cmd = 'cmd /c '+roConfig.path.tools+'nwinfo\\nwinfo.exe  ' + parameter + ' --format=json'
-        resolve(JSON.parse(await runCmdAsync(cmd) as string))//完成返回
-/*         let result = ''
 
-        runCmd(cmd, (str: string) => { result = result + str }, (e: number) => {
-            
-            if(e == 0){
-                console.log(result)
-                
-                resolve(JSON.parse(result))//完成返回
-            }else{
-                console.log(Error(e+' getHardwareInfo error'));
-                reject(e)
+        const outPath = roConfig.path.clientTemp + Math.random().toString(36).substring(2, 7) + '.json'//随机文件名
 
-            }
-            
-            
-        }) */
+        const cmd = roConfig.path.tools + 'nwinfo\\nwinfo.exe  ' + parameter + ' --format=json --output=' + outPath
+
+        await runCmdAsync(cmd)
+
+        let hwinfo = ''
+
+        if (await isFileExisted(outPath)) {
+            hwinfo = fs.readFileSync(outPath).toString()
+            await delFiles(outPath)
+        } else {
+            hwinfo='{}'
+        }
+
+        //console.log(hwinfo);
+        //resolve(JSON.parse(hwinfo))//完成返回
+        resolve(eval('(' + hwinfo + ')'))//完成返回
+
 
     }
     )

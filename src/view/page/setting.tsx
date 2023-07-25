@@ -1,11 +1,21 @@
 import React, { useReducer, useState } from 'react';
 import { config, roConfig } from '../services/config';
-import { Card, Button, Row, Col, Typography, TreeSelect, InputNumber, Input, Space, Divider, Image, CardGroup, Collapse } from '@douyinfe/semi-ui';
-import { saveClientSetting, savePESetting } from '../controller/setting/setting';
+import { Card, Button, Row, Col, Typography, TreeSelect, InputNumber, Input, Space, Divider, Image, CardGroup, Collapse, Modal } from '@douyinfe/semi-ui';
+import { checkPESetting, saveClientSetting, savePESetting } from '../controller/setting/setting';
 import { setting } from '../services/setting';
+import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
+import { updateState } from '../controller/init';
 const { shell, ipcRenderer } = require('electron')
 
 const { Text, Paragraph, Title } = Typography;
+
+
+
+
+
+
+
+
 
 export default function Setting(props: any) {
 
@@ -39,15 +49,9 @@ export default function Setting(props: any) {
                                 <div style={{ width: '100%', textAlign: 'center', height: '30px' }}>
                                     <Text style={{ fontWeight: 'bold' }}>壁纸</Text>
                                 </div>
-
-
                                 <div style={{ height: '140px', textAlign: 'center', overflow: 'hidden' }}>
-                                    {wallpaper == '' ? <Text>未自定义，请选择</Text> : <Image height={'100%'} src={"file://" + wallpaper}
-                                    />}
-
-
+                                    {wallpaper == '' ? <Text>未自定义，请选择</Text> : <Image height={'100%'} src={"file://" + wallpaper}/>}
                                 </div>
-
                                 <div style={{ textAlign: 'right', width: '100%' }}>
                                     <Button style={{ marginTop: '10px' }} onClick={() => {
                                         const wallTemp: Array<string> = ipcRenderer.sendSync('file:getOpenPath', '')
@@ -55,19 +59,16 @@ export default function Setting(props: any) {
                                             if (wallTemp.length > 0) {
                                                 setting.pe.wallpaper = wallTemp[0]
                                                 setWallpaper(setting.pe.wallpaper)
-
                                             }
                                         }
                                     }}>选择</Button>
                                 </div>
-
                             </div>
 
                         </Col>
                         <Col span={12}>
                             <div style={cardStyle} >
                                 <div style={{ height: '212px' }}>
-
                                     <div style={{ width: '100%', textAlign: 'center', height: '30px' }}>
                                         <Text style={{ fontWeight: 'bold' }}>其他</Text>
                                     </div>
@@ -77,14 +78,10 @@ export default function Setting(props: any) {
 
 
                             </div>
-
                         </Col>
-
                     </Row>
 
                     <br />
-
-
                     <div style={{ textAlign: 'right', width: '100%' }}>
                         <Button type='primary' onClick={() => { savePESetting() }}>保存更改</Button>
                         <br /><br />
@@ -96,6 +93,8 @@ export default function Setting(props: any) {
                 <Collapse.Panel header="客户端设置" itemKey="client">
                     下载最大线程数：<TreeSelect defaultValue={config.download.thread} onSelect={(value) => { setting.client.dlThread = Number(value) }} style={{ width: 100 }} treeData={[{ label: '16', value: '16', key: '16', }, { label: '32', value: '32', key: '32', }, { label: '64', value: '64', key: '64', }, { label: '128', value: '128', key: '128', }]} />
 
+                    <br /><br />
+                    当前操作的HotPE安装{config.environment.HotPEDrive.all.length > 1 ? <Text onClick={()=>{HotPEDriveChoose(()=>{forceUpdate()})}} link>(选择)</Text> : <></>}：{config.environment.HotPEDrive.new.letter}
 
                     <div style={{ textAlign: 'right', width: '100%' }}>
                         <Button type='primary' onClick={() => { saveClientSetting() }}>保存更改</Button>
@@ -131,10 +130,63 @@ export default function Setting(props: any) {
                     </Card>
                 </Collapse.Panel>
             </Collapse>
-
-
-
-
         </div>
     )
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//let HotPEDriveChooseOk = false
+
+//多个pe安装时选择
+export function HotPEDriveChoose(callback:Function) {
+    //config.environment.HotPEDrive.all = Array.from(new Set(config.environment.HotPEDrive.all))//去重
+    //console.log(config.environment.HotPEDrive.all);
+
+    if (config.environment.HotPEDrive.all.length > 1/*  && HotPEDriveChooseOk == false */) {
+        /* HotPEDriveChooseOk = true */
+
+        let driveData = config.environment.HotPEDrive.all.map(function callback(currentValue: any, index: number) {
+            return { label: currentValue.letter, value: currentValue.letter, key: index.toString() }
+        })
+
+        let modalContent = <>
+            <p>请选择要操作的HotPE安装：</p>
+
+            <TreeSelect
+                defaultValue={config.environment.HotPEDrive.new.letter}//选择默认的
+                style={{ width: '100%' }}
+                dropdownStyle={{ overflow: 'auto' }}
+                treeData={driveData}
+                onSelect={async (value: string) => {
+                    config.environment.HotPEDrive.new = config.environment.HotPEDrive.all[value]
+
+                    //获取本地HPM列表,刷新一下
+                    await checkHPMFiles()
+
+                    //获取设置
+                    await checkPESetting()
+
+                    console.log(value, config.environment.HotPEDrive.all[value]);
+
+                }} />
+        </>
+
+        Modal.confirm({ title: '检测到安装了多个HotPE', content: modalContent, maskClosable: false, closable: false, hasCancel: false, onOk: () => { updateState(); callback()}, centered: true });
+    }
+}

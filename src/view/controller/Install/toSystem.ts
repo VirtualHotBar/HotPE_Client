@@ -53,7 +53,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     await copyFile(tempPath + 'EFI\\HotPE\\kernel.wim', roConfig.environment.sysLetter + 'HotPE\\kernel.wim')
     await copyFile(tempPath + 'EFI\\HotPE\\kernel.sdi', roConfig.environment.sysLetter + 'HotPE\\kernel.sdi')
     await copyFile(tempPath + 'Data\\HotPE\\confi.ini', roConfig.environment.sysLetter + 'HotPE\\confi.ini')
-    await copyFile(tempPath + 'EFI\\HotPE\\HotPE.ini', roConfig.environment.sysLetter + 'HotPE\\HotPE.ini')
+    await copyFile(tempPath + 'Data\\HotPE\\HotPE.ini', roConfig.environment.sysLetter + 'HotPE\\HotPE.ini')
     await copyDir(tempPath + 'EFI\\HotPE\\Data\\', roConfig.environment.sysLetter + 'HotPE\\Data\\')
     await copyDir(tempPath + 'Data\\HotPEModule\\', roConfig.environment.sysLetter + 'HotPEModule\\')
 

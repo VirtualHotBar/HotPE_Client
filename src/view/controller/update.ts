@@ -13,7 +13,7 @@ const fs = window.require('fs')
 //检查更新,pe and client
 export async function checkUpdate() {
     await checkPEUpdate()
-    await checkCilentUpdate()
+    await checkClientUpdate()
 
     if (takeLeftStr(config.resources.pe.new, '.') < config.resources.pe.update.id) {
         config.state.resUpdate = 'needUpdatePE'
@@ -50,7 +50,7 @@ function checkPEUpdate() {
 }
 
 //检查客户端更新
-function checkCilentUpdate() {
+function checkClientUpdate() {
     return new Promise(function (resolve, reject) {
         fetch(config.api.ghapi + roConfig.url.update.client).then(response => response.json())
             .then(data => {
@@ -75,7 +75,7 @@ function checkCilentUpdate() {
 }
 
 //更新客户端
-export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
+export function updateClient(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
     let updateStep = '' //dl、fit、restart
     //let isDlOk = false//下载是否完成
 
@@ -105,9 +105,9 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
     //设置客户端
     async function fitClient() {
         updateStep = 'fit'
+        callback(updateStep, tempAria2Attrib)
         setDlPercent(100)
         setDlSpeed('正在部署更新，请等待软件重启')
-        callback(updateStep, tempAria2Attrib)
 
 
         /*         fs.copyDir((err: any) => {
@@ -129,7 +129,7 @@ export function updateCilent(setDlPercent: Function, setDlSpeed: Function, callb
     //重启客户端
     function restartClient() {
         updateStep = 'restart'
-        callback(updateStep, tempAria2Attrib)
+        //callback(updateStep, tempAria2Attrib)
 
         const updateBatSource = fs.readFileSync(roConfig.path.tools + 'update\\update.bat', 'utf8')
 

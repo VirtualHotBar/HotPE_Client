@@ -8,53 +8,14 @@ import { Aria2Attrib } from '../type/aria2';
 import { updateState } from '../controller/init';
 import ReactMarkdown from 'react-markdown'
 import { UpdateLatest } from '../type/update';
-import { updateCilent, updateDoneTip } from '../controller/update';
+import { updateClient, updateDoneTip } from '../controller/update';
 import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
 import { checkPESetting } from '../controller/setting/setting';
 
-let HotPEDriveChooseOk = false
 let updatePromptOk = false//更新提示
 
 let dlPercent = -1//下载百分百
 let dlSpeed = 'OKB/S'//下载速度
-
-//多个pe安装时选择
-function HotPEDriveChoose() {
-    //config.environment.HotPEDrive.all = Array.from(new Set(config.environment.HotPEDrive.all))//去重
-    console.log(config.environment.HotPEDrive.all);
-    
-    if (config.environment.HotPEDrive.all.length > 1 && HotPEDriveChooseOk == false) {
-        HotPEDriveChooseOk = true
-
-        let driveData = config.environment.HotPEDrive.all.map(function callback(currentValue: any, index: number) {
-            return { label: currentValue.letter, value: currentValue.letter, key: index.toString() }
-        })
-
-        let modalContent = <>
-            <p>请选择要操作的HotPE安装：</p>
-
-            <TreeSelect
-                defaultValue={config.environment.HotPEDrive.new.letter}//选择默认的
-                style={{ width: '100%' }}
-                dropdownStyle={{ overflow: 'auto' }}
-                treeData={driveData}
-                onSelect={async (value: string) => {
-                    config.environment.HotPEDrive.new = config.environment.HotPEDrive.all[value]
-
-                    //获取本地HPM列表,刷新一下
-                    await checkHPMFiles()
-
-                    //获取设置
-                    await checkPESetting()
-
-                    console.log(value, config.environment.HotPEDrive.all[value]);
-
-                }} />
-        </>
-
-        Modal.confirm({ title: '检测到安装了多个HotPE', content: modalContent, maskClosable: false, closable: false, hasCancel: false, onOk: () => { updateState(); }, centered: true });
-    }
-}
 
 
 
@@ -149,7 +110,7 @@ export default function Home(props: any) {
                     } else if (config.state.resUpdate == 'needUpdateClient') {
                         //锁定菜单
                         props.setLockMuen(true)
-                        updateCilent(setDlPercent, setDlSpeed, (aria2Back: Aria2Attrib, updateStep: string) => {
+                        updateClient(setDlPercent, setDlSpeed, (aria2Back: Aria2Attrib, updateStep: string) => {
                             console.log(updateStep);
                             if (aria2Back.state == 'error') {//下载错误
 
@@ -175,7 +136,7 @@ export default function Home(props: any) {
 
 
         //多个pe安装时选择
-        HotPEDriveChoose()
+        //HotPEDriveChoose()
 
 
     })
@@ -208,12 +169,16 @@ export default function Home(props: any) {
 
 
     return (
-        <div style={{padding: '24px',height:'calc(100%-84px)',position:'relative'}}>
+        <div style={{ padding: '24px', height: '100%' }}>
 
-            <div style={{ width: '100%' }}>
-                {welcomeStr != '' ? <h2>{welcomeStr}</h2> : <></>}
-                {config.notice.show ? <Banner description={config.notice.content} type={config.notice.type} onClose={() => { config.notice.show = false }} /> : <></>}
+            <div style={{ width: '100%', display: 'flex', whiteSpace: 'nowrap' }}>
+                <div style={{ width: 'calc(100% - 150px)' }}> {welcomeStr != '' ? <h2>{welcomeStr}</h2> : <></>}</div>
+                <div style={{ width: '150px', textAlign: 'right' }}>
+                    {/* <Button>设置</Button> */}
+                </div>
             </div>
+
+            {config.notice.show ? <Banner description={config.notice.content} type={config.notice.type} onClose={() => { config.notice.show = false }} /> : <></>}
 
             <div style={{ textAlign: "center", marginTop: "100px", display: 'block' }}>
                 {dlPercent == -1 ? content : <>
@@ -223,7 +188,7 @@ export default function Home(props: any) {
                 </>}
             </div >
 
-{/*             <div style={{position:'absolute',textAlign:'center',backgroundColor:'white',width:'100%', left: 0,bottom: 0}}>
+            {/*             <div style={{position:'absolute',textAlign:'center',backgroundColor:'white',width:'100%', left: 0,bottom: 0}}>
                 6
 
             </div> */}

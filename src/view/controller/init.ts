@@ -2,7 +2,7 @@ import { config, roConfig } from "../services/config"
 import { getHardwareInfo } from "../utils/hardwareInfo"
 import { checkUpdate } from "./update"
 import { checkPERes, checkPEDrive } from "./condition"
-import { takeRightStr } from "../utils/utils"
+import { makeDir, takeRightStr } from "../utils/utils"
 import { disksInfo, partitionInfo } from "../type/config"
 import { Modal } from "@douyinfe/semi-ui"
 import { ReactNode } from "react"
@@ -10,10 +10,15 @@ import { getHPMList, getNotices } from "./online/online"
 import { checkHPMFiles } from "./hpm/checkHpmFiles"
 import { errorDialog } from "./log"
 import { exitapp } from "../layout/header"
+import { HotPEDriveChoose } from "../page/setting"
 
 let isInitDone = false
 
 export async function initClient(setStartStr: Function) {
+
+
+    await initDir()
+
     //记录日志
     //await logInit()
     //系统信息
@@ -51,10 +56,15 @@ export async function initClient(setStartStr: Function) {
 
     isInitDone = true
 
+    //检测到有多个HotPE安装的时候，选择
+    if (config.environment.HotPEDrive.all.length > 1) {
+        HotPEDriveChoose(() => { })
+    }
 
     console.log(config);
     console.log(roConfig);
 }
+
 
 //更新状态
 export async function updateState() {
@@ -66,6 +76,15 @@ export async function updateState() {
         config.state.install = 'ready'
     }
 }
+
+
+//创建目录，运行所需的
+async function initDir() {
+    await makeDir(roConfig.path.clientTemp)
+    await makeDir(roConfig.path.resources.client)
+    await makeDir(roConfig.path.resources.pe)
+}
+
 
 //环境检查，启动时
 async function checkEnvironment() {
@@ -108,22 +127,29 @@ export async function getEnvironment() {
     config.environment.ware.disks = []
     temp.map(function callback(disk: any, index: number) {
 
+        let partitionInfos: Array<partitionInfo>
         //分区
-        let partitionInfos: Array<partitionInfo> =
-            disk['Volumes'].map((partition: any) => {
+        if ('Volumes' in disk) {//判断是否存在分区
+            partitionInfos =
+                disk['Volumes'].map((partition: any) => {
 
-                //盘符
-                let letterTemp = ''
-                if (partition['Volume Path Names'].length > 0) {
-                    letterTemp = partition['Volume Path Names'][0]['Drive Letter']
-                }
+                    //盘符
+                    let letterTemp = ''
+                    if (partition['Volume Path Names'].length > 0) {
+                        letterTemp = partition['Volume Path Names'][0]['Drive Letter']
+                    }
 
-                let partitionInfo: partitionInfo = {
-                    index: partition['Partition Number'],
-                    letter: letterTemp
-                }
-                return partitionInfo
-            })
+                    let partitionInfo: partitionInfo = {
+                        index: partition['Partition Number'],
+                        letter: letterTemp
+                    }
+                    return partitionInfo
+                })
+        } else {
+            partitionInfos = []
+        }
+
+
 
         let diskInfo: disksInfo = {
             index: Number(takeRightStr(disk['Path'], 'Drive')),

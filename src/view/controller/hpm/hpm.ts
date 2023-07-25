@@ -11,15 +11,34 @@ export function getHPMinfoLocal(HPMFilePath: string, HPMFileName: string) {
     let hpmFileInfo = fs.statSync(HPMFilePath + HPMFileName)
 
     let hpmInfo = HPMFileName.split('_')
-    let HPM: HPM = {
-        fileName: HPMFileName,
-        size: hpmFileInfo.size,
-        name: hpmInfo[0],
-        maker: hpmInfo[1],
-        version: hpmInfo[2],
-        description: takeLeftStr(hpmInfo[3], '.'),
-        time: hpmFileInfo.ctime
+
+    let HPM: HPM
+
+
+    if (hpmInfo.length == 4) {
+        HPM = {
+            fileName: HPMFileName,
+            size: hpmFileInfo.size,
+            name: hpmInfo[0],
+            maker: hpmInfo[1],
+            version: hpmInfo[2],
+            description: takeLeftStr(hpmInfo[3], '.'),
+            time: hpmFileInfo.ctime
+        }
+    } else {
+        //格式不规范
+        HPM = {
+            fileName: HPMFileName,
+            size: hpmFileInfo.size,
+            name: hpmInfo[0],
+            maker:'获取失败',
+            version: '获取失败',
+            description: '获取失败',
+            time: hpmFileInfo.ctime
+        }
     }
+
+
     return HPM
 }
 

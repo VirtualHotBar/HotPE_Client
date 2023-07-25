@@ -25,7 +25,7 @@ app.on('ready', () => {
     }
   })
 
-
+  
   //窗口加载html文件
   //mainWindow.loadFile('./src/main.html')
   mainWindow.loadURL(isDev ? 'http://localhost:5173' : `file://${path.join(__dirname, '../view/index.html')}`);
@@ -41,7 +41,6 @@ app.on('ready', () => {
     mainWindow.webContents.openDevTools({ mode: 'right' })
   })
 
-
   ipcMain.on('exitapp', () => {
     app.exit()//退出 
   })
@@ -49,7 +48,6 @@ app.on('ready', () => {
   ipcMain.on('windows:mini', () => {
     mainWindow.minimize();//最小化
   })
-
 
   //拦截首页打开新窗口的链接用浏览器打开  
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -81,5 +79,6 @@ app.on('ready', () => {
   })
 
 
+  
 })
 
