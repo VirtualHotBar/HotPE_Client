@@ -3,7 +3,7 @@ const fs = window.require('fs')
 
 import { config, roConfig } from "../services/config";
 import { runCmdAsync } from "../utils/command";
-import { isHotPEDrive, traverseFiles, readHotPEConfig } from "../utils/utils"
+import { isHotPEDrive, traverseFiles, readHotPEConfig, delFiles } from "../utils/utils"
 import { getHardwareInfo } from "../utils/hardwareInfo"
 import { getEnvironment, updateState } from "./init";
 import { checkHPMFiles } from "./hpm/checkHpmFiles";
@@ -20,6 +20,15 @@ export async function checkPERes() {
     } else {
         config.resources.pe.new = ''
     }
+
+    //删除旧的PE资源
+    for (let i in config.resources.pe.all) {
+        if (config.resources.pe.all[i] != config.resources.pe.new) {
+            await delFiles(roConfig.path.resources.pe + config.resources.pe.all[i])
+            config.resources.pe.all.splice(i, 0)
+        }
+    }
+
 }
 
 //检查本地的PE
@@ -59,10 +68,10 @@ export async function checkPEDrive() {
             if (partition.letter != '') {
                 if (isHotPEDrive(partition.letter)) {
                     let HotPEDriveInfoTemp = { diskIndex: disk.index, letter: partition.letter, isMove: disk.type == 'USB', version: readHotPEConfig(partition.letter).information.ReleaseVersion }
-                    if(!config.environment.HotPEDrive.all.includes(HotPEDriveInfoTemp)){
+                    if (!config.environment.HotPEDrive.all.includes(HotPEDriveInfoTemp)) {
                         config.environment.HotPEDrive.all.push(HotPEDriveInfoTemp)
                     }
-                    
+
 
                     //判断是否为系统安装的PE
                     if (partition.letter == roConfig.environment.sysLetter) {

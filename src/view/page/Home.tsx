@@ -169,7 +169,7 @@ export default function Home(props: any) {
 
 
     return (
-        <div style={{ padding: '24px', height: '100%' }}>
+        <div style={{ padding: '24px', height: 'calc(100% - 48px)' }}>
 
             <div style={{ width: '100%', display: 'flex', whiteSpace: 'nowrap' }}>
                 <div style={{ width: 'calc(100% - 150px)' }}> {welcomeStr != '' ? <h2>{welcomeStr}</h2> : <></>}</div>
