@@ -30,7 +30,7 @@ export default function SetupToSys(props:any) {
                                 <h2 >已安装到系统</h2>
                                 <h3 style={{color:'var(--semi-color-text-1)'}}>你已将HotPE安装到系统中，你可以进行</h3>
                                 {//更新按钮
-                                    config.state.setupToSys < Number(takeLeftStr(config.resources.pe.new, '.')) ? <Button onClick={() => { updatePEForSys(setIsUninstalling, setCurrentStep, setStepStr,props.setLockMuen) }} type='primary' style={{ marginLeft: 8 }}>更新</Button> : <></>}
+                                    config.state.setupToSys < Number(takeLeftStr(config.resources.pe.new, '.')) ? <Button onClick={() => { updatePEForSys(setIsUninstalling, setCurrentStep, setStepStr,props.setLockMuen) }} type='primary' style={{ marginRight: 8 }}>更新</Button> : <></>}
                                 <Button onClick={() => { uninstallToSystem(setIsUninstalling,props.setLockMuen) }} type='danger'>卸载</Button>
                             </div>
                             : <div style={{ textAlign: "center", marginTop: "70px", width: "100%" }}>

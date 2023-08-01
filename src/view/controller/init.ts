@@ -11,10 +11,13 @@ import { checkHPMFiles } from "./hpm/checkHpmFiles"
 import { errorDialog } from "./log"
 import { exitapp } from "../layout/header"
 import { HotPEDriveChoose } from "../page/setting"
+import { runCmdAsync } from "../utils/command"
 
 let isInitDone = false
 
 export async function initClient(setStartStr: Function) {
+    //结束傲慢
+    await runCmdAsync('taskkill /IM PartAssist.exe /F')
 
 
     await initDir()

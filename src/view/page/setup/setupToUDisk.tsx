@@ -8,6 +8,7 @@ import { IconRefresh } from '@douyinfe/semi-icons';
 import { getEnvironment } from '../../controller/init';
 import { UnInstallToUDisk, installToUDisk, updatePEForUDisk } from '../../controller/Install/toUDisk';
 import { checkPEDrive } from '../../controller/condition';
+import { getHotPEDriveVer } from '../../controller/Install/check';
 
 
 //let uDiskRefreshing =false
@@ -27,19 +28,6 @@ async function UDiskRefres(steUDiskRefreshing: Function, setLockMuen: Function) 
 
     steUDiskRefreshing(false)
     setLockMuen(false)
-}
-
-//获取PE版本
-function getHotPEDriveVer(diskIndex: Number) {
-    //console.log(config.environment.HotPEDrive.all);
-
-    for (let i in config.environment.HotPEDrive.all) {
-        if (config.environment.HotPEDrive.all[i].diskIndex == diskIndex) {
-            return config.environment.HotPEDrive.all[i].version
-        }
-    }
-
-    return ''
 }
 
 export default function SetupToUDisk(props: any) {

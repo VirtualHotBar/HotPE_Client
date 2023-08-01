@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { dialog } from 'electron';
 import path from 'path'
 
+
 //是否为开发模式
 import isDev from 'electron-is-dev'
 
@@ -24,7 +25,6 @@ app.on('ready', () => {
       preload: path.join(__dirname, './preload.js')
     }
   })
-
   
   //窗口加载html文件
   //mainWindow.loadFile('./src/main.html')

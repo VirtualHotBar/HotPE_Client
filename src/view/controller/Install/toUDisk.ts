@@ -3,7 +3,7 @@ import { config, roConfig } from "../../services/config"
 import { runCmdAsync } from "../../utils/command"
 import { copyDir, copyFile, delDir, delFiles, getUsableLetter, isHotPEDrive, letterIsExist, moveFiles, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils"
 import { checkPEDrive } from "../condition"
-import { checkIsReady } from "./check"
+import { checkIsReady, getHotPEDriveLetter } from "./check"
 import { ReactNode } from "react"
 const fs = window.require('fs')
 
@@ -206,8 +206,6 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
     setStepStr('正在解压文件')
     await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPath)
 
-
-
     setStep(1)
 
     //清理EFI分区
@@ -221,25 +219,31 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
     isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /whide:1 /src:' + roConfig.path.execDir + tempEFIPath.substring(2, tempEFIPath.length - 1))//去路径末'\'
 
     setStepStr('正在更新数据分区')
+    let dataLetter = getHotPEDriveLetter(Number(diskIndex))
 
-    let dataLetter = (await getUsableLetter() as string).substring(0, 2)
-    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)
+    //let dataLetter = (await getUsableLetter() as string).substring(0, 2)
+    //await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)
+    if (dataLetter != '') {
+        //if (await letterIsExist(dataLetter)) {
+        //复制数据区文件
+        await copyDir(tempDataPath, dataLetter + '\\')
 
-    //if (await letterIsExist(dataLetter)) {
-    //复制数据区文件
-    await copyDir(tempDataPath, dataLetter + '\\')
+        //pe配置文件
+        let HotPEConfig = readHotPEConfig(dataLetter + '\\')
+        HotPEConfig.information.Installation_Method = 'UDisk'
+        HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
+        writeHotPEConfig(dataLetter + '\\', HotPEConfig)
 
-    //pe配置文件
-    let HotPEConfig = readHotPEConfig(dataLetter + '\\')
-    HotPEConfig.information.Installation_Method = 'UDisk'
-    HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
-    writeHotPEConfig(dataLetter + '\\', HotPEConfig)
+        await runCmdAsync('attrib ' + dataLetter + '\\HotPE +S +H /S /D')
+        await runCmdAsync('attrib ' + dataLetter + '\\HotPE\\* +S +H /S /D')
+        await runCmdAsync('attrib ' + dataLetter + '\\AUTORUN.INF +S +H /S /D')
+        await runCmdAsync('attrib ' + dataLetter + '\\HotPE.ico +S +H /S /D')
+        //}
+    }else{
+        isSucceed = isSucceed && false
+    }
 
-    await runCmdAsync('attrib ' + dataLetter + '\\HotPE +S +H /S /D')
-    await runCmdAsync('attrib ' + dataLetter + '\\HotPE\\* +S +H /S /D')
-    await runCmdAsync('attrib ' + dataLetter + '\\AUTORUN.INF +S +H /S /D')
-    await runCmdAsync('attrib ' + dataLetter + '\\HotPE.ico +S +H /S /D')
-    //}
+
 
     setStep(2)
     setStepStr('正在清理退出')

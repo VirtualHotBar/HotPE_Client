@@ -134,7 +134,10 @@ export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen
     await runCmdAsync(bcdeditPath + ' /delete ' + GUID1 + ' /f')
 
     await delDir(roConfig.environment.sysLetter + 'HotPE\\')
-    await delDir(roConfig.environment.sysLetter + 'HotPEModule\\')
+    if (!isUpdate) {
+        await delDir(roConfig.environment.sysLetter + 'HotPEModule\\')
+    }
+    
 
     //更新PE安装状态
     await checkPEDrive()

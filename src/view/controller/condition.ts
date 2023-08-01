@@ -21,6 +21,7 @@ export async function checkPERes() {
         config.resources.pe.new = ''
     }
 
+
     //删除旧的PE资源
     for (let i in config.resources.pe.all) {
         if (config.resources.pe.all[i] != config.resources.pe.new) {
