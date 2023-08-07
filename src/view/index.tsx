@@ -1,3 +1,4 @@
+import "./services/config"
 import React, { useEffect, useState } from 'react';
 import ReactDom from 'react-dom';
 import './controller/log'//导入错误处理

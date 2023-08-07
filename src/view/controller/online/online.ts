@@ -3,7 +3,6 @@
 import { config } from "../../services/config"
 import { setHPMListOnline } from "../../services/hpm"
 import { HPM, HPMClass } from "../../type/hpm"
-import { takeLeftStr } from "../../utils/utils"
 
 
 //获取公告
@@ -16,7 +15,7 @@ export async function getNotices() {
                 config.notice.type = data.data.client.type
             }
         })
-        .catch(e => Error(e))
+        .catch(e => console.log(Error(e)))
 }
 
 //获取HPM列表
@@ -47,5 +46,6 @@ export async function getHPMList() {
                 setHPMListOnline(HPMListOnlineTemp)
             }
         })
-        .catch(e => Error(e))
+        .catch(e => console.log(Error(e)))
 }
+

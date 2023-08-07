@@ -1,3 +1,5 @@
+
+
 const fs = window.require('fs')
 const path = window.require('path')
 import { runCmd } from "../command"
@@ -14,9 +16,7 @@ interface Aria2 {
 
 }
 
-
 const sourceAria2Path = roConfig.path.tools + 'aria2c.exe'
-
 
 //内部变量
 //let aria2Path;

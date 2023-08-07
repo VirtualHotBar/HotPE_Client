@@ -22,7 +22,7 @@ export function runCmd(cmd: string, returnstr: Function, end: Function) {
 
 //运行命令行，完成返回,异步
 export function runCmdAsync(cmd: string) {
-    return new Promise(function (resolve, reject) {
+    return new Promise<string>(function (resolve, reject) {
         let returnStr: string = ''
         runCmd(cmd, (back: string) => {
             returnStr = returnStr + back

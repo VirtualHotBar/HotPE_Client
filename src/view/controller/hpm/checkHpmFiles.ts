@@ -12,7 +12,7 @@ export async function checkHPMFiles() {
     if (isCheckingHPMFiles || config.environment.HotPEDrive.new.letter == '') { return }//如果正在获取或没有HotPE安装，就取消
     isCheckingHPMFiles = true
 
-    const HPMDirPath = config.environment.HotPEDrive.new.letter + 'HotPEModule\\'
+    const HPMDirPath = config.environment.HotPEDrive.new.letter + '\\HotPEModule\\'
 
     let HPMsTemp = await traverseFiles(HPMDirPath + '*.HPM')
     let onHPMTemp = HPMsTemp.map((fileName: string, index: number) => {

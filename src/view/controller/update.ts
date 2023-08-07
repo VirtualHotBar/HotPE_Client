@@ -42,7 +42,7 @@ function checkPEUpdate() {
 
                 resolve(updateData)//完成返回
             })
-            .catch(e => Error(e))
+            .catch(e => console.log(Error(e)))
 
 
     }
@@ -67,7 +67,7 @@ function checkClientUpdate() {
 
                 resolve(updateData)//完成返回
             })
-            .catch(e => Error(e))
+            .catch(e => console.log(Error(e)))
 
 
     }

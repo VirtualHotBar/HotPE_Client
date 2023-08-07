@@ -2,10 +2,8 @@ import { Button, Spin, Steps, TreeSelect } from '@douyinfe/semi-ui';
 import { UsbMemoryStick } from '@icon-park/react';
 import React, { useState, useReducer, useEffect } from 'react';
 import { config } from '../../services/config';
-import { getUsableLetter, takeLeftStr, takeRightStr } from '../../utils/utils';
-import { Config, partitionInfo } from '../../type/config';
+import { takeLeftStr} from '../../utils/utils';
 import { IconRefresh } from '@douyinfe/semi-icons';
-import { getEnvironment } from '../../controller/init';
 import { UnInstallToUDisk, installToUDisk, updatePEForUDisk } from '../../controller/Install/toUDisk';
 import { checkPEDrive } from '../../controller/condition';
 import { getHotPEDriveVer } from '../../controller/Install/check';
@@ -18,11 +16,8 @@ async function UDiskRefres(steUDiskRefreshing: Function, setLockMuen: Function) 
     steUDiskRefreshing(true)
     setLockMuen(true)
 
-    //更新环境信息(disk)
-    //await getEnvironment()
-
     //更新PE安装
-    await checkPEDrive()//getEnvironment()
+    await checkPEDrive()//getdiskinfo()
 
     console.log(config.environment.ware.disks);
 
@@ -42,18 +37,19 @@ export default function SetupToUDisk(props: any) {
 
     let driveDataTemp: Array<any> = []
     for (let i in config.environment.ware.disks) {
-        let disk = config.environment.ware.disks[i]
+        const disk = config.environment.ware.disks[i]
 
         let letter: Array<string> = []
-        disk.partitions.map((partition: partitionInfo, index: number) => {
-            if (partition.letter != '') {
+        for (let i in config.environment.ware.partitions) {
+            const partition = config.environment.ware.partitions[i]
+            if (partition.letter != '' && partition.diskIndex == disk.index) {
                 letter.push(partition.letter)
             }
-        })
+        }
 
-        let label = disk.index + ':' + disk.name + '(' + (disk.size / 1000 / 1000 / 1000).toFixed(2) + 'GB,' + letter.toString() + ')'
+        const label = disk.index + ':' + disk.name + '(' + disk.size + ',' + letter.toString() + ')'
 
-        if (disk.type == 'USB') {//可移动
+        if (disk.movable) {//可移动
             driveDataTemp.push({ label: label, value: disk.index, key: i })
         }
     }
@@ -85,7 +81,7 @@ export default function SetupToUDisk(props: any) {
             ? <div style={{ textAlign: "center", marginTop: "100px" }}>
                 <UsbMemoryStick theme="outline" size="90" fill="var( --semi-color-secondary)" />
                 <h2 >  安装到U盘</h2>
-                <h3 style={{color:'var(--semi-color-text-1)'}}>将HotPE安装到U盘中，随身携带</h3>
+                <h3 style={{ color: 'var(--semi-color-text-1)' }}>将HotPE安装到U盘中，随身携带</h3>
                 <TreeSelect
                     placeholder={'请插入U盘'}
                     //defaultValue={[]}

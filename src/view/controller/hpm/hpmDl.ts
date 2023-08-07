@@ -21,7 +21,8 @@ export function newHPMDl(hpmInfo: HPM) {
         delHPMDlFromList(hpmInfo)
     }
 
-    const HPMDirPath = config.environment.HotPEDrive.new.letter + 'HotPEModule\\'
+    const HPMDirPath = config.environment.HotPEDrive.new.letter + '\\HotPEModule\\'
+    
 
     let HPMDlTemp: HPMDl = {
         HPMInfo: hpmInfo,
@@ -112,7 +113,6 @@ export function getHPMDlPercent(HPMInfo: HPM) {
         if (HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {
             return HPMDlList[i].dlInfo.percentage
         }
-
     }
     return -1
 }

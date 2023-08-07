@@ -2,12 +2,8 @@ import { config, roConfig } from "../services/config"
 import { getHardwareInfo } from "../utils/hardwareInfo"
 import { checkUpdate } from "./update"
 import { checkPERes, checkPEDrive } from "./condition"
-import { makeDir, takeRightStr } from "../utils/utils"
-import { disksInfo, partitionInfo } from "../type/config"
-import { Modal } from "@douyinfe/semi-ui"
-import { ReactNode } from "react"
+import { makeDir} from "../utils/utils"
 import { getHPMList, getNotices } from "./online/online"
-import { checkHPMFiles } from "./hpm/checkHpmFiles"
 import { errorDialog } from "./log"
 import { exitapp } from "../layout/header"
 import { HotPEDriveChoose } from "../page/setting"
@@ -16,7 +12,7 @@ import { runCmdAsync } from "../utils/command"
 let isInitDone = false
 
 export async function initClient(setStartStr: Function) {
-    //结束傲慢
+    //结束傲梅
     await runCmdAsync('taskkill /IM PartAssist.exe /F')
 
 
@@ -32,13 +28,14 @@ export async function initClient(setStartStr: Function) {
     await checkEnvironment()
 
     //获取需要的环境信息
-    await getEnvironment()
+    //await getDisksInfo()
+    //await getPartitionsInfo()
+
+    //检查已安装的分区
+    await checkPEDrive()//默认选择最后一个，并获取获取本地HPM列表,have getDisksInfo and getPartitionsInfo
 
     //检查已有的PE资源
     await checkPERes()// 
-
-    //检查已安装的分区
-    await checkPEDrive()//默认选择最后一个，并获取获取本地HPM列表
 
     setStartStr('检查更新')
     //获取公告
@@ -66,6 +63,10 @@ export async function initClient(setStartStr: Function) {
 
     console.log(config);
     console.log(roConfig);
+
+    
+
+
 }
 
 
@@ -122,49 +123,6 @@ export async function getSystemInfo() {
 }
 
 
-//环境信息(磁盘)
-export async function getEnvironment() {
-    //disk
-    let temp = (await getHardwareInfo('--disk') as any).Disks as Array<any>
-
-    config.environment.ware.disks = []
-    temp.map(function callback(disk: any, index: number) {
-
-        let partitionInfos: Array<partitionInfo>
-        //分区
-        if ('Volumes' in disk) {//判断是否存在分区
-            partitionInfos =
-                disk['Volumes'].map((partition: any) => {
-
-                    //盘符
-                    let letterTemp = ''
-                    if (partition['Volume Path Names'].length > 0) {
-                        letterTemp = partition['Volume Path Names'][0]['Drive Letter']
-                    }
-
-                    let partitionInfo: partitionInfo = {
-                        index: partition['Partition Number'],
-                        letter: letterTemp
-                    }
-                    return partitionInfo
-                })
-        } else {
-            partitionInfos = []
-        }
-
-
-
-        let diskInfo: disksInfo = {
-            index: Number(takeRightStr(disk['Path'], 'Drive')),
-            name: disk['HW Name'],
-            type: disk['Type'],
-            size: disk['Size'],
-            removable: Boolean(disk['Removable']),
-            partitions: partitionInfos
-        }
-        config.environment.ware.disks.push(diskInfo)
-    })
-}
 
 
 

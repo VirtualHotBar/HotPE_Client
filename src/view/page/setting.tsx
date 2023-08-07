@@ -5,6 +5,7 @@ import { checkPESetting, saveClientSetting, savePESetting } from '../controller/
 import { setting } from '../services/setting';
 import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
 import { updateState } from '../controller/init';
+import { AppTest } from '../controller/test';
 const { shell, ipcRenderer } = require('electron')
 
 const { Text, Paragraph, Title } = Typography;
@@ -127,12 +128,15 @@ export default function Setting(props: any) {
                     </Row>
                     <Card style={{ marginBottom: "20px" }} title='工具' >
                         <Button onClick={() => { ipcRenderer.send('windows:openDevTools') }}>打开开发工具</Button>
+                        <Button style={{marginLeft:'8px'}} onClick={() => {  AppTest() }}>测试</Button>
                     </Card>
                 </Collapse.Panel>
             </Collapse>
         </div>
     )
 };
+
+
 
 
 

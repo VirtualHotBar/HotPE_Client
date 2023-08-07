@@ -2,7 +2,7 @@ const fs = window.require('fs')
 //let ini = require('ini');
 import ini from 'ini'
 import { config, roConfig } from "../services/config";
-import { runCmd, runCmdAsync } from "./command";
+import { runCmd, runCmdAsync, runCmdSync } from "./command";
 import { disksInfo, partitionInfo } from '../type/config';
 
 //解析JOSN文件
@@ -37,23 +37,23 @@ export function isJSON(str: string) {
 
 //读取Hotpe配置
 export function readHotPEConfig(drive: string) {
-    return ini.parse(fs.readFileSync(drive + "HotPE\\confi.ini").toString());
+    return ini.parse(fs.readFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini").toString());
 }
 
 
 //保存Hotpe配置
 export function writeHotPEConfig(drive: string, obj: object) {
-    return fs.writeFileSync(drive + "HotPE\\confi.ini", ini.encode(obj))
+    return fs.writeFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini", ini.encode(obj))
 }
 
 //读取Hotpe设置
 export function readHotPESetting(drive: string) {
-    return ini.parse(fs.readFileSync(drive + "HotPE\\confi.ini").toString());
+    return ini.parse(fs.readFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini").toString());
 }
 
 //读取Hotpe设置
 export function writeHotPESetting(drive: string, obj: object) {
-    return fs.writeFileSync(drive + "HotPE\\confi.ini", ini.encode(obj))
+    return fs.writeFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini", ini.encode(obj))
 }
 
 
@@ -79,7 +79,7 @@ export function unZipFile(filePath: string, outDir: string) {
 
 //判断是否为HotPE盘
 export function isHotPEDrive(drive: string) {
-    return (fs.existsSync(drive + 'HotPE\\confi.ini') && fs.existsSync(drive + 'HotPEModule\\'))
+    return (fs.existsSync(drive.substring(0,1) + ':\\HotPE\\confi.ini') && fs.existsSync(drive.substring(0,1) + ':\\HotPEModule\\'))
 }
 
 //判断文件是否存在
@@ -132,11 +132,16 @@ export function takeRightStr(str: string, taggedStr: string) {
     return str.substring(str.indexOf(taggedStr) + taggedStr.length, str.length)
 }
 
+//删除数组中的空值
+export function filterArrayNull(arr: Array<any>) {
+    return arr.filter((s) => { return s && s.trim() }).reverse()
+}
+
 //遍历文件,通过dir命令行
 export async function traverseFiles(path: string) {
     //if (!await isFileExisted(path)) {return [] }
     let returnStr = await runCmdAsync('dir ' + dealStrForCmd(path) + ' /b') as string
-    return returnStr.split("\r\n").filter((s) => { return s && s.trim() }).reverse()
+    return filterArrayNull(returnStr.split("\r\n"))
 }
 
 //复制文件
@@ -284,44 +289,17 @@ export async function makeDir(path: string) {
 
 }
 
-//取所有盘符
-export async function getAllLetter() {
-    let allLetter: Array<string> = []
-    config.environment.ware.disks.map((disk: disksInfo) => {
-        disk.partitions.map((partition: partitionInfo) => {
-            if (partition.letter != '') {
-                allLetter.push(partition.letter)
-            }
-        })
+//获取分区信息
+/* export async function getPartitionInfo() {
+    return new Promise<boolean>(async (resolve, reject) => {
+        const returnStr = await runCmdSync(roConfig.path.tools + 'CxDir.exe  -mohong')
+        console.log(returnStr);
+        
+
     })
-
-    return allLetter
 }
+ */
 
-//盘符是否存在
-export async function letterIsExist(letter: string) {
-    let allLetter: Array<string> = await getAllLetter()
-    for (let i in allLetter) {
-        if (allLetter[i].substring(0, 1) == letter.substring(0, 1)) {
-            return true
-        }
-    }
-    return false
-}
-
-
-//取可用盘符
-export async function getUsableLetter() {
-    let letters: Array<string> = 'DEFGHIJKLMNOPQRSTUVWXYZABC'.split('')
-
-    for (let i in letters) {
-        if (!await letterIsExist(letters[i] + ':\\')) {
-            return letters[i] + ':\\'
-        }
-    }
-
-    Error('No available drive letter!')
-}
 
 //文件重命名
 export async function reNameFile(filePath: string, newFilePath: string) {

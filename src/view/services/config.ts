@@ -9,8 +9,8 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '230730',
-    clientVer: 'V0.2.230730_bate',
+    id: '230807',
+    clientVer: 'V0.2.230807_final',
     url: {
         home: 'https://www.hotpe.top/',
         github: 'https://github.com/VirtualHotBar/HotPE_Client',
@@ -36,8 +36,8 @@ const roConfig = {
         }
     },
     environment: {
-        sysLetter: runCmdSync('echo %SystemDrive%').substring(0, 2) + '\\',
-        temp: runCmdSync('echo %temp%').replaceAll('\r\n', ''),
+        sysLetter: runCmdSync('echo %SystemDrive%').substring(0, 2),
+        temp: runCmdSync('echo %temp%').replaceAll('\r\n', '')+'\\',
         userName: runCmdSync('echo %UserName%').replaceAll('\r\n', ''),
         desktopDir: runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\').replaceAll('\r\n', ''),
         /* arch:runCmdSync('echo %PROCESSOR_ARCHITECTURE%').replaceAll('\r\n', ''),//系统架构 */
@@ -75,7 +75,8 @@ let config: Config = {
                 architecture: '',
                 firmware: '',
             },
-            disks: []
+            disks: [],
+            partitions:[]
         }
 
     },

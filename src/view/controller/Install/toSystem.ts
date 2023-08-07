@@ -45,17 +45,17 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     setStepStr('正在复制HotPE文件')
 
     //创建目录
-    await fs.mkdir(roConfig.environment.sysLetter + 'HotPE\\', (back: any) => { console.log(back) })
-    //await fs.mkdir(roConfig.environment.sysLetter + 'HotPE\\Data\\', (back: any) => { console.log(back) })
-    //await fs.mkdir(roConfig.environment.sysLetter + 'HotPEModule\\', (back: any) => { console.log(back) })
+    await fs.mkdir(roConfig.environment.sysLetter + '\\HotPE\\', (back: any) => { console.log(back) })
+    //await fs.mkdir(roConfig.environment.sysLetter + '\\HotPE\\Data\\', (back: any) => { console.log(back) })
+    //await fs.mkdir(roConfig.environment.sysLetter + '\\HotPEModule\\', (back: any) => { console.log(back) })
 
     //复制文件
-    await copyFile(tempPath + 'EFI\\HotPE\\kernel.wim', roConfig.environment.sysLetter + 'HotPE\\kernel.wim')
-    await copyFile(tempPath + 'EFI\\HotPE\\kernel.sdi', roConfig.environment.sysLetter + 'HotPE\\kernel.sdi')
-    await copyFile(tempPath + 'Data\\HotPE\\confi.ini', roConfig.environment.sysLetter + 'HotPE\\confi.ini')
-    await copyFile(tempPath + 'Data\\HotPE\\HotPE.ini', roConfig.environment.sysLetter + 'HotPE\\HotPE.ini')
-    await copyDir(tempPath + 'EFI\\HotPE\\Data\\', roConfig.environment.sysLetter + 'HotPE\\Data\\')
-    await copyDir(tempPath + 'Data\\HotPEModule\\', roConfig.environment.sysLetter + 'HotPEModule\\')
+    await copyFile(tempPath + 'EFI\\HotPE\\kernel.wim', roConfig.environment.sysLetter + '\\HotPE\\kernel.wim')
+    await copyFile(tempPath + 'EFI\\HotPE\\kernel.sdi', roConfig.environment.sysLetter + '\\HotPE\\kernel.sdi')
+    await copyFile(tempPath + 'Data\\HotPE\\confi.ini', roConfig.environment.sysLetter + '\\HotPE\\confi.ini')
+    await copyFile(tempPath + 'Data\\HotPE\\HotPE.ini', roConfig.environment.sysLetter + '\\HotPE\\HotPE.ini')
+    await copyDir(tempPath + 'EFI\\HotPE\\Data\\', roConfig.environment.sysLetter + '\\HotPE\\Data\\')
+    await copyDir(tempPath + 'Data\\HotPEModule\\', roConfig.environment.sysLetter + '\\HotPEModule\\')
 
     //pe配置文件
     let HotPEConfig = readHotPEConfig(roConfig.environment.sysLetter)
@@ -97,8 +97,8 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' BootMenuPolicy Standard')//启用Metro启动界面
 
 
-    await runCmdAsync('attrib ' + roConfig.environment.sysLetter + 'HotPE +S +H /S /D')
-    await runCmdAsync('attrib ' + roConfig.environment.sysLetter + 'HotPE\\* +S +H /S /D')
+    await runCmdAsync('attrib ' + roConfig.environment.sysLetter + '\\HotPE +S +H /S /D')
+    await runCmdAsync('attrib ' + roConfig.environment.sysLetter + '\\HotPE\\* +S +H /S /D')
 
     //清理
     await delDir(tempPath)
@@ -116,7 +116,6 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
     }
 
-
     setCurrentStep(-1)
     setLockMuen(false)
 
@@ -133,9 +132,9 @@ export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen
     await runCmdAsync(bcdeditPath + ' /delete ' + GUID2 + ' /f')
     await runCmdAsync(bcdeditPath + ' /delete ' + GUID1 + ' /f')
 
-    await delDir(roConfig.environment.sysLetter + 'HotPE\\')
+    await delDir(roConfig.environment.sysLetter + '\\HotPE\\')
     if (!isUpdate) {
-        await delDir(roConfig.environment.sysLetter + 'HotPEModule\\')
+        await delDir(roConfig.environment.sysLetter + '\\HotPEModule\\')
     }
     
 
