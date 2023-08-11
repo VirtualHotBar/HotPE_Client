@@ -1,6 +1,6 @@
 import React, { useReducer, useState } from 'react';
 import { config, roConfig } from '../services/config';
-import { Card, Button, Row, Col, Typography, TreeSelect, InputNumber, Input, Space, Divider, Image, CardGroup, Collapse, Modal } from '@douyinfe/semi-ui';
+import { Card, Button, Row, Col, Typography, TreeSelect, InputNumber, Input, Space, Divider, Image, CardGroup, Collapse, Modal, Checkbox, Switch } from '@douyinfe/semi-ui';
 import { checkPESetting, saveClientSetting, savePESetting } from '../controller/setting/setting';
 import { setting } from '../services/setting';
 import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';

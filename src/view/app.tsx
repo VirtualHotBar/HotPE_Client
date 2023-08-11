@@ -32,7 +32,7 @@ export default function App() {
         /* Layout 布局 */
         <Layout style={{ border: '1px solid var(--semi-color-border)', height: "100%", width: "100%" }}>
             <Header style={{ backgroundColor: 'var(--semi-color-bg-1)', height: "40px", width: "100%" }}>
-                <Header_></Header_>
+                <Header_ upNavKey={upNavKey}></Header_>
             </Header>
             <Layout style={{ width: '100%', height: 'calc(100vh - 41px)' }}>
                 <Sider style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>

@@ -2,6 +2,11 @@ div.topbarLeft{
     -webkit-app-region: drag;
 }
 
+div.topbarSearch{
+    -webkit-app-region: no-drag;
+
+}
+
 Button{
     -webkit-app-region: no-drag;
     height: 35px;

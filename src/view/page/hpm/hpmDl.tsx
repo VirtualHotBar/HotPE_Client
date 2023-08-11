@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import { Tabs, TabPane, RadioGroup, Radio, Button, Nav, Card, Descriptions, Spin, Progress } from '@douyinfe/semi-ui';
 import { IconFile, IconGlobe, IconHelpCircle } from '@douyinfe/semi-icons';
-import { HPMDLRender, HPMDlList, HPMListOnline } from '../../services/hpm';
+import { HPMDLRender, HPMDlList, HPMListOnline, HPMSearch } from '../../services/hpm';
 import { HPM, HPMClass, HPMDl } from '../../type/hpm';
 import { HPMTab } from '../../type/page/hpm/hpmDl';
 import { AutoSizer } from 'react-virtualized';
@@ -19,7 +19,6 @@ let selectHPMClassIndex = 0
 
 export default function HPMDl() {
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
-
     function setSelectHPMClassIndex(index: number) {
         selectHPMClassIndex = index
         forceUpdate()
@@ -27,6 +26,58 @@ export default function HPMDl() {
 
     //清空刷新队列
     HPMDLRender.callRefreshDlTab = []
+
+    HPMSearch.callRefres = forceUpdate
+
+    //模块分类
+    function HPMClassItems() {
+        let items = []
+        if (HPMSearch.value != '') {
+            items.push({ itemKey: -1, text: '搜索' })
+        }
+        for (let i in HPMListOnline) {
+            items.push({ itemKey: Number(i), text: HPMListOnline[i].class })
+        }
+        return items
+    }
+
+
+    //模块列表
+    let HPMItems: Array<HPM> = []
+    if (selectHPMClassIndex == -1) {
+        //搜索模块
+        for (let i in HPMListOnline) {
+            let HPMListTemp = HPMListOnline[i].list
+            for (let i_ in HPMListTemp) {
+                let tempHPM: HPM = HPMListTemp[i_]
+                if (tempHPM.name.includes(HPMSearch.value) || tempHPM.description.includes(HPMSearch.value) || tempHPM.maker.includes(HPMSearch.value)) {
+                    HPMItems.push(tempHPM)
+                }
+            }
+        }
+    } else {
+        HPMItems = HPMListOnline[selectHPMClassIndex].list
+    }
+
+
+
+    useEffect(() => {
+
+        //选择搜索项
+        if (HPMSearch.select == true) {
+            setSelectHPMClassIndex(-1)
+            HPMSearch.select = false
+        } else {
+            if (selectHPMClassIndex == -1 && HPMSearch.value == '') {
+                setSelectHPMClassIndex(0)
+            }
+        }
+
+    })
+
+
+
+
 
     return (
         <div style={{ height: '100% ', display: 'flex' }} >
@@ -38,7 +89,7 @@ export default function HPMDl() {
                     style={{ height: '100%', width: '120px' }}
                     bodyStyle={{ height: 'calc(100% - 15px)', }}
                     defaultOpenKeys={[]}
-                    items={HPMListOnline.map((HPMList: HPMClass, index) => { return { itemKey: index, text: HPMList.class } }) as any}
+                    items={HPMClassItems()}
                     onSelect={data => setSelectHPMClassIndex(Number(data.itemKey))}
                 />
             </div>
@@ -50,12 +101,12 @@ export default function HPMDl() {
                     {({ height, width }) => (
                         <FixedSizeList
                             height={height}
-                            itemCount={HPMListOnline[selectHPMClassIndex].list.length}
+                            itemCount={HPMItems.length}
                             itemSize={70}
                             width={width}
                         >
                             {({ index, style }) => (
-                                <HPMTab Row={{ index, style }} HPM={HPMListOnline[selectHPMClassIndex].list[index]} ></HPMTab>
+                                <HPMTab Row={{ index, style }} HPM={HPMItems[index]} ></HPMTab>
                             )}
                         </FixedSizeList>
                     )}
@@ -64,6 +115,7 @@ export default function HPMDl() {
         </div>
     )
 };
+
 
 function HPMTab(props: HPMTab) {
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件

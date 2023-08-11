@@ -1,4 +1,4 @@
-import { HPM, HPMClass,  HPMDLRender,  HPMDl } from "../type/hpm";
+import { HPM, HPMClass, HPMDLRender, HPMDl } from "../type/hpm";
 
 //在线的HPM列表
 let HPMListOnline: Array<HPMClass> = []
@@ -17,11 +17,11 @@ let HPMDlList: Array<HPMDl> = []
     callRender: () => { }
 } */
 
-let HPMDLRender:HPMDLRender={
-    callRefreshNav:()=>{},
-    callRefreshPage:()=>{},
-    callRefreshResult:()=>{},
-    callRefreshDlTab:[]
+let HPMDLRender: HPMDLRender = {
+    callRefreshNav: () => { },
+    callRefreshPage: () => { },
+    callRefreshResult: () => { },
+    callRefreshDlTab: []
 }
 
 function setHPMListOnline(data: Array<HPMClass>) {
@@ -29,4 +29,10 @@ function setHPMListOnline(data: Array<HPMClass>) {
     console.log(HPMListOnline);
 }
 
-export { setHPMListOnline, HPMListOnline, HPMListLocal, HPMDlList, HPMDLRender }
+let HPMSearch = {
+    value: '',
+    select: false,
+    callRefres: () => { }
+}
+
+export { setHPMListOnline, HPMListOnline, HPMListLocal, HPMDlList, HPMDLRender, HPMSearch }

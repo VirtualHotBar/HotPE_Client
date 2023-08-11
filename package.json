@@ -7,7 +7,7 @@
     "dev": "vite  --force",
     "dev-main": "tsc -w --p ./src/main",
     "dev-ele": "nodemon --watch ./dist/main/* --exec electron .",
-    "build": "tsc && vite build && tsc -p ./src/main && electron-builder --ia32 --dir",
+    "build": "tsc && vite build && tsc -p ./src/main && electron-builder --x64 --dir",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

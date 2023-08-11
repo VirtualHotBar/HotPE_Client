@@ -98,7 +98,7 @@ export async function letterIsExist(letter: string) {
 
 //取可用盘符
 export async function getUsableLetter() {
-    let letters: Array<string> = 'DEFGHIJKLMNOPQRSTUVWXYZABC'.split('')
+    let letters: Array<string> = 'FGHIJKLMNOPQRSTUVWXYZABCDE'.split('')
 
     await getPartitionsInfo()//更新一下分区信息
     

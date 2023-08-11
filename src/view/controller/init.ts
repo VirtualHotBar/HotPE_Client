@@ -2,12 +2,13 @@ import { config, roConfig } from "../services/config"
 import { getHardwareInfo } from "../utils/hardwareInfo"
 import { checkUpdate } from "./update"
 import { checkPERes, checkPEDrive } from "./condition"
-import { makeDir} from "../utils/utils"
+import { makeDir } from "../utils/utils"
 import { getHPMList, getNotices } from "./online/online"
 import { errorDialog } from "./log"
 import { exitapp } from "../layout/header"
 import { HotPEDriveChoose } from "../page/setting"
 import { runCmdAsync } from "../utils/command"
+import { getUsableLetter } from "../utils/disk/diskInfo"
 
 let isInitDone = false
 
@@ -64,7 +65,8 @@ export async function initClient(setStartStr: Function) {
     console.log(config);
     console.log(roConfig);
 
-    
+
+    //console.log(await getUsableLetter());
 
 
 }
@@ -93,10 +95,10 @@ async function initDir() {
 //环境检查，启动时
 async function checkEnvironment() {
     //架构
-    if (config.environment.ware.system.architecture != 'x64') {
+/*     if (config.environment.ware.system.architecture != 'x64') {
         await errorDialog('错误', '请在64位系统下运行！')
         exitapp()
-    }
+    } */
 
     //联网检查
     while (!window.navigator.onLine) {
@@ -113,13 +115,30 @@ async function checkEnvironment() {
 
 //系统信息
 export async function getSystemInfo() {
-    //system
-    let temp = (await getHardwareInfo('--sys') as any).System
-    config.environment.ware.system.os = temp['OS']
-    config.environment.ware.system.userName = temp['Username']
-    config.environment.ware.system.buildNumber = temp['Build Number']
-    config.environment.ware.system.firmware = temp['Firmware']
-    config.environment.ware.system.architecture = temp['Processor Architecture']
+    /*     //system
+        let temp = (await getHardwareInfo('--sys') as any).System
+        config.environment.ware.system.os = temp['OS']
+        config.environment.ware.system.userName = temp['Username']
+        config.environment.ware.system.buildNumber = temp['Build Number']
+        config.environment.ware.system.firmware = temp['Firmware']
+        config.environment.ware.system.architecture = temp['Processor Architecture'] */
+
+    let temp = await runCmdAsync(roConfig.path.tools + 'BootMode.exe')
+    if (temp.includes('UEFI')) {
+        config.environment.ware.system.firmware = "UEFI"
+    } else {
+        config.environment.ware.system.firmware = "Legacy"
+    }
+
+/*     temp = await runCmdAsync('echo %PROCESSOR_ARCHITECTURE%')
+    if (temp.includes('64')) {
+        config.environment.ware.system.architecture = process.arch
+    } else {
+        config.environment.ware.system.architecture = "32"
+    } */
+
+    //config.environment.ware.system.architecture = process.arch
+
 }
 
 

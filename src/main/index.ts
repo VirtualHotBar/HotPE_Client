@@ -1,8 +1,8 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { dialog } from 'electron';
 import path from 'path'
- 
-//是否为开发模式
+     
+//是否为开发模式  
 import isDev from 'electron-is-dev'
 
 app.on('ready', () => {
@@ -20,7 +20,7 @@ app.on('ready', () => {
       nodeIntegration: true,     //设置能在页面使用nodejs的API
       //sandbox: false,//禁用沙箱
       contextIsolation: false,
-      webSecurity: false,//关闭浏览器安全性检查
+      webSecurity: false,//关闭浏览器安全性检查 
       preload: path.join(__dirname, './preload.js')
     }
   })

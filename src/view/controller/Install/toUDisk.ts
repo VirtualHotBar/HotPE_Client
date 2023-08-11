@@ -1,7 +1,7 @@
 import { Modal, Notification } from "@douyinfe/semi-ui"
 import { config, roConfig } from "../../services/config"
 import { runCmdAsync } from "../../utils/command"
-import { copyDir, copyFile, delDir, delFiles, isHotPEDrive,moveFiles, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils"
+import { copyDir, copyFile, delDir, delFiles, isHotPEDrive, moveFiles, readHotPEConfig, takeLeftStr, takeMidStr, unZipFile, writeHotPEConfig } from "../../utils/utils"
 import { checkPEDrive } from "../condition"
 import { checkIsReady, getHotPEDriveLetter } from "./check"
 import { ReactNode } from "react"
@@ -18,7 +18,7 @@ const pecmdPath = roConfig.path.tools + 'PECMD.exe'
 const fbplusPath = roConfig.path.tools + 'fbplus.exe'
 
 export async function installToUDisk(diskIndex: string, setStep: Function, setStepStr: Function, setLockMuen: Function) {
-console.log('diskIndex'+diskIndex);
+    console.log('diskIndex' + diskIndex);
 
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
@@ -46,15 +46,15 @@ console.log('diskIndex'+diskIndex);
     setStep(1)
     setStepStr('正在解除占用')
     //解除占用(数据分区强制分配盘符)
-    await runPacmd( ' /hd:' + diskIndex + ' /setletter:0 /letter:*')
-    await runPacmd( ' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
+    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')
+    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
 
     setStepStr('正在删除U盘所有分区')
     await runCmdAsync(fbplusPath + ' (hd' + diskIndex + ') format --force --raw --fat32  --align')//还原磁盘为普通模式（删除fbinst引导记录）
     //删除磁盘所有分区
     await runPacmd(' /hd:' + diskIndex + '  /del:all')
 
-    
+
 
     setStepStr('正在初始化U盘')
     //初始化
@@ -73,10 +73,16 @@ console.log('diskIndex'+diskIndex);
 
     setStepStr('正在创建数据分区')
     //创建数据分区，EXFAT
-    let dataLetter = (await getUsableLetter()).substring(0, 2)
+    //let dataLetter = (await getUsableLetter()).substring(0, 2)
+    let dataLetter = ''
+
+    //isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
+    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:auto', (back: string) => {
+        dataLetter = takeMidStr(back, '盘符:', '文件系统:').replaceAll('	', '').replaceAll('\r\n', '').replaceAll(' ', '');
+    });
+
     console.log(dataLetter);
 
-    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
 
     await runCmdAsync(pecmdPath + ' DFMT ' + dataLetter + ',exFAT,HotPE工具箱')
 
@@ -101,7 +107,7 @@ console.log('diskIndex'+diskIndex);
     //解除占用(数据分区强制分配盘符)
     await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')
     dataLetter = (await getUsableLetter() as string).substring(0, 2)
-    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)
+    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
 
     setStep(2)
     setStepStr('正在清理退出')
@@ -276,13 +282,13 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
 }
 
 //运行傲梅
-async function runPacmd(cmd: string) {
+async function runPacmd(cmd: string, callBack: Function = () => { }) {
     let logPath = roConfig.path.clientTemp + 'pacmd_' + Date.now() + ".log"
 
     await runCmdAsync(pacmdPath + ' ' + cmd + ' /out:' + logPath)
     let result = new TextDecoder('gbk').decode(fs.readFileSync(logPath))
     //await delFiles(logPath)
-
+    callBack(result)
     if (result.indexOf('完成') != -1) {
         return true
     }

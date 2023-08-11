@@ -76,7 +76,7 @@ class Aria2 {
 
             //标准返回
             console.log(print);
-            if (print.indexOf('DL:') != -1 && print.indexOf('ETA') != -1) {//正在下载，[#46fea8 210MiB/583MiB(36%) CN:4 DL:10MiB ETA:35s]
+            if (print.indexOf('DL:') != -1  && print.indexOf('ETA') != -1 ) {//正在下载，[#46fea8 210MiB/583MiB(36%) CN:4 DL:10MiB ETA:35s]
                 tempAria2Attrib.state = 'doing';
 
                 //速度speed,str.substring(str.indexOf("DL:") + 3, str.indexOf("iB ETA")) + 'B/S'
