@@ -104,10 +104,12 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     await runCmdAsync(pecmdPath + ' PART -admin ' + diskIndex + '#1 0x7')
     await runCmdAsync(pecmdPath + ' PART -admin ' + diskIndex + '#2 0xEF')
 
+    await runCmdAsync(booticePath + ' /DEVICE=' + diskIndex + ':0 /partitions /delete_letter /quiet')
+    await runCmdAsync(booticePath + ' /DEVICE=' + diskIndex + ':0 /partitions  /assign_letter  /quiet')
+
     //解除占用(数据分区强制分配盘符)
-    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')
-    dataLetter = (await getUsableLetter() as string).substring(0, 2)
-    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
+    //await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')
+    //await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
 
     setStep(2)
     setStepStr('正在清理退出')

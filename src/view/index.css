@@ -16,12 +16,12 @@ div.loading {
 /* 字体 */
 @font-face {
   font-family: "Inter";
-  src: url("./public/font/HarmonyOS_Sans_Regular.ttf") format("truetype");
+  src: url("./assets/font/HarmonyOS_Sans_Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Inter-Bold";
-  src: url("./public/font/HarmonyOS_Sans_Bold.ttf") format("truetype");
+  src: url("./assets/font/HarmonyOS_Sans_Bold.ttf") format("truetype");
 }
 
 

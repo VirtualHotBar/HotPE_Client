@@ -1,8 +1,8 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { dialog } from 'electron';
 import path from 'path'
-     
-//是否为开发模式  
+      
+//是否为开发模式 
 import isDev from 'electron-is-dev'
 
 app.on('ready', () => {

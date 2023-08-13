@@ -60,7 +60,7 @@
     },
     "win": {
       "requestedExecutionLevel": "highestAvailable",
-      "icon": "./dist/view/img/logo.ico"
+      "icon": "./logo.ico"
     },
     "extraResources": {
       "from": "./resources/"

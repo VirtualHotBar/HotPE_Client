@@ -27,7 +27,7 @@ export default function Header_(props: any) {
             <div className='topbarLeft' style={{ height: "100%", width: "100%" }}>
                 <Nav mode="horizontal" defaultSelectedKeys={['Home']} style={{ height: "100%", width: "100%" }}>
                     <Nav.Header style={{ marginLeft: "-15px", width: '150px' }}>
-                        <img src="./img/logo256.png" height={30} />
+                        <img src="img/logo256.png" height={30} />
 
                         <span style={{ color: 'var(--semi-color-text-0)', margin: '0px 10px 0 10px' }}>HotPE Client</span>
                     </Nav.Header>

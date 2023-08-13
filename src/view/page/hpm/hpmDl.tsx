@@ -47,10 +47,15 @@ export default function HPMDl() {
     if (selectHPMClassIndex == -1) {
         //搜索模块
         for (let i in HPMListOnline) {
+            if (HPMListOnline[i].class == '推荐') {
+                continue
+            }
+
             let HPMListTemp = HPMListOnline[i].list
+
             for (let i_ in HPMListTemp) {
                 let tempHPM: HPM = HPMListTemp[i_]
-                if (tempHPM.name.includes(HPMSearch.value) || tempHPM.description.includes(HPMSearch.value) || tempHPM.maker.includes(HPMSearch.value)) {
+                if ((tempHPM.name+tempHPM.description+tempHPM.maker).toLowerCase().includes(HPMSearch.value.toLowerCase())) {
                     HPMItems.push(tempHPM)
                 }
             }
