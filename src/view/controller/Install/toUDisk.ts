@@ -83,7 +83,6 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 
     //获取数据分区盘符失败后重新获取
     if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter)) {
-        console.log('获取数据分区盘符失败后重新获取:',dataLetter);
         await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')//卸载盘符
         dataLetter = await getUsableLetter()//取个没被占用(可用)的盘符
         isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)//重新分配盘符
