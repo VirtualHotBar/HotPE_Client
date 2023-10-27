@@ -52,8 +52,10 @@ export async function getPartitionsInfo() {
 }
 
 
-
-
+//获取所有盘符，包括虚拟盘符
+export async function getAllLetterInfo() {
+    config.environment.ware.allLetter = filterArrayNull((await runCmdAsync(roConfig.path.tools + 'letter.bat')).split(' ')).reverse()//翻转
+}
 
 
 
@@ -71,24 +73,23 @@ export function isMoveForDisk(diskIndex: number) {
 }
 
 //取所有盘符
-export async function getAllLetter() {
+/* export async function getAllLetter() {
     let allLetter: Array<string> = []
 
+    //不包括虚拟盘符
     for (let i in config.environment.ware.partitions) {
         const partition = config.environment.ware.partitions[i]
         if (partition.letter != '') {
             allLetter.push(partition.letter)
         }
     }
-
     return allLetter
-}
+} */
 
 //盘符是否存在
 export async function letterIsExist(letter: string) {
-    let allLetter: Array<string> = await getAllLetter()
-    for (let i in allLetter) {
-        if (allLetter[i].substring(0, 1) == letter.substring(0, 1)) {
+    for (let i in config.environment.ware.allLetter) {
+        if (config.environment.ware.allLetter[i].substring(0, 1) == letter.substring(0, 1)) {
             return true
         }
     }
@@ -100,11 +101,12 @@ export async function letterIsExist(letter: string) {
 export async function getUsableLetter() {
     let letters: Array<string> = 'FGHIJKLMNOPQRSTUVWXYZABCDE'.split('')
 
-    await getPartitionsInfo()//更新一下分区信息
-    
+    //await getPartitionsInfo()//更新一下分区信息
+    await getAllLetterInfo()//更新所有盘符信息
+
     for (let i in letters) {
-        if (!await letterIsExist(letters[i]+':' )) {
-            return letters[i] +':'
+        if (!await letterIsExist(letters[i] + ':')) {
+            return letters[i] + ':'
         }
     }
 

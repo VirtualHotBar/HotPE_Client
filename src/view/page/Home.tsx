@@ -145,13 +145,13 @@ export default function Home(props: any) {
     //处理状态
     if (config.state.install == "noDown") {
         content = <>
-            <div ><span style={{ fontSize: '80px' }}>😶</span>{/* <EmotionUnhappy theme="outline" size="90" fill="#4a90e2" /> */}</div>
+            <div ><span style={{ fontSize: '80px', fontFamily: 'emoji' }}>😶</span>{/* <EmotionUnhappy theme="outline" size="90" fill="#4a90e2" /> */}</div>
             <h3>未检测到HotPE的相关文件,需要下载,以便安装</h3>
             <Button type='primary' style={{ marginRight: 8 }} onClick={toDlPERes}>开始下载</Button>
         </>
     } else if (config.state.install == 'noSetup') {
         content = <>
-            <div ><span style={{ fontSize: '80px' }}>🤔</span>{/* <Help theme="outline" size="90" fill="#4a90e2" /> */}</div>
+            <div ><span style={{ fontSize: '80px', fontFamily: 'emoji' }}>🤔</span>{/* <Help theme="outline" size="90" fill="#4a90e2" /> */}</div>
             <h3>现在并未检测到有HotPE的安装,请插入已安装的U盘或开始安装</h3>
             <Button onClick={() => { props.setNavKey('SetupToSys') }} type='primary' style={{ marginRight: 8 }}>安装到系统</Button>
             <Button onClick={() => { props.setNavKey('SetupToUDisk') }} type='primary' style={{ marginRight: 8 }}>安装到U盘</Button>
@@ -159,7 +159,7 @@ export default function Home(props: any) {
         </>
     } else if (config.state.install == 'ready') {
         content = <>
-            <div ><span style={{ fontSize: '80px' }}>😊</span>{/* <EmotionHappy theme="outline" size="90" fill="#4a90e2" /> */}</div>
+            <div ><span style={{ fontSize: '80px', fontFamily: 'emoji' }}>😊</span>{/* <EmotionHappy theme="outline" size="90" fill="#4a90e2" /> */}</div>
             <h3>你的HotPE已准备就绪,你可以进行更改</h3>
             <Button onClick={() => { props.setNavKey('HPMDl') }} type='primary' style={{ marginRight: 8 }}>模块下载</Button>
             <Button onClick={() => { props.setNavKey('HPMMgr') }} type='primary' style={{ marginRight: 8 }}>模块管理</Button>

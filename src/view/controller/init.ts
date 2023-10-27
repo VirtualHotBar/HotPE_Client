@@ -31,6 +31,7 @@ export async function initClient(setStartStr: Function) {
     //获取需要的环境信息
     //await getDisksInfo()
     //await getPartitionsInfo()
+    //await getAllLetterInfo()
 
     //检查已安装的分区
     await checkPEDrive()//默认选择最后一个，并获取获取本地HPM列表,have getDisksInfo and getPartitionsInfo

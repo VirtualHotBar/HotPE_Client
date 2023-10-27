@@ -27,7 +27,8 @@ interface Config {
                 firmware:string,//固件：UEFI
             },
             disks:Array<disksInfo>,
-            partitions:Array<partitionInfo>
+            partitions:Array<partitionInfo>,
+            allLetter:Array<string>//所有盘符，包括虚拟盘符
         }
 
     },

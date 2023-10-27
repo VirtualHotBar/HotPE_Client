@@ -76,7 +76,8 @@ let config: Config = {
                 firmware: '',
             },
             disks: [],
-            partitions:[]
+            partitions:[],
+            allLetter:[]
         }
 
     },

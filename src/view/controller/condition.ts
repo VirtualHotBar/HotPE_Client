@@ -6,7 +6,7 @@ import { isHotPEDrive, traverseFiles, readHotPEConfig, delFiles } from "../utils
 import { updateState } from "./init";
 import { checkHPMFiles } from "./hpm/checkHpmFiles";
 import { checkPESetting } from "./setting/setting";
-import { getDisksInfo, getPartitionsInfo, isMoveForDisk } from "../utils/disk/diskInfo";
+import { getAllLetterInfo, getDisksInfo, getPartitionsInfo, isMoveForDisk } from "../utils/disk/diskInfo";
 
 //检查PE资源
 export async function checkPERes() {
@@ -37,6 +37,7 @@ export async function checkPEDrive() {
     //刷新一下DiskList
     await getDisksInfo()
     await getPartitionsInfo()
+    await getAllLetterInfo()
 
     config.state.setupToSys = 'without'
 

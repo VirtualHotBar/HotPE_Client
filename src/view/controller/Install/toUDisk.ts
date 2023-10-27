@@ -81,8 +81,13 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
         dataLetter = takeMidStr(back, '盘符:', '文件系统:').replaceAll('	', '').replaceAll('\r\n', '').replaceAll(' ', '');
     });
 
-    console.log(dataLetter);
-
+    //获取数据分区盘符失败后重新获取
+    if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter)) {
+        console.log('获取数据分区盘符失败后重新获取:',dataLetter);
+        await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')//卸载盘符
+        dataLetter = await getUsableLetter()//取个没被占用(可用)的盘符
+        isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)//重新分配盘符
+    }
 
     await runCmdAsync(pecmdPath + ' DFMT ' + dataLetter + ',exFAT,HotPE工具箱')
 
@@ -160,7 +165,7 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
     setStepStr('正在删除U盘所有分区')
     //删除磁盘所有分区
     await runCmdAsync(fbplusPath + ' (hd' + diskIndex + ') format --force --raw --fat32  --align')//还原磁盘为普通模式（删除fbinst引导记录）
-    await runPacmd(' /hd:' + diskIndex + '  /del:all')
+    await runPacmd(' /hd:' + diskIndex + ' /del:all')
 
     setStepStr('正在初始化U盘')
     //初始化
