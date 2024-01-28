@@ -1,4 +1,4 @@
-import { HPM, HPMClass, HPMDLRender, HPMDl } from "../type/hpm";
+import type { HPM, HPMClass, HPMDLRender, HPMDl } from "../type/hpm";
 
 //在线的HPM列表
 let HPMListOnline: Array<HPMClass> = []

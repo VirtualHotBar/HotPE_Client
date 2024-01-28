@@ -14,7 +14,7 @@ let isInitDone = false
 
 export async function initClient(setStartStr: Function) {
     //结束傲梅
-    await runCmdAsync('taskkill /IM PartAssist.exe /F')
+    //await runCmdAsync('taskkill /IM PartAssist.exe /F')
 
 
     await initDir()

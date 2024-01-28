@@ -7,29 +7,29 @@ interface HPMClass {
 }
 
 interface HPM {
-    fileName:string,
-    size:number,
-    name:string,
-    maker:string,
-    version:string,
-    description:string,
-    time:Date,
-    dlLink?:string,
-    state?:'without'|'downloading'|'installed'
+    fileName: string,
+    size: number,
+    name: string,
+    maker: string,
+    version: string,
+    description: string,
+    time: Date,
+    dlLink?: string,
+    state?: 'without' | 'downloading' | 'installed'
 }
 
-interface HPMDl{
-    HPMInfo:HPM,
-    dlClass:Aria2,
-    dlInfo:Aria2Attrib
+interface HPMDl {
+    HPMInfo: HPM,
+    dlClass: Aria2,
+    dlInfo: Aria2Attrib
 }
 
- interface HPMDLRender{
-    callRefreshPage:Function,
-    callRefreshNav:Function,
-    callRefreshResult:Function,//任务结束时更新
-    callRefreshDlTab:Array<Function>
-    
-} 
+interface HPMDLRender {
+    callRefreshPage: Function,
+    callRefreshNav: Function,
+    callRefreshResult: Function,//任务结束时更新
+    callRefreshDlTab: Array<Function>
 
-export { HPMClass,  HPM ,HPMDl ,HPMDLRender }
+}
+
+export { HPMClass, HPM, HPMDl, HPMDLRender }

@@ -12,8 +12,8 @@ export async function checkPESetting() {
     if (config.environment.HotPEDrive.new.letter == '') { return }
 
 
-    if (await isFileExisted(config.environment.HotPEDrive.new.letter + 'HotPE\\wallpaper.jpg')) {
-        setting.pe.wallpaper = config.environment.HotPEDrive.new.letter + 'HotPE\\wallpaper.jpg'
+    if (await isFileExisted(config.environment.HotPEDrive.new.letter + '\\HotPE\\wallpaper.jpg')) {
+        setting.pe.wallpaper = config.environment.HotPEDrive.new.letter + '\\HotPE\\wallpaper.jpg'
     }else{
         setting.pe.wallpaper=''
     }
@@ -30,7 +30,7 @@ export async function savePESetting() {
     }
 
 
-    await copyFile(setting.pe.wallpaper, config.environment.HotPEDrive.new.letter + 'HotPE\\wallpaper.jpg')
+    await copyFile(setting.pe.wallpaper, config.environment.HotPEDrive.new.letter + '\\HotPE\\wallpaper.jpg')
 
     Toast.success('设置保存成功!')
 
