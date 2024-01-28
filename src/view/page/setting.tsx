@@ -120,7 +120,7 @@ export default function Setting(props: any) {
 
                                 <p><Text link={{ href: 'https://www.hotpe.top/', target: '_blank' }}>HotPE工具箱</Text></p>
                                 <p><Text link={{ href: 'https://docs.hotpe.top/overview/contract.html', target: '_blank' }}>用户协议</Text></p>
-                                <p><Text link onClick={() => { props.setNavKey('Docs') }} >HotPE 文档</Text></p>
+                                <p><Text link onClick={() => { props.upNavKey('Docs') }} >HotPE 文档</Text></p>
                                 <p><Text link={{ href: 'https://blog.hotpe.top/', target: '_blank' }}>VirtualHotBarの博客</Text></p>
 
                             </Card>

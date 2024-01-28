@@ -17,7 +17,7 @@ import Setting from './setting';
 export default function Page(props: any) {
 
     if (props.navKey == 'Home') {
-        return (<Home setNavKey={props.setNavKey} setLockMuen={props.setLockMuen}></Home>)
+        return (<Home upNavKey={props.upNavKey} setLockMuen={props.setLockMuen}></Home>)
 
     } else if (props.navKey == 'SetupToSys') {
         return (<SetupToSys setLockMuen={props.setLockMuen}></SetupToSys>)
@@ -41,7 +41,7 @@ export default function Page(props: any) {
         return (<Docs></Docs>)
 
     } else if (props.navKey == 'Setting') {
-        return (<Setting setNavKey={props.setNavKey}></Setting>)
+        return (<Setting upNavKey={props.upNavKey}></Setting>)
     }
 
     return (<></>)

@@ -1,10 +1,10 @@
-import React, { useState,useEffect,useReducer } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import Header_ from './layout/header.tsx'
 import Page from './page/page.tsx'
 
 import { Layout, Nav, Button, Notification, Badge } from '@douyinfe/semi-ui';
 import { IconAppCenter, IconHelpCircle, IconPaperclip, IconHome, IconSetting } from '@douyinfe/semi-icons';
-import { HPMDLRender, HPMDlList } from './services/hpm.ts';
+import { HPMDLRender, HPMDlList, HPMListOnline } from './services/hpm.ts';
 
 const { Header, Sider, Content } = Layout;
 
@@ -15,6 +15,10 @@ export default function App() {
     const [lockMuen, setLockMuen] = useState(false);
 
     function upNavKey(navKey_: string) {
+
+
+
+        //锁定菜单
         if (lockMuen) {
             Notification.info({
                 content: '请任务结束后再切换页面',
@@ -22,6 +26,14 @@ export default function App() {
                 theme: 'light',
             })
             //setNavKey(navKey)
+
+        } else if (HPMListOnline.length == 0 && navKey_ == "HPMDl") {//无模块
+            Notification.warning({
+                content: '未获取到模块列表，功能不可用。',
+                duration: 2,
+                theme: 'light',
+            })
+
         } else {
             setNavKey(navKey_)
         }
@@ -40,7 +52,7 @@ export default function App() {
 
                 </Sider>
                 <Content style={{ backgroundColor: 'var(--semi-color-bg-0)', height: "100%" }}>
-                    <Page navKey={navKey} setNavKey={setNavKey} setLockMuen={setLockMuen}></Page>
+                    <Page navKey={navKey} upNavKey={upNavKey} setLockMuen={setLockMuen}></Page>
                 </Content>
             </Layout>
 
@@ -49,7 +61,7 @@ export default function App() {
     )
 }
 
-function Navigation(props:any) {
+function Navigation(props: any) {
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
 
     useEffect(() => {

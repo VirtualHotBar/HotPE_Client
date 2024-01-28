@@ -16,6 +16,7 @@ export async function initClient(setStartStr: Function) {
     //结束傲梅
     //await runCmdAsync('taskkill /IM PartAssist.exe /F')
 
+    
 
     await initDir()
 
@@ -102,8 +103,11 @@ async function checkEnvironment() {
     } */
 
     //联网检查
-    while (!window.navigator.onLine) {
+/*     while (!window.navigator.onLine) {
         await errorDialog('已离线', '请检查网络，点击[确定]重试。')
+    } */
+    if (!window.navigator.onLine){
+        await errorDialog('已离线', '未连接互联网，功能将受限，点击[确定]继续。')
     }
 
     //路径检查
