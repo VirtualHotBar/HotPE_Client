@@ -11,6 +11,7 @@ import { UpdateLatest } from '../type/update';
 import { updateClient, updateDoneTip } from '../controller/update';
 import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
 import { checkPESetting } from '../controller/setting/setting';
+import { formatSize } from '../utils/utils';
 
 let updatePromptOk = false//更新提示
 
@@ -39,6 +40,7 @@ export default function Home(props: any) {
     function toDlPERes() {
         //锁定菜单
         props.setLockMuen(true)
+        setDlPercent(0)
 
         dlPERes(setDlPercent, setDlSpeed, (back: Aria2Attrib) => {
 
@@ -80,9 +82,11 @@ export default function Home(props: any) {
             let updateData: UpdateLatest = {
                 id: '',
                 name: '',
-                description: '',
-                url: '',
-                date: ''
+                pushTime: '',
+                body: '',
+                size: 0,
+                download_url: '',
+                download_url_github: ''
             }
 
             if (config.state.resUpdate == 'needUpdatePE') {
@@ -96,8 +100,9 @@ export default function Home(props: any) {
             const updateModalContent = <>
                 <Descriptions>
                     <Descriptions.Item itemKey="更新版本">{updateData.name} (id{updateData.id})</Descriptions.Item>
-                    <Descriptions.Item itemKey="更新日志"><ReactMarkdown>{updateData.description}</ReactMarkdown></Descriptions.Item>
-                    <Descriptions.Item itemKey="发布日期">{updateData.date}</Descriptions.Item>
+                    <Descriptions.Item itemKey="更新日志"><ReactMarkdown>{updateData.body}</ReactMarkdown></Descriptions.Item>
+                    <Descriptions.Item itemKey="发布日期">{updateData.pushTime}</Descriptions.Item>
+                    <Descriptions.Item itemKey="更新大小">{formatSize(updateData.size)}</Descriptions.Item>
                 </Descriptions>
 
             </>
@@ -110,6 +115,7 @@ export default function Home(props: any) {
                     } else if (config.state.resUpdate == 'needUpdateClient') {
                         //锁定菜单
                         props.setLockMuen(true)
+                        setDlPercent(0)
                         updateClient(setDlPercent, setDlSpeed, (aria2Back: Aria2Attrib, updateStep: string) => {
                             console.log(updateStep);
                             if (aria2Back.state == 'error') {//下载错误

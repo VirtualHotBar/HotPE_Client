@@ -12,8 +12,18 @@ const fs = window.require('fs')
 
 //检查更新,pe and client
 export async function checkUpdate() {
-    await checkPEUpdate()
-    await checkClientUpdate()
+
+    fetch(config.api.api + roConfig.url.update).then(response => response.json())
+    .then(data => {
+        config.resources.pe.update = data.data.pe
+        config.resources.client.update = data.data.client
+    })
+    .catch(e => console.log(Error(e)))
+
+
+
+    //await checkPEUpdate()
+    //await checkClientUpdate()
 
     if (takeLeftStr(config.resources.pe.new, '.') < config.resources.pe.update.id) {
         config.state.resUpdate = 'needUpdatePE'
@@ -24,55 +34,6 @@ export async function checkUpdate() {
     }
 }
 
-//检查PE更新
-function checkPEUpdate() {
-    return new Promise(function (resolve, reject) {
-        fetch(config.api.ghapi + roConfig.url.update.PE).then(response => response.json())
-            .then(data => {
-
-                let updateData: UpdateLatest = {
-                    id: data.tag_name,
-                    name: data.name,
-                    description: data.body,
-                    url: config.api.dl + roConfig.url.package.PE.replaceAll('{id}', data.tag_name),
-                    date: data.published_at
-                }
-
-                config.resources.pe.update = updateData
-
-                resolve(updateData)//完成返回
-            })
-            .catch(e => console.log(Error(e)))
-
-
-    }
-    )
-}
-
-//检查客户端更新
-function checkClientUpdate() {
-    return new Promise(function (resolve, reject) {
-        fetch(config.api.ghapi + roConfig.url.update.client).then(response => response.json())
-            .then(data => {
-
-                let updateData: UpdateLatest = {
-                    id: data.tag_name,
-                    name: data.name,
-                    description: data.body,
-                    url: config.api.dl + roConfig.url.package.client.replaceAll('{id}', data.tag_name),
-                    date: data.published_at
-                }
-
-                config.resources.client.update = updateData
-
-                resolve(updateData)//完成返回
-            })
-            .catch(e => console.log(Error(e)))
-
-
-    }
-    )
-}
 
 //更新客户端
 export function updateClient(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
@@ -133,7 +94,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
 
         const updateBatSource = fs.readFileSync(roConfig.path.tools + 'update\\update.bat', 'utf8')
 
-        let updateBat = updateBatSource.replaceAll('{pack}', roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.id + '.7z')
+        let updateBat = updateBatSource.replaceAll('{pack}', roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.fileName)
         updateBat = updateBat.replaceAll('{clientDir}', roConfig.path.execDir)
 
         let batPath = roConfig.path.resources.client + 'update.bat'

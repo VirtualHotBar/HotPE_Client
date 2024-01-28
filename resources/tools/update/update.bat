@@ -31,7 +31,7 @@ del "{clientDir}resources\elevate.exe" /F /Q > tmp
 rd "{clientDir}resources\tools\" /S /Q > tmp
 
 echo 替换文件
-xcopy "%~dp0updateTemp\*" "{clientDir}*" /E /C /Q  /H /R /Y > tmp
+xcopy "%~dp0updateTemp\HotPE_Client\*" "{clientDir}*" /E /C /Q  /H /R /Y > tmp
 
 
 echo 清理退出

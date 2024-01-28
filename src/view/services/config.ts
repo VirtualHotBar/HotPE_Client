@@ -9,21 +9,18 @@ const fs = window.require('fs')
 
 //只读配置read only=======================================================================================
 const roConfig = {
-    id: '231027',
+    id: '231026',
     clientVer: 'V0.2.231027_final',
     url: {
         home: 'https://www.hotpe.top/',
         github: 'https://github.com/VirtualHotBar/HotPE_Client',
         docs: 'https://docs.hotpe.top/',
         blog: 'https://blog.hotpe.top/',
-        donate: 'https://www.hotpe.top/donation/',
-        update: {//githubApi:config.api.ghapi
-            PE: 'repos/VirtualHotBar/HotPEToolBox/releases/latest',
-            client: 'repos/VirtualHotBar/HotPE_Client/releases/latest'
-        },
+        donate: 'https://www.hotpe.top/donation/',//config.api.api
+        update: 'API/HotPE/GetUpdate/',
         package: {//config.api.dl
-            PE: 'Package/PE/{id}.7z',
-            client: 'Package/Client/{id}.7z'
+            //PE: 'Package/PE/{id}.7z',
+            //client: 'Package/Client/{id}.7z'
         }
     },
     path: {
@@ -88,9 +85,12 @@ let config: Config = {
             update: {
                 id: '',
                 name: '',
-                description: '',
-                url: '',
-                date: ''
+                pushTime: '',
+                body: '',
+                size: 0,
+                download_url: '',
+                download_url_github: '',
+                fileName: ""
             }
         },
         client: {
@@ -99,9 +99,12 @@ let config: Config = {
             update: {
                 id: '',
                 name: '',
-                description: '',
-                url: '',
-                date: ''
+                pushTime: '',
+                body: '',
+                size: 0,
+                download_url: '',
+                download_url_github: '',
+                fileName: ""
             }
         }
     }, directory: {
