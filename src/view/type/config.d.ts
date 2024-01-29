@@ -54,9 +54,12 @@ interface Config {
      download: {
         thread: number//下载线程数
     },
-    setting:{
+    setting:{//设置的缓存
         pe:{
             bootWaitTime:number//启动选择超时
+        },
+        client:{
+            themeMode:'dark' | 'light' | 'auto'//主题模式
         }
     }
 }

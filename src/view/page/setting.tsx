@@ -6,6 +6,7 @@ import { setting } from '../services/setting';
 import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
 import { updateState } from '../controller/init';
 import { AppTest } from '../controller/test';
+import { setThemeMode } from '../controller/setting/themeMode';
 const { shell, ipcRenderer } = require('electron')
 
 const { Text, Paragraph, Title } = Typography;
@@ -51,7 +52,7 @@ export default function Setting(props: any) {
                                     <Text style={{ fontWeight: 'bold' }}>壁纸</Text>
                                 </div>
                                 <div style={{ height: '140px', textAlign: 'center', overflow: 'hidden' }}>
-                                    {wallpaper == '' ? <Text>未自定义，请选择</Text> : <Image height={'100%'} src={"file://" + wallpaper}/>}
+                                    {wallpaper == '' ? <Text>未自定义，请选择</Text> : <Image height={'100%'} src={"file://" + wallpaper} />}
                                 </div>
                                 <div style={{ textAlign: 'right', width: '100%' }}>
                                     <Button style={{ marginTop: '10px' }} onClick={() => {
@@ -92,10 +93,16 @@ export default function Setting(props: any) {
 
 
                 <Collapse.Panel header="客户端设置" itemKey="client">
-                    下载最大线程数：<TreeSelect defaultValue={config.download.thread} onSelect={(value) => { setting.client.dlThread = Number(value) }} style={{ width: 100 }} treeData={[{ label: '16', value: '16', key: '16', }, { label: '32', value: '32', key: '32', }, { label: '64', value: '64', key: '64', }, { label: '128', value: '128', key: '128', }]} />
+                    下载线程数：<TreeSelect defaultValue={config.download.thread} onSelect={(value) => { setting.client.dlThread = Number(value) }} style={{ width: 100 }} treeData={[{ label: '16', value: '16', key: '16', }, { label: '32', value: '32', key: '32', }, { label: '64', value: '64', key: '64', }, { label: '128', value: '128', key: '128', }]} />
+
+
 
                     <br /><br />
-                    当前操作的HotPE安装{config.environment.HotPEDrive.all.length > 1 ? <Text onClick={()=>{HotPEDriveChoose(()=>{forceUpdate()})}} link>(选择)</Text> : <></>}：{config.environment.HotPEDrive.new.letter}
+
+                    颜色模式：<TreeSelect defaultValue={config.setting.client.themeMode} onSelect={(value: any) => { config.setting.client.themeMode = value; setThemeMode(config.setting.client.themeMode) }} style={{ width: 130 }} treeData={[{ label: '跟随系统', value: 'auto', key: 'auto' }, { label: '浅色', value: 'light', key: 'light' }, { label: '深色', value: 'dark', key: 'dark' }]} />
+                    <br />
+                    <br />
+                    当前操作的HotPE安装{config.environment.HotPEDrive.all.length > 1 ? <Text onClick={() => { HotPEDriveChoose(() => { forceUpdate() }) }} link>(选择)</Text> : <></>}：{config.environment.HotPEDrive.new.letter}
 
                     <div style={{ textAlign: 'right', width: '100%' }}>
                         <Button type='primary' onClick={() => { saveClientSetting() }}>保存更改</Button>
@@ -128,7 +135,7 @@ export default function Setting(props: any) {
                     </Row>
                     <Card style={{ marginBottom: "20px" }} title='工具' >
                         <Button onClick={() => { ipcRenderer.send('windows:openDevTools') }}>打开开发工具</Button>
-                        <Button style={{marginLeft:'8px'}} onClick={() => {  AppTest() }}>测试</Button>
+                        <Button style={{ marginLeft: '8px' }} onClick={() => { AppTest() }}>测试</Button>
                     </Card>
                 </Collapse.Panel>
             </Collapse>
@@ -158,7 +165,7 @@ export default function Setting(props: any) {
 //let HotPEDriveChooseOk = false
 
 //多个pe安装时选择
-export function HotPEDriveChoose(callback:Function) {
+export function HotPEDriveChoose(callback: Function) {
     //config.environment.HotPEDrive.all = Array.from(new Set(config.environment.HotPEDrive.all))//去重
     //console.log(config.environment.HotPEDrive.all);
 
@@ -191,6 +198,6 @@ export function HotPEDriveChoose(callback:Function) {
                 }} />
         </>
 
-        Modal.confirm({ title: '检测到安装了多个HotPE', content: modalContent, maskClosable: false, closable: false, hasCancel: false, onOk: () => { updateState(); callback()}, centered: true });
+        Modal.confirm({ title: '检测到安装了多个HotPE', content: modalContent, maskClosable: false, closable: false, hasCancel: false, onOk: () => { updateState(); callback() }, centered: true });
     }
 }

@@ -121,6 +121,9 @@ let config: Config = {
     setting:{
         pe:{
             bootWaitTime:3
+        },
+        client:{
+            themeMode:'auto'
         }
     }
 }

@@ -9,6 +9,8 @@ import { exitapp } from "../layout/header"
 import { HotPEDriveChoose } from "../page/setting"
 import { runCmdAsync } from "../utils/command"
 import { getUsableLetter } from "../utils/disk/diskInfo"
+import "./setting/themeMode"
+//import { ThemeMode } from "../type/setting"
 
 let isInitDone = false
 
@@ -66,7 +68,7 @@ export async function initClient(setStartStr: Function) {
 
     console.log(config);
     console.log(roConfig);
-
+    //setThemeMode(ThemeMode.Light)
 
     //console.log(await getUsableLetter());
 
@@ -158,3 +160,4 @@ export function isClientReady() {
 
     return true
 }
+

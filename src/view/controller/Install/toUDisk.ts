@@ -130,7 +130,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     if (isSucceed) {
         Notification.success({
             title: '安装到U盘成功！',
-            content: '每次重启都有3S的等待时间。',
+            content: '重启并从U盘启动以开始使用。',
             duration: 10,
         })
     } else {
