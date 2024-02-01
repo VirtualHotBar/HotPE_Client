@@ -27,6 +27,7 @@ del "{pack}" /F /Q > tmp
 del "{clientDir}resources\app.asar" /F /Q > tmp
 del "{clientDir}resources\app-update.yml" /F /Q > tmp
 del "{clientDir}resources\elevate.exe" /F /Q > tmp
+del "{clientDir}resources\config.json" /F /Q > tmp
 
 rd "{clientDir}resources\tools\" /S /Q > tmp
 
