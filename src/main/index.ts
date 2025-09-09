@@ -1,9 +1,13 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
-import { dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, shell, dialog } from 'electron'
 import path from 'path'
-    
+
+// 声明全局变量用于 Vite 开发服务器
+declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
+declare const MAIN_WINDOW_VITE_NAME: string;
+
+
 //是否为开发模式 
-import isDev from 'electron-is-dev'
+const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
 app.on('ready', () => {
   //创建一个窗口
@@ -14,20 +18,22 @@ app.on('ready', () => {
     height: 640,
     minHeight: 600,
     frame: false,      //无边框窗口
-    icon: path.join(__dirname, '../dist/view/img/logo.ico'),     //应用运行时的标题栏图标
+    icon: path.join(__dirname, '../../logo.ico'),     //应用运行时的标题栏图标
     webPreferences: {
       backgroundThrottling: false,   //设置应用在后台正常运行
-      nodeIntegration: true,     //设置能在页面使用nodejs的API
-      //sandbox: false,//禁用沙箱
-      contextIsolation: false,
-      webSecurity: false,//关闭浏览器安全性检查 
-      preload: path.join(__dirname, './preload.js')
+      nodeIntegration: false,     //禁用 nodeIntegration 提高安全性
+      contextIsolation: true,     //启用上下文隔离
+      webSecurity: true,          //启用 web 安全性检查
+      preload: path.join(__dirname, 'preload.js')
     }
   })
   
   //窗口加载html文件
-  //mainWindow.loadFile('./src/main.html')
-  mainWindow.loadURL(isDev ? 'http://localhost:5173' : `file://${path.join(__dirname, '../view/index.html')}`);
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  } else {
+    mainWindow.loadFile(path.join(__dirname, '../view/index.html'));
+  }
 
   //去掉菜单栏
   mainWindow.removeMenu()
