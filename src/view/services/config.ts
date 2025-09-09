@@ -1,4 +1,4 @@
-import { delFiles, isJSON, parseJosnFile, writeJosnFile } from "../utils/utils"
+import { isJSON, writeJosnFile } from "../utils/utils"
 import { Config } from "../type/config"
 import { runCmdSync } from "../utils/command"
 import { safeFS } from "../utils/safeAPI"

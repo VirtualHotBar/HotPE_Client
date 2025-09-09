@@ -1,5 +1,5 @@
-import { Button, Collapse, List, TabPane, Tabs, Typography } from '@douyinfe/semi-ui';
-import React, { useState, useReducer } from 'react';
+import { Button, Collapse, List, Typography } from '@douyinfe/semi-ui';
+import { useReducer } from 'react';
 import { delHPM, disableHPM, enableHPM } from '../../controller/hpm/setHpm';
 import { HPMListLocal } from '../../services/hpm';
 import { formatSize } from '../../utils/utils';
@@ -7,7 +7,7 @@ import { formatSize } from '../../utils/utils';
 const { Text } = Typography;
 
 export default function HPMMgr() {
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
+    const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
 
     const style = {
 

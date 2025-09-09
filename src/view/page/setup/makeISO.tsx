@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Banner, Spin } from '@douyinfe/semi-ui';
+import { useState } from 'react';
+import { Button, Spin } from '@douyinfe/semi-ui';
 import { Cd } from '@icon-park/react';
 
 import { makeISOFile } from '../../controller/Install/makeISO';

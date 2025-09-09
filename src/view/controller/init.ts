@@ -1,5 +1,5 @@
 import { config, roConfig } from "../services/config"
-import { getHardwareInfo } from "../utils/hardwareInfo"
+
 import { checkUpdate } from "./update"
 import { checkPERes, checkPEDrive } from "./condition"
 import { makeDir } from "../utils/utils"
@@ -8,7 +8,7 @@ import { errorDialog } from "./log"
 import { exitapp } from "../layout/header"
 import { HotPEDriveChoose } from "../page/setting"
 import { runCmdAsync } from "../utils/command"
-import { getUsableLetter } from "../utils/disk/diskInfo"
+
 import "./setting/themeMode"
 //import { ThemeMode } from "../type/setting"
 

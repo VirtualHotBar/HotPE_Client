@@ -1,7 +1,7 @@
 import { Modal, Notification } from "@douyinfe/semi-ui"
 import { config, roConfig } from "../../services/config"
 import { runCmdAsync } from "../../utils/command"
-import { copyDir, copyFile, delDir, delFiles, isHotPEDrive, moveFiles, readHotPEConfig, takeLeftStr, takeMidStr, unZipFile, writeHotPEConfig } from "../../utils/utils"
+import { copyDir, delDir, readHotPEConfig, takeLeftStr, takeMidStr, unZipFile, writeHotPEConfig } from "../../utils/utils"
 import { checkPEDrive } from "../condition"
 import { checkIsReady, getHotPEDriveLetter } from "./check"
 import { ReactNode } from "react"
@@ -85,8 +85,8 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 
     //pe配置文件
     let HotPEConfig = await readHotPEConfig(dataLetter + '\\')
-    HotPEConfig.information.Installation_Method = 'UDisk'
-    HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
+    HotPEConfig['information'].Installation_Method = 'UDisk'
+    HotPEConfig['information'].ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
     await writeHotPEConfig(dataLetter + '\\', HotPEConfig)
 
     await runCmdAsync('attrib ' + dataLetter + '\\HotPE +S +H /S /D')
@@ -216,8 +216,8 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
 
         //pe配置文件
         let HotPEConfig = await readHotPEConfig(dataLetter + '\\')
-        HotPEConfig.information.Installation_Method = 'UDisk'
-        HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
+        HotPEConfig['information'].Installation_Method = 'UDisk'
+        HotPEConfig['information'].ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
         await writeHotPEConfig(dataLetter + '\\', HotPEConfig)
 
         await runCmdAsync('attrib ' + dataLetter + '\\HotPE +S +H /S /D')
@@ -286,13 +286,13 @@ async function runPacmd(cmd: string, callBack: Function = () => { }) {
 
 //确认对话框
 function confirmDialog(title: string, content: ReactNode) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         Modal.warning(
             {
                 title: title,
                 content: content,
-                onOk: (e: any) => { resolve(true) },
-                onCancel: (e: any) => { resolve(false) },
+                onOk: () => { resolve(true) },
+                onCancel: () => { resolve(false) },
                 centered: true
             }
         )

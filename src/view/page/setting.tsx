@@ -1,6 +1,6 @@
-import React, { useReducer, useState } from 'react';
+import { useReducer, useState } from 'react';
 import { config, roConfig } from '../services/config';
-import { Card, Button, Row, Col, Typography, TreeSelect, InputNumber, Input, Space, Divider, Image, CardGroup, Collapse, Modal, Checkbox, Switch } from '@douyinfe/semi-ui';
+import { Card, Button, Row, Col, Typography, TreeSelect, InputNumber, Image, Collapse, Modal } from '@douyinfe/semi-ui';
 import { checkPESetting, saveClientSetting, savePESetting } from '../controller/setting/setting';
 import { setting } from '../services/setting';
 import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
@@ -10,7 +10,7 @@ import { setThemeMode } from '../controller/setting/themeMode';
 import { runCmdSync } from '../utils/command';
 
 
-const { Text, Paragraph, Title } = Typography;
+const { Text } = Typography;
 
 
 
@@ -22,7 +22,7 @@ const { Text, Paragraph, Title } = Typography;
 
 export default function Setting(props: any) {
 
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
+    const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
 
     const [wallpaper, setWallpaper] = useState(setting.pe.wallpaper)
 
@@ -57,10 +57,10 @@ export default function Setting(props: any) {
                                 </div>
                                 <div style={{ textAlign: 'right', width: '100%' }}>
                                     <Button style={{ marginTop: '10px' }} onClick={() => {
-                                        const wallTemp: Array<string> = window.electronAPI.getOpenPath('')
+                                        const wallTemp = window.electronAPI.dialog.getOpenPath('')
                                         if (wallTemp != null && wallTemp != undefined) {
                                             if (wallTemp.length > 0) {
-                                                setting.pe.wallpaper = wallTemp[0]
+                                                setting.pe.wallpaper = wallTemp[0] || ''
                                                 setWallpaper(setting.pe.wallpaper)
                                             }
                                         }
@@ -135,7 +135,7 @@ export default function Setting(props: any) {
                         </Col>
                     </Row>
                     <Card style={{ marginBottom: "20px" }} title='工具' >
-                        <Button onClick={() => { window.electronAPI.openDevTools() }}>打开开发工具</Button>
+                        <Button onClick={() => { window.electronAPI.windows.openDevTools() }}>打开开发工具</Button>
                         <Button style={{ marginLeft: '8px' }} onClick={() => { AppTest() }}>测试</Button>
                         <Button style={{ marginLeft: '8px' }} onClick={() => { runCmdSync('notepad.exe ./resources/config.json') }}>编辑配置文件</Button>
                     </Card>

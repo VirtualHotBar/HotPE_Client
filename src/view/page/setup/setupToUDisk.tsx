@@ -1,6 +1,6 @@
 import { Button, Spin, Steps, TreeSelect } from '@douyinfe/semi-ui';
 import { UsbMemoryStick } from '@icon-park/react';
-import React, { useState, useReducer, useEffect } from 'react';
+import { useState, useReducer, useEffect } from 'react';
 import { config } from '../../services/config';
 import { takeLeftStr} from '../../utils/utils';
 import { IconRefresh } from '@douyinfe/semi-icons';
@@ -26,7 +26,7 @@ async function UDiskRefres(steUDiskRefreshing: Function, setLockMuen: Function) 
 }
 
 export default function SetupToUDisk(props: any) {
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
+    useReducer(x => x + 1, 0);//刷新页面
     const [uDiskRefreshing, steUDiskRefreshing] = useState(false)
 
     const [step, setStep] = useState(-1)//步骤   -1:无操作，-2：加载(还原)
@@ -38,10 +38,12 @@ export default function SetupToUDisk(props: any) {
     let driveDataTemp: Array<any> = []
     for (let i in config.environment.ware.disks) {
         const disk = config.environment.ware.disks[i]
+        if (!disk) continue
 
         let letter: Array<string> = []
         for (let i in config.environment.ware.partitions) {
             const partition = config.environment.ware.partitions[i]
+            if (!partition) continue
             if (partition.letter != '' && partition.diskIndex == disk.index) {
                 letter.push(partition.letter)
             }

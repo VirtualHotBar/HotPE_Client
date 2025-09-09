@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Steps, Spin, Button } from '@douyinfe/semi-ui';
-import { Windows, Delete, CheckOne } from '@icon-park/react';
+import { Windows, Check } from '@icon-park/react';
 import { config } from '../../services/config';
 import { installToSystem, uninstallToSystem, updatePEForSys } from '../../controller/Install/toSystem';
-import { getHardwareInfo } from '../../utils/hardwareInfo';
 import { takeLeftStr } from '../../utils/utils';
 
 export default function SetupToSys(props:any) {
@@ -26,7 +25,7 @@ export default function SetupToSys(props:any) {
 
                         {!isUninstalling
                             ? <div style={{ textAlign: "center", marginTop: "100px" }}>
-                                <CheckOne theme="outline" size="90" fill="var( --semi-color-secondary)" />
+                                <Check theme="outline" size="90" fill="var( --semi-color-secondary)" />
                                 <h2 >已安装到系统</h2>
                                 <h3 style={{color:'var(--semi-color-text-1)'}}>你已将HotPE安装到系统中，你可以进行</h3>
                                 {//更新按钮

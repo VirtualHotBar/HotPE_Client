@@ -117,7 +117,7 @@ class Aria2 {
 
         runCmd(cmd, (print: string) => {
             console.log(print);
-        }, async (e: number) => {
+        }, async (_e: number) => {
 
             //结束返回
             //删除下载的文件

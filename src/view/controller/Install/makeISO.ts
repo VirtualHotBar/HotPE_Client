@@ -1,7 +1,7 @@
 import { Notification } from '@douyinfe/semi-ui';
 import { config, roConfig } from '../../services/config';
 import { runCmdAsync } from '../../utils/command';
-import { copyDir, copyFile, dealStrForCmd, delDir, isFileExisted, takeLeftStr, unZipFile } from '../../utils/utils';
+import { copyDir, dealStrForCmd, delDir, isFileExisted, takeLeftStr, unZipFile } from '../../utils/utils';
 import { checkIsReady } from './check';
 
 
@@ -12,7 +12,7 @@ const tempPathISO = roConfig.path.clientTemp + 'install\\ISOFile\\'
 export async function makeISOFile(setStep: Function, setStepStr: Function,setLockMuen: Function) {
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
-    let ISOSavePath = window.electronAPI.getSavePath(roConfig.environment.desktopDir + 'HotPE-' + takeLeftStr(config.resources.pe.new, '.'))
+    let ISOSavePath = window.electronAPI.dialog.getSavePath(roConfig.environment.desktopDir + 'HotPE-' + takeLeftStr(config.resources.pe.new, '.'))
     if (ISOSavePath == undefined) { return }
 
     setLockMuen(true)

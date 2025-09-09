@@ -183,7 +183,6 @@ export const compatChildProcess = {
   } => {
     const command = `${shell} ${args.join(' ')}`;
     let outputCallback: ((data: string) => void) | null = null;
-    let errorCallback: ((data: string) => void) | null = null;
     let exitCallback: ((code: number) => void) | null = null;
     
     // 启动命令执行
@@ -209,10 +208,8 @@ export const compatChildProcess = {
         }
       },
       stderr: {
-        on: (event: string, callback: (data: any) => void) => {
-          if (event === 'data') {
-            errorCallback = callback;
-          }
+        on: (_event: string, _callback: (data: any) => void) => {
+          // errorCallback is not used in current implementation
         }
       },
       on: (event: string, callback: (code: number) => void) => {

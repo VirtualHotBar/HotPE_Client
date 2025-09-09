@@ -1,49 +1,121 @@
-import React, { useState } from 'react';
-import { Notification } from '@douyinfe/semi-ui';
+/**
+ * 页面路由组件 - 重构后的页面管理
+ */
 
-import Home from './home';
+import React, { Suspense, lazy } from 'react';
+import { Spin, Typography } from '@douyinfe/semi-ui';
+import { PAGES, type PageType } from '../constants';
+import ErrorBoundary from '../components/ErrorBoundary';
 
-import SetupToSys from './setup/setupToSys';
-import SetupToUDisk from './setup/setupToUDisk';
-import MakeISO from './setup/makeISO';
+const { Text } = Typography;
 
-import HPMDl from './hpm/hpmDl';
-import HPMMgr from './hpm/hpmMgr';
-import TaskMgr from './hpm/taskMgr';
+// 懒加载页面组件
+const Home = lazy(() => import('./home'));
+const SetupToSys = lazy(() => import('./setup/setupToSys'));
+const SetupToUDisk = lazy(() => import('./setup/setupToUDisk'));
+const MakeISO = lazy(() => import('./setup/makeISO'));
+const HPMDl = lazy(() => import('./hpm/hpmDl'));
+const HPMMgr = lazy(() => import('./hpm/hpmMgr'));
+const TaskMgr = lazy(() => import('./hpm/taskMgr'));
+const Docs = lazy(() => import('./docs'));
+const Setting = lazy(() => import('./setting'));
 
-import Docs from './docs';
-import Setting from './setting';
+// 组件属性类型
+interface PageProps {
+  currentPage: string;
+  onNavigate: (page: string) => void;
+  onMenuLockChange: (locked: boolean) => void;
+}
 
-export default function Page(props: any) {
+// 页面组件通用属性类型
+interface BasePageProps {
+  onNavigate?: (page: string) => void;
+  onMenuLockChange?: (locked: boolean) => void;
+}
 
-    if (props.navKey == 'Home') {
-        return (<Home upNavKey={props.upNavKey} setLockMuen={props.setLockMuen}></Home>)
+// 加载组件
+function LoadingSpinner() {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '200px',
+        flexDirection: 'column',
+      }}
+    >
+      <Spin size="large" />
+      <Text style={{ marginTop: '16px' }}>加载中...</Text>
+    </div>
+  );
+}
 
-    } else if (props.navKey == 'SetupToSys') {
-        return (<SetupToSys setLockMuen={props.setLockMuen}></SetupToSys>)
-
-    } else if (props.navKey == 'SetupToUDisk') {
-        return (<SetupToUDisk setLockMuen={props.setLockMuen}></SetupToUDisk>)
-
-    } else if (props.navKey == 'MakeISO') {
-        return (<MakeISO setLockMuen={props.setLockMuen}></MakeISO>)
-
-    } else if (props.navKey == 'HPMDl') {
-        return (<HPMDl></HPMDl>)
-
-    } else if (props.navKey == 'HPMMgr') {
-        return (<HPMMgr></HPMMgr>)
-
-    } else if (props.navKey == 'TaskMgr') {
-        return (<TaskMgr></TaskMgr>)
-
-    } else if (props.navKey == 'Docs') {
-        return (<Docs></Docs>)
-
-    } else if (props.navKey == 'Setting') {
-        return (<Setting upNavKey={props.upNavKey}></Setting>)
-    }
-
-    return (<></>)
-
+// 页面配置映射
+const pageComponents: Record<PageType, React.ComponentType<BasePageProps>> = {
+  [PAGES.HOME]: Home,
+  [PAGES.SETUP_TO_SYS]: SetupToSys,
+  [PAGES.SETUP_TO_UDISK]: SetupToUDisk,
+  [PAGES.MAKE_ISO]: MakeISO,
+  [PAGES.HPM_DOWNLOAD]: HPMDl,
+  [PAGES.HPM_MANAGER]: HPMMgr,
+  [PAGES.TASK_MANAGER]: TaskMgr,
+  [PAGES.DOCS]: Docs,
+  [PAGES.SETTING]: Setting,
 };
+
+/**
+ * 页面路由组件
+ */
+export default function Page({ currentPage, onNavigate, onMenuLockChange }: PageProps) {
+  // 获取对应的页面组件
+  const PageComponent = pageComponents[currentPage as PageType];
+
+  // 如果页面不存在，显示404
+  if (!PageComponent) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          flexDirection: 'column',
+        }}
+      >
+        <Text type="danger" style={{ fontSize: '18px', marginBottom: '8px' }}>
+          页面未找到
+        </Text>
+        <Text type="secondary">
+          请求的页面 "{currentPage}" 不存在
+        </Text>
+      </div>
+    );
+  }
+
+  // 渲染页面组件
+  return (
+    <ErrorBoundary
+      fallback={
+        <div
+          style={{
+            padding: '40px',
+            textAlign: 'center',
+          }}
+        >
+          <Text type="danger">页面加载失败</Text>
+        </div>
+      }
+    >
+      <Suspense fallback={<LoadingSpinner />}>
+        <PageComponent
+          onNavigate={onNavigate}
+          onMenuLockChange={onMenuLockChange}
+        />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+// 导出页面属性类型供其他组件使用
+export type { BasePageProps };

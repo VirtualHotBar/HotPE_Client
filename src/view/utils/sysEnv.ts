@@ -1,4 +1,4 @@
-import { getHardwareInfo } from "./hardwareInfo";
+
 
 //环境变量：process.env
 

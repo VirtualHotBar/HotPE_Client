@@ -1,8 +1,7 @@
 import { safeFS } from "./safeAPI";
 import ini from 'ini'
-import { config, roConfig } from "../services/config";
-import { runCmd, runCmdAsync, runCmdSync } from "./command";
-import { disksInfo, partitionInfo } from '../type/config';
+import { roConfig } from "../services/config";
+import { runCmd, runCmdAsync } from "./command";
 
 //解析JOSN文件
 export async function parseJosnFile(path: string) {
@@ -31,6 +30,7 @@ export function isJSON(str: string) {
             return false;
         }
     }
+    return false;
 }
 
 //读取Hotpe配置
@@ -57,7 +57,7 @@ export async function writeHotPESetting(drive: string, obj: object) {
 
 //解压文件7Z
 export function unZipFile(filePath: string, outDir: string) {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve, _reject) => {
         let cmd = roConfig.path.tools + '.\\7z\\7z.exe x -y ' + dealStrForCmd('-o' + outDir) + ' ' + dealStrForCmd(filePath)
 
         runCmd(cmd, (back: string) => {
@@ -89,7 +89,7 @@ export async function isFileExisted(path_way: string) {
 //取对象成员数
 export function objectCount(o: object) {
     let n = 0;
-    for (let i in o) {
+    for (let _i in o) {
         n++;
     }
     return n;
@@ -136,7 +136,7 @@ export async function traverseFiles(path: string) {
 
 //复制文件
 export async function copyFile(path: string, toPath: string) {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve, _reject) => {
         if (path != toPath) {
             safeFS.cp(path, toPath).then(
                 () => resolve(true),
@@ -153,7 +153,7 @@ export async function copyFile(path: string, toPath: string) {
 
 //复制目录
 export async function copyDir(path: string, toPath: string) {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve, _reject) => {
         // 复制目录
         safeFS.cp(path, toPath, { recursive: true }).then(
             () => resolve(true),
@@ -166,7 +166,7 @@ export async function copyDir(path: string, toPath: string) {
 }
 
 export async function delFiles(path: string) {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve, _reject) => {
         let cmd = 'del ' + dealStrForCmd(path) + ' /F /S /Q'
 
         runCmd(cmd, (back: string) => {
@@ -184,7 +184,7 @@ export async function delFiles(path: string) {
 }
 
 export async function delDir(path: string) {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve, _reject) => {
         let cmd = 'rd ' + dealStrForCmd(path) + ' /S /Q'
 
         runCmd(cmd, (back: string) => {
@@ -202,7 +202,7 @@ export async function delDir(path: string) {
 }
 
 export async function moveFiles(path: string, toPath: string) {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve, _reject) => {
         let cmd = 'move /Y ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath)
         runCmd(cmd, (back: string) => {
             console.log(back);
@@ -219,7 +219,7 @@ export async function moveFiles(path: string, toPath: string) {
 }
 
 export async function makeDir(path: string) {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve, _reject) => {
         safeFS.existsSync(path).then(exists => {
             if (exists) {
                 resolve(true);

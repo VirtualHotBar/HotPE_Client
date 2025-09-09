@@ -1,12 +1,11 @@
-import { UpdateLatest } from '../type/update'
 import { roConfig, config } from '../services/config'
-import { copyDir, dealStrForCmd, takeLeftStr } from '../utils/utils'
+import { takeLeftStr } from '../utils/utils'
 import { dlClientRes } from './dlRes'
 import { Aria2Attrib } from '../type/aria2'
-import { runCmd, runCmdAsync, runCmdSync } from '../utils/command'
+import { runCmdSync } from '../utils/command'
 import { exitapp } from '../layout/header'
 import { Notification } from '@douyinfe/semi-ui'
-import { safeFS, safePath } from '../utils/safeAPI'
+import { safeFS } from '../utils/safeAPI'
 
 //检查更新,pe and client
 export async function checkUpdate() {

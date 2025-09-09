@@ -1,5 +1,5 @@
 //状态：PE的 安装状态、下载状态
-import { safeFS } from "../utils/safeAPI";
+
 
 import { config, roConfig } from "../services/config";
 import { isHotPEDrive, traverseFiles, readHotPEConfig, delFiles } from "../utils/utils"
@@ -46,6 +46,7 @@ export async function checkPEDrive() {
     //遍历所有分区
     for (let i in config.environment.ware.partitions) {
         const partition = config.environment.ware.partitions[i]
+        if (!partition) continue
 
         if (partition.letter != '') {
             if (await isHotPEDrive(partition.letter)) {
@@ -54,7 +55,7 @@ export async function checkPEDrive() {
                     diskIndex: partition.diskIndex, 
                     letter: partition.letter, 
                     isMove: isMoveForDisk(partition.diskIndex), 
-                    version: hotPEConfig.information.ReleaseVersion 
+                    version: hotPEConfig["information"]["ReleaseVersion"] 
                 }
 
                 if (!config.environment.HotPEDrive.all.includes(HotPEDriveInfoTemp)) {
@@ -64,7 +65,7 @@ export async function checkPEDrive() {
                 //判断是否为系统安装的PE
                 if (partition.letter == roConfig.environment.sysLetter) {
                     const sysHotPEConfig = await readHotPEConfig(partition.letter);
-                    config.state.setupToSys = Number(sysHotPEConfig.information.ReleaseVersion)
+                    config.state.setupToSys = Number(sysHotPEConfig["information"]["ReleaseVersion"])
                 }
             }
         }

@@ -1,137 +1,135 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import Header_ from './layout/header.tsx'
-import Page from './page/page.tsx'
+/**
+ * 主应用组件 - 使用新的状态管理和组件结构
+ */
 
-import { Layout, Nav, Button, Notification, Badge } from '@douyinfe/semi-ui';
-import { IconAppCenter, IconHelpCircle, IconPaperclip, IconHome, IconSetting } from '@douyinfe/semi-icons';
-import { HPMDLRender, HPMDlList, HPMListOnline } from './services/hpm.ts';
+import { useEffect, useCallback } from 'react';
+import { Layout, Notification } from '@douyinfe/semi-ui';
+import { AppProvider, useAppStore } from './store';
 import { initializeAll } from './services/config';
+import Header from './layout/header';
+import Navigation from './layout/Navigation';
+import Page from './page/page';
+import { HPMListOnline } from './services/hpm';
 
-const { Header, Sider, Content } = Layout;
+const { Header: LayoutHeader, Sider, Content } = Layout;
 
-export default function App() {
-    const [navKey, setNavKey] = useState('Home');
-    const [lockMuen, setLockMuen] = useState(false);
-    const [isInitialized, setIsInitialized] = useState(false);
+/**
+ * 应用内容组件
+ */
+function AppContent() {
+  const { 
+    state, 
+    setInitialized, 
+    setError, 
+    setCurrentPage, 
+    setMenuLocked 
+  } = useAppStore();
 
-    // 初始化配置
-    useEffect(() => {
-        const initialize = async () => {
-            try {
-                await initializeAll();
-                setIsInitialized(true);
-            } catch (error) {
-                console.error('应用初始化失败:', error);
-                Notification.error({
-                    title: '初始化失败',
-                    content: '应用初始化过程中出现错误，某些功能可能无法正常使用。',
-                    duration: 10,
-                });
-                setIsInitialized(true); // 即使失败也继续运行
-            }
-        };
-        initialize();
-    }, []);
+  const {
+    isInitialized,
+    currentPage,
+    isMenuLocked,
+  } = state;
 
-    // 如果还未初始化完成，显示加载状态
-    if (!isInitialized) {
-        return (
-            <div style={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                height: '100vh',
-                fontSize: '16px'
-            }}>
-                正在初始化应用...
-            </div>
-        );
+  // 初始化应用
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await initializeAll();
+        setInitialized(true);
+      } catch (error) {
+        console.error('应用初始化失败:', error);
+        const errorMessage = error instanceof Error ? error.message : '未知错误';
+        setError(errorMessage);
+        
+        Notification.error({
+          title: '初始化失败',
+          content: '应用初始化过程中出现错误，某些功能可能无法正常使用。',
+          duration: 10,
+        });
+        
+        setInitialized(true); // 即使失败也继续运行
+      }
+    };
+
+    initialize();
+  }, [setInitialized, setError]);
+
+  // 导航切换处理
+  const handleNavigation = useCallback((targetPage: string) => {
+    // 检查菜单是否被锁定
+    if (isMenuLocked) {
+      Notification.info({
+        content: '请任务结束后再切换页面',
+        duration: 2,
+        theme: 'light',
+      });
+      return;
     }
 
-    function upNavKey(navKey_: string) {
-
-
-
-        //锁定菜单
-        if (lockMuen) {
-            Notification.info({
-                content: '请任务结束后再切换页面',
-                duration: 2,
-                theme: 'light',
-            })
-            //setNavKey(navKey)
-
-        } else if (HPMListOnline.length == 0 && navKey_ == "HPMDl") {//无模块
-            Notification.warning({
-                content: '未获取到模块列表，功能不可用。',
-                duration: 2,
-                theme: 'light',
-            })
-
-        } else {
-            setNavKey(navKey_)
-        }
-        console.log(lockMuen, navKey_);
+    // 检查HPM模块列表
+    if (HPMListOnline.length === 0 && targetPage === 'HPMDl') {
+      Notification.warning({
+        content: '未获取到模块列表，功能不可用。',
+        duration: 2,
+        theme: 'light',
+      });
+      return;
     }
 
-    return (
-        /* Layout 布局 */
-        <Layout style={{ border: '1px solid var(--semi-color-border)', height: "100%", width: "100%" }}>
-            <Header style={{ backgroundColor: 'var(--semi-color-bg-1)', height: "40px", width: "100%" }}>
-                <Header_ upNavKey={upNavKey}></Header_>
-            </Header>
-            <Layout style={{ width: '100%', height: 'calc(100vh - 41px)' }}>
-                <Sider style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
-                    <Navigation navKey={navKey} upNavKey={upNavKey}></Navigation>
+    setCurrentPage(targetPage);
+  }, [isMenuLocked, setCurrentPage]);
 
-                </Sider>
-                <Content style={{ backgroundColor: 'var(--semi-color-bg-0)', height: "100%" }}>
-                    <Page navKey={navKey} upNavKey={upNavKey} setLockMuen={setLockMuen}></Page>
-                </Content>
-            </Layout>
+  // 如果还未初始化完成，返回null让启动页面继续显示
+  if (!isInitialized) {
+    return null;
+  }
 
-        </Layout>
-
-    )
+  return (
+    <Layout 
+      style={{ 
+        border: '1px solid var(--semi-color-border)', 
+        height: '100%', 
+        width: '100%' 
+      }}
+    >
+      <LayoutHeader 
+        style={{ 
+          backgroundColor: 'var(--semi-color-bg-1)', 
+          height: '40px', 
+          width: '100%' 
+        }}
+      >
+        <Header onNavigate={handleNavigation} />
+      </LayoutHeader>
+      
+      <Layout style={{ width: '100%', height: 'calc(100vh - 41px)' }}>
+        <Sider style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
+          <Navigation 
+            currentPage={currentPage} 
+            onNavigate={handleNavigation} 
+          />
+        </Sider>
+        
+        <Content style={{ backgroundColor: 'var(--semi-color-bg-0)', height: '100%' }}>
+          <Page 
+            currentPage={currentPage} 
+            onNavigate={handleNavigation}
+            onMenuLockChange={setMenuLocked}
+          />
+        </Content>
+      </Layout>
+    </Layout>
+  );
 }
 
-function Navigation(props: any) {
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
-
-    useEffect(() => {
-        HPMDLRender.callRefreshNav = forceUpdate
-    })
-
-    const naviItems = [
-        { itemKey: 'Home', text: '首页', icon: <IconHome /> },
-        {
-            text: '安装',
-            icon: <IconPaperclip />,
-            itemKey: 'Setup',
-            items: [{ itemKey: 'SetupToSys', text: '安装到系统' }, { itemKey: 'SetupToUDisk', text: '安装到U盘' }, { itemKey: 'MakeISO', text: '生成ISO镜像' }],
-        },
-        {
-            text: '模块',
-            icon: <IconAppCenter />,
-            itemKey: 'HPM',
-            items: [{ itemKey: 'HPMDl', text: '下载模块' }, { itemKey: 'HPMMgr', text: '模块管理' }, {
-                itemKey: 'TaskMgr', text: <>
-                    任务管理{HPMDlList.length > 0 ? <Badge count={HPMDlList.length} overflowCount={99} type='primary' /> : <></>}
-                </>
-            }],
-        },
-        { itemKey: 'Docs', text: '文档', icon: <IconHelpCircle /> },
-        { itemKey: 'Setting', text: '设置', icon: <IconSetting /> }
-    ];
-
-    return <Nav
-        style={{ maxWidth: 170, height: '100%' }}
-        selectedKeys={[props.navKey]}
-        defaultSelectedKeys={['Home']}
-        defaultOpenKeys={['Setup', 'HPM']}
-        items={naviItems}
-        onSelect={(e) => { props.upNavKey(e.itemKey.toString()) }}
-        footer={{ collapseButton: true, }}
-    />
-
+/**
+ * 主应用组件 - 包装了状态管理提供者
+ */
+export default function App() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
+  );
 }

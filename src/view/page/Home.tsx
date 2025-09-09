@@ -1,16 +1,12 @@
-import React, { useState, useReducer, useEffect } from 'react';
-import { getHardwareInfo } from '../utils/hardwareInfo';
-import { Button, Banner, Progress, Notification, Modal, TreeSelect, Descriptions } from '@douyinfe/semi-ui';
-import { Help, DownloadOne, EmotionUnhappy, EmotionHappy, Refresh, UpdateRotation } from '@icon-park/react'
+import { useReducer, useEffect } from 'react';
+import { Button, Banner, Progress, Notification, Modal, Descriptions } from '@douyinfe/semi-ui';
+import { DownloadOne } from '@icon-park/react'
 import { config } from '../services/config';
 import { dlPERes } from '../controller/dlRes';
 import { Aria2Attrib } from '../type/aria2';
-import { updateState } from '../controller/init';
 import ReactMarkdown from 'react-markdown'
 import { UpdateLatest } from '../type/update';
 import { updateClient, updateDoneTip } from '../controller/update';
-import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
-import { checkPESetting } from '../controller/setting/setting';
 import { formatSize } from '../utils/utils';
 
 let updatePromptOk = false//更新提示
@@ -21,7 +17,7 @@ let dlSpeed = 'OKB/S'//下载速度
 
 
 export default function Home(props: any) {
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
+    const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
 
     let welcomeStr = '欢迎使用HotPE客户端！';
     let content = <></>;//页内容

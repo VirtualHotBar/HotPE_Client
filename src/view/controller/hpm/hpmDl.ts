@@ -43,7 +43,7 @@ export function newHPMDl(hpmInfo: HPM) {
         if (back.state == 'done') {
             //删除HPMDl（下载任务
             for (let i in HPMDlList) {
-                if (HPMDlList[i].HPMInfo == HPMDlTemp.HPMInfo) {
+                if (HPMDlList[i] && HPMDlList[i].HPMInfo == HPMDlTemp.HPMInfo) {
                     HPMDlList.splice(Number(i), 1)
                     break//跳出当前循环体
                 }
@@ -88,7 +88,7 @@ export function newHPMDl(hpmInfo: HPM) {
 
 //取消HPM下载任务
 export async function cancelDlTask(hpmDl: HPMDl) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         hpmDl.dlClass.stop((back: boolean) => {
             delHPMDlFromList(hpmDl.HPMInfo)
             setTimeout(refreshRenderResult, 100)
@@ -100,7 +100,7 @@ export async function cancelDlTask(hpmDl: HPMDl) {
 //判断模块是否在下载队列
 export function isHPMinDlList(HPMInfo: HPM) {
     for (let i in HPMDlList) {
-        if (HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {            
+        if (HPMDlList[i] && HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {            
             return true//结束函数体返回值
         }
     }
@@ -110,7 +110,7 @@ export function isHPMinDlList(HPMInfo: HPM) {
 //取模块下载进度
 export function getHPMDlPercent(HPMInfo: HPM) {
     for (let i in HPMDlList) {
-        if (HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {
+        if (HPMDlList[i] && HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {
             return HPMDlList[i].dlInfo.percentage
         }
     }
@@ -121,7 +121,7 @@ export function getHPMDlPercent(HPMInfo: HPM) {
 function delHPMDlFromList(HPMInfo: HPM) {
     //删除HPMDl,下载任务
     for (let i in HPMDlList) {
-        if (HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {
+        if (HPMDlList[i] && HPMDlList[i].HPMInfo.fileName == HPMInfo.fileName) {
             HPMDlList.splice(Number(i), 1)
             break
         }

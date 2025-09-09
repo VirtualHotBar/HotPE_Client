@@ -34,20 +34,20 @@ async function errorThrowToUser(message: string) {
 
     let content = '请尝试重启程序，并记录控制台错误信息向开发者反馈，' + '错误信息：' + message
 
-    window.electronAPI?.openDevTools?.()
+    window.electronAPI?.windows?.openDevTools?.()
     //提示错误
     await errorDialog('发生错误！', content)
 }
 
 //错误对话框
 export function errorDialog(title: string, content: ReactNode) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         Modal.error(
             {
                 title: title,
                 content: content,
-                onOk: (e: any) => { resolve(true) },
-                onCancel: (e: any) => { resolve(false) },
+                onOk: () => { resolve(true) },
+                onCancel: () => { resolve(false) },
                 centered: true,
                 hasCancel: false,
                 maskClosable: false,

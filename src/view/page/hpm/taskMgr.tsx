@@ -1,13 +1,12 @@
-import { Button, Collapse, List, Typography } from '@douyinfe/semi-ui';
-import React, { useEffect, useReducer, useState } from 'react';
-import { HPMDLRender, HPMDlList, HPMListLocal } from '../../services/hpm';
-import { HPM } from '../../type/hpm';
+import { Button, List, Typography } from '@douyinfe/semi-ui';
+import { useEffect, useReducer } from 'react';
+import { HPMDLRender, HPMDlList } from '../../services/hpm';
 import { cancelDlTask, newHPMDl } from '../../controller/hpm/hpmDl';
 
 const { Text } = Typography;
 
 export default function TaskMgr() {
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
+    const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
 
     useEffect(() => {
         HPMDLRender.callRefreshPage = forceUpdate

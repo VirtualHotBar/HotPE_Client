@@ -1,10 +1,8 @@
-//import { Link } from '@icon-park/react';
-import { Button } from '@douyinfe/semi-ui';
-import React, { HTMLProps, useEffect, useRef, useState, useLayoutEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 //import KeepAlive, { AliveScope } from 'react-activation'//引入，需要结合使用
 
 export default function Docs() {
-    const [url, setUrl] = useState('https://docs.hotpe.top/')
+    const [url] = useState('https://docs.hotpe.top/')
 
     const ref = useRef(null)
 

@@ -1,10 +1,10 @@
 import { roConfig } from "../services/config";
-import { runCmd, runCmdAsync } from "./command";
+import { runCmdAsync } from "./command";
 import { delFiles, isFileExisted } from "./utils";
 import { safeFS } from "./safeAPI";
 
 export function getHardwareInfo(parameter: string) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async function (resolve) {
 
         const outPath = roConfig.path.clientTemp + Math.random().toString(36).substring(2, 7) + '.json'//随机文件名
 

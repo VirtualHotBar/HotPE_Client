@@ -1,7 +1,7 @@
 import { Notification } from "@douyinfe/semi-ui"
 import { config } from "../../services/config"
 import { HPM } from "../../type/hpm"
-import { takeLeftStr, takeRightStr } from "../../utils/utils"
+import { takeLeftStr } from "../../utils/utils"
 import { runCmdSync } from "../../utils/command"
 
 //通过文件名，和路径获取HPMInfo
@@ -21,7 +21,7 @@ export async function getHPMinfoLocal(HPMFilePath: string, HPMFileName: string) 
                 if (parts.length >= 4) {
                     // 尝试解析文件大小（通常在第3或第4个位置）
                     for (let i = 0; i < parts.length; i++) {
-                        const sizeStr = parts[i].replace(/,/g, '');
+                        const sizeStr = parts[i]?.replace(/,/g, '') || '';
                         if (!isNaN(Number(sizeStr)) && Number(sizeStr) > 0) {
                             fileSize = Number(sizeStr);
                             break;
@@ -49,10 +49,10 @@ export async function getHPMinfoLocal(HPMFilePath: string, HPMFileName: string) 
             HPM = {
                 fileName: HPMFileName,
                 size: fileSize,
-                name: hpmInfo[0],
-                maker: hpmInfo[1],
-                version: hpmInfo[2],
-                description: takeLeftStr(hpmInfo[3], '.'),
+                name: hpmInfo[0] || '',
+                maker: hpmInfo[1] || '',
+                version: hpmInfo[2] || '',
+                description: takeLeftStr(hpmInfo[3] || '', '.'),
                 time: fileTime
             }
         } else {
@@ -60,7 +60,7 @@ export async function getHPMinfoLocal(HPMFilePath: string, HPMFileName: string) 
             HPM = {
                 fileName: HPMFileName,
                 size: fileSize,
-                name: hpmInfo[0],
+                name: hpmInfo[0] || '获取失败',
                 maker:'获取失败',
                 version: '获取失败',
                 description: '获取失败',

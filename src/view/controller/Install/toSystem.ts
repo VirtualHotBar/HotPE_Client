@@ -1,8 +1,8 @@
 import { config, roConfig } from "../../services/config";
 import { runCmdAsync } from "../../utils/command";
-import { copyDir, copyFile, delDir, delFiles, isFileExisted, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils";
+import { copyDir, copyFile, delDir, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils";
 import { Notification } from "@douyinfe/semi-ui";
-import ini from 'ini'
+
 import { checkPEDrive } from "../condition";
 import { checkIsReady } from "./check";
 import { safeFS } from "../../utils/safeAPI";
@@ -50,8 +50,8 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
     //pe配置文件
     let HotPEConfig = await readHotPEConfig(roConfig.environment.sysLetter)
-    HotPEConfig.information.Installation_Method = 'System'
-    HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
+    HotPEConfig['information']['Installation_Method'] = 'System'
+    HotPEConfig['information']['ReleaseVersion'] = takeLeftStr(config.resources.pe.new, '.')
     await writeHotPEConfig(roConfig.environment.sysLetter, HotPEConfig)
 
     //添加引导

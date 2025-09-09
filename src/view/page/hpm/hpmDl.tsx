@@ -1,12 +1,10 @@
-import React, { useState, useReducer, useEffect } from 'react';
-import { Tabs, TabPane, RadioGroup, Radio, Button, Nav, Card, Descriptions, Spin, Progress } from '@douyinfe/semi-ui';
-import { IconFile, IconGlobe, IconHelpCircle } from '@douyinfe/semi-icons';
-import { HPMDLRender, HPMDlList, HPMListOnline, HPMSearch } from '../../services/hpm';
-import { HPM, HPMClass, HPMDl } from '../../type/hpm';
-import { HPMTab } from '../../type/page/hpm/hpmDl';
-import { AutoSizer } from 'react-virtualized';
-import { Typography } from '@douyinfe/semi-ui';
+import React, { useReducer, useEffect } from 'react';
+import { Button, Nav, Spin, Typography } from '@douyinfe/semi-ui';
+import { HPMDLRender, HPMListOnline, HPMSearch } from '../../services/hpm';
+import type { HPM } from '../../type/hpm';
+import type { HPMTab as HPMTabType } from '../../type/page/hpm/hpmDl';
 import { FixedSizeList } from 'react-window';
+
 import { formatSize } from '../../utils/utils';
 import { isHPMinDlList, getHPMDlPercent, newHPMDl } from '../../controller/hpm/hpmDl';
 import { isHPMHaveLocal } from '../../controller/hpm/checkHpmFiles';
@@ -18,7 +16,7 @@ const { Text } = Typography;
 let selectHPMClassIndex = 0
 
 export default function HPMDl() {
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
+    const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
     function setSelectHPMClassIndex(index: number) {
         selectHPMClassIndex = index
         forceUpdate()
@@ -36,7 +34,7 @@ export default function HPMDl() {
             items.push({ itemKey: -1, text: '搜索' })
         }
         for (let i in HPMListOnline) {
-            items.push({ itemKey: Number(i), text: HPMListOnline[i].class })
+            items.push({ itemKey: Number(i), text: HPMListOnline[i]?.class || '' })
         }
         return items
     }
@@ -47,21 +45,22 @@ export default function HPMDl() {
     if (selectHPMClassIndex == -1) {
         //搜索模块
         for (let i in HPMListOnline) {
-            if (HPMListOnline[i].class == '推荐') {
+            if (HPMListOnline[i]?.class == '推荐') {
                 continue
             }
 
-            let HPMListTemp = HPMListOnline[i].list
+            let HPMListTemp = HPMListOnline[i]?.list || []
 
             for (let i_ in HPMListTemp) {
-                let tempHPM: HPM = HPMListTemp[i_]
+                let tempHPM: HPM | undefined = HPMListTemp[i_]
+                if (!tempHPM) continue;
                 if ((tempHPM.name+tempHPM.description+tempHPM.maker).toLowerCase().includes(HPMSearch.value.toLowerCase())) {
                     HPMItems.push(tempHPM)
                 }
             }
         }
     } else {
-        HPMItems = HPMListOnline[selectHPMClassIndex].list
+        HPMItems = HPMListOnline[selectHPMClassIndex]?.list || []
     }
 
 
@@ -102,28 +101,25 @@ export default function HPMDl() {
             {/* </div><div style={{ height: 'calc(100% - 20px)', width: 'calc(100% - 20px)', padding: '10px' }}> */}
             <div style={{ height: '100% ', width: '100%', textAlign: 'center' }}>
 
-                <AutoSizer>
-                    {({ height, width }) => (
-                        <FixedSizeList
-                            height={height}
-                            itemCount={HPMItems.length}
-                            itemSize={70}
-                            width={width}
-                        >
-                            {({ index, style }) => (
-                                <HPMTab Row={{ index, style }} HPM={HPMItems[index]} ></HPMTab>
-                            )}
-                        </FixedSizeList>
-                    )}
-                </AutoSizer>
+                <div style={{ height: '100%', width: '100%' }}>
+                  {React.createElement(FixedSizeList as any, {
+                    height: 500,
+                    itemCount: HPMItems.length,
+                    itemSize: 70,
+                    width: 500,
+                    children: ({ index, style }: { index: number; style: React.CSSProperties }) => (
+                      HPMItems[index] ? <HPMTab Row={{ index, style }} HPM={HPMItems[index]!} ></HPMTab> : null
+                    )
+                  })}
+                </div>
             </div>
         </div>
     )
 };
 
 
-function HPMTab(props: HPMTab) {
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
+function HPMTab(props: HPMTabType) {
+    const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
 
     useEffect(() => {
 

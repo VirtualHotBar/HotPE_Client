@@ -15,22 +15,22 @@ export async function checkHPMFiles() {
     const HPMDirPath = config.environment.HotPEDrive.new.letter + '\\HotPEModule\\'
 
     let HPMsTemp = await traverseFiles(HPMDirPath + '*.HPM')
-    let onHPMTemp = HPMsTemp.map((fileName: string, index: number) => {
+    let onHPMTemp = await Promise.all(HPMsTemp.map((fileName: string) => {
         return getHPMinfoLocal(HPMDirPath, fileName)
-    })
+    }))
 
     //排除没有下载完成的
     for (let i in HPMListLocal.on) {
-        if (await isFileExisted(HPMDirPath + HPMListLocal.on[i].fileName + '.aria2')) {
+        if (HPMListLocal.on[i] && await isFileExisted(HPMDirPath + HPMListLocal.on[i]!.fileName + '.aria2')) {
             //alert(HPMListLocal.on[1].fileName)
             HPMListLocal.on.splice(Number(i), 1)
         }
     }
 
     HPMsTemp = await traverseFiles(HPMDirPath + '*.HPM.off')
-    let offHPMTemp = HPMsTemp.map((fileName: string, index: number) => {
+    let offHPMTemp = await Promise.all(HPMsTemp.map((fileName: string) => {
         return getHPMinfoLocal(HPMDirPath, fileName)
-    })
+    }))
 
 
     HPMListLocal.on = onHPMTemp
@@ -45,7 +45,7 @@ export function isHPMHaveLocal(HPMInfo: HPM) {
     let HPMListLocalAll = HPMListLocal.on.concat(HPMListLocal.off)//合并
 
     for (let i in HPMListLocalAll) {
-        if (takeLeftStr(HPMListLocalAll[i].fileName.toLowerCase(), '.hpm') == takeLeftStr(HPMInfo.fileName.toLowerCase(), '.hpm')) {
+        if (HPMListLocalAll[i] && takeLeftStr(HPMListLocalAll[i]!.fileName.toLowerCase(), '.hpm') == takeLeftStr(HPMInfo.fileName.toLowerCase(), '.hpm')) {
             return true
         }
     }
