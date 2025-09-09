@@ -5,9 +5,7 @@ import { Notification } from "@douyinfe/semi-ui";
 import ini from 'ini'
 import { checkPEDrive } from "../condition";
 import { checkIsReady } from "./check";
-//import fs from "fs";
-
-const fs = window.require('fs')
+import { safeFS } from "../../utils/safeAPI";
 
 const GUID1 = '{4a00d3c0-3a86-2d40-b468-8bb065afa321}'
 const GUID2 = '{3a5d9b25-3e56-7c1a-0162-d1bfe6b14acc}'
@@ -29,25 +27,18 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     setCurrentStep(0)
     setStepStr('正在解压HotPE源')
 
-
-
-    //创建临时目录
-    //if (await isFileExisted(tempPath) == false) {
-    //    fs.mkdir(tempPath, (back: any) => { console.log(back) })
-    //}
-
     //解压
     await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPath)
-
-
 
     setCurrentStep(1)
     setStepStr('正在复制HotPE文件')
 
     //创建目录
-    await fs.mkdir(roConfig.environment.sysLetter + '\\HotPE\\', (back: any) => { console.log(back) })
-    //await fs.mkdir(roConfig.environment.sysLetter + '\\HotPE\\Data\\', (back: any) => { console.log(back) })
-    //await fs.mkdir(roConfig.environment.sysLetter + '\\HotPEModule\\', (back: any) => { console.log(back) })
+    try {
+        await safeFS.mkdirSync(roConfig.environment.sysLetter + '\\HotPE\\', { recursive: true });
+    } catch (error) {
+        console.log('创建目录:', error);
+    }
 
     //复制文件
     await copyFile(tempPath + 'EFI\\HotPE\\kernel.wim', roConfig.environment.sysLetter + '\\HotPE\\kernel.wim')
@@ -58,10 +49,10 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     await copyDir(tempPath + 'Data\\HotPEModule\\', roConfig.environment.sysLetter + '\\HotPEModule\\')
 
     //pe配置文件
-    let HotPEConfig = readHotPEConfig(roConfig.environment.sysLetter)
+    let HotPEConfig = await readHotPEConfig(roConfig.environment.sysLetter)
     HotPEConfig.information.Installation_Method = 'System'
     HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
-    writeHotPEConfig(roConfig.environment.sysLetter, HotPEConfig)
+    await writeHotPEConfig(roConfig.environment.sysLetter, HotPEConfig)
 
     //添加引导
     setCurrentStep(2)
@@ -96,7 +87,6 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //await runCmdAsync(bcdeditPath + ' /set {bootmgr} nointegritychecks yes')//禁用数字签名检查
     //await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' BootMenuPolicy Standard')//启用Metro启动界面
 
-
     await runCmdAsync('attrib ' + roConfig.environment.sysLetter + '\\HotPE +S +H /S /D')
     await runCmdAsync('attrib ' + roConfig.environment.sysLetter + '\\HotPE\\* +S +H /S /D')
 
@@ -106,24 +96,17 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //更新PE安装状态
     await checkPEDrive()
 
-
     if (!isUpdate) {
         Notification.success({
             title: '安装到系统完成！',
             content: '每次重启都有3S的等待时间。',
             duration: 5,
         })
-
     }
 
     setCurrentStep(-1)
     setLockMuen(false)
-
 }
-
-
-
-
 
 export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen: Function) {
     setIsUninstalling(true)
@@ -136,7 +119,6 @@ export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen
     if (!isUpdate) {
         await delDir(roConfig.environment.sysLetter + '\\HotPEModule\\')
     }
-    
 
     //更新PE安装状态
     await checkPEDrive()

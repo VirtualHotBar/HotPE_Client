@@ -10,6 +10,38 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 文件对话框
   getSavePath: (defaultPath: string) => ipcRenderer.sendSync('file:getSavePath', defaultPath),
   getOpenPath: (defaultPath: string) => ipcRenderer.sendSync('file:getOpenPath', defaultPath),
+
+  // 文件系统操作
+  fs: {
+    readFile: (filePath: string, encoding?: string) => ipcRenderer.invoke('fs:readFile', filePath, encoding),
+    writeFile: (filePath: string, data: string, encoding?: string) => ipcRenderer.invoke('fs:writeFile', filePath, data, encoding),
+    exists: (filePath: string) => ipcRenderer.invoke('fs:exists', filePath),
+    access: (filePath: string) => ipcRenderer.invoke('fs:access', filePath),
+    mkdir: (dirPath: string, options?: any) => ipcRenderer.invoke('fs:mkdir', dirPath, options),
+    copyFile: (src: string, dest: string) => ipcRenderer.invoke('fs:copyFile', src, dest),
+    cp: (src: string, dest: string, options?: any) => ipcRenderer.invoke('fs:cp', src, dest, options),
+    rename: (oldPath: string, newPath: string) => ipcRenderer.invoke('fs:rename', oldPath, newPath),
+  },
+
+  // 命令执行
+  cmd: {
+    execSync: (command: string) => ipcRenderer.invoke('cmd:execSync', command),
+    spawn: (command: string) => ipcRenderer.invoke('cmd:spawn', command),
+    onOutput: (callback: (data: string) => void) => {
+      ipcRenderer.on('cmd:output', (event, data) => callback(data));
+    },
+    removeOutputListener: () => {
+      ipcRenderer.removeAllListeners('cmd:output');
+    }
+  },
+
+  // Path 操作
+  path: {
+    join: (...paths: string[]) => ipcRenderer.invoke('path:join', ...paths),
+    basename: (filePath: string) => ipcRenderer.invoke('path:basename', filePath),
+    dirname: (filePath: string) => ipcRenderer.invoke('path:dirname', filePath),
+    extname: (filePath: string) => ipcRenderer.invoke('path:extname', filePath),
+  }
 });
 
 // 类型声明
@@ -21,6 +53,28 @@ declare global {
       openDevTools: () => void;
       getSavePath: (defaultPath: string) => string | undefined;
       getOpenPath: (defaultPath: string) => string[] | undefined;
+      fs: {
+        readFile: (filePath: string, encoding?: string) => Promise<string>;
+        writeFile: (filePath: string, data: string, encoding?: string) => Promise<boolean>;
+        exists: (filePath: string) => Promise<boolean>;
+        access: (filePath: string) => Promise<boolean>;
+        mkdir: (dirPath: string, options?: any) => Promise<boolean>;
+        copyFile: (src: string, dest: string) => Promise<boolean>;
+        cp: (src: string, dest: string, options?: any) => Promise<boolean>;
+        rename: (oldPath: string, newPath: string) => Promise<boolean>;
+      };
+      cmd: {
+        execSync: (command: string) => Promise<string>;
+        spawn: (command: string) => Promise<{ success: boolean, output: string, code: number }>;
+        onOutput: (callback: (data: string) => void) => void;
+        removeOutputListener: () => void;
+      };
+      path: {
+        join: (...paths: string[]) => Promise<string>;
+        basename: (filePath: string) => Promise<string>;
+        dirname: (filePath: string) => Promise<string>;
+        extname: (filePath: string) => Promise<string>;
+      };
     };
   }
 }

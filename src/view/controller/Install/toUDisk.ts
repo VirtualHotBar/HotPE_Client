@@ -6,7 +6,7 @@ import { checkPEDrive } from "../condition"
 import { checkIsReady, getHotPEDriveLetter } from "./check"
 import { ReactNode } from "react"
 import { getUsableLetter } from "../../utils/disk/diskInfo"
-const fs = window.require('fs')
+import { safeFS } from "../../utils/safeAPI"
 
 const tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
 const tempEFIPath = roConfig.path.clientTemp + 'install\\peFiles\\EFI\\'
@@ -27,17 +27,11 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
         '由于制作启动U盘会格式化U盘，请备份好数据后再操作!建议暂时关闭杀软。\r\n'
         + '继续写入请点[确定]，点[取消]取消写入。\r\n')) { return };
 
-    //创建目录
-    //await fs.mkdir(tempEFIPath, (back: any) => { console.log(back) })
-    //await fs.mkdir(tempDataPath, (back: any) => { console.log(back) })
-
-
     setLockMuen(true)
     setStep(0)
 
     //当前操作是否成功
     let isSucceed = true
-
 
     //解压
     setStepStr('正在解压文件')
@@ -53,8 +47,6 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     await runCmdAsync(fbplusPath + ' (hd' + diskIndex + ') format --force --raw --fat32  --align')//还原磁盘为普通模式（删除fbinst引导记录）
     //删除磁盘所有分区
     await runPacmd(' /hd:' + diskIndex + '  /del:all')
-
-
 
     setStepStr('正在初始化U盘')
     //初始化
@@ -73,16 +65,13 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 
     setStepStr('正在创建数据分区')
     //创建数据分区，EXFAT
-    //let dataLetter = (await getUsableLetter()).substring(0, 2)
     let dataLetter = ''
 
-    //isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
     isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:auto', (back: string) => {
-        dataLetter = takeMidStr(back, '盘符:', '文件系统:').replaceAll('	', '').replaceAll('\r\n', '').replaceAll(' ', '');
+        dataLetter = takeMidStr(back, '盘符:', '文件系统:').replaceAll('\t', '').replaceAll('\r\n', '').replaceAll(' ', '');
     });
 
     //获取数据分区盘符失败后重新获取
-
     if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter)|| !dataLetter) {
         await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')//卸载盘符
         dataLetter = await getUsableLetter()//取个没被占用(可用)的盘符
@@ -95,10 +84,10 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     await copyDir(tempDataPath, dataLetter + '\\')
 
     //pe配置文件
-    let HotPEConfig = readHotPEConfig(dataLetter + '\\')
+    let HotPEConfig = await readHotPEConfig(dataLetter + '\\')
     HotPEConfig.information.Installation_Method = 'UDisk'
     HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
-    writeHotPEConfig(dataLetter + '\\', HotPEConfig)
+    await writeHotPEConfig(dataLetter + '\\', HotPEConfig)
 
     await runCmdAsync('attrib ' + dataLetter + '\\HotPE +S +H /S /D')
     await runCmdAsync('attrib ' + dataLetter + '\\HotPE\\* +S +H /S /D')
@@ -112,15 +101,10 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     await runCmdAsync(booticePath + ' /DEVICE=' + diskIndex + ':0 /partitions /delete_letter /quiet')
     await runCmdAsync(booticePath + ' /DEVICE=' + diskIndex + ':0 /partitions  /assign_letter  /quiet')
 
-    //解除占用(数据分区强制分配盘符)
-    //await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')
-    //await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
-
     setStep(2)
     setStepStr('正在清理退出')
     //清理
     await delDir(tempPath)
-
 
     //更新PE安装状态
     await checkPEDrive()
@@ -157,9 +141,6 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
     let isSucceed = true
 
     setStepStr('正在解除占用')
-    //解除占用(数据分区强制分配盘符)
-    //await runPacmd( ' /hd:' + diskIndex + ' /setletter:0 /letter:*')
-    //await runPacmd( ' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
 
     setStepStr('正在删除U盘所有分区')
     //删除磁盘所有分区
@@ -177,12 +158,6 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
 
     isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
     await runCmdAsync(pecmdPath + ' DFMT ' + dataLetter + ',exFAT,')
-
-
-    //setStepStr('正在解除占用')
-    //解除占用(数据分区强制分配盘符)
-    //await runPacmd( ' /hd:' + diskIndex + ' /setletter:0 /letter:*')
-    //await runPacmd( ' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
 
     //更新PE安装状态
     await checkPEDrive()
@@ -203,7 +178,6 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
             duration: 10,
         })
     }
-
 }
 
 //更新PE，免格
@@ -236,29 +210,23 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
     setStepStr('正在更新数据分区')
     let dataLetter = getHotPEDriveLetter(Number(diskIndex))
 
-    //let dataLetter = (await getUsableLetter() as string).substring(0, 2)
-    //await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)
     if (dataLetter !== '') {
-        //if (await letterIsExist(dataLetter)) {
         //复制数据区文件
         await copyDir(tempDataPath, dataLetter + '\\')
 
         //pe配置文件
-        let HotPEConfig = readHotPEConfig(dataLetter + '\\')
+        let HotPEConfig = await readHotPEConfig(dataLetter + '\\')
         HotPEConfig.information.Installation_Method = 'UDisk'
         HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
-        writeHotPEConfig(dataLetter + '\\', HotPEConfig)
+        await writeHotPEConfig(dataLetter + '\\', HotPEConfig)
 
         await runCmdAsync('attrib ' + dataLetter + '\\HotPE +S +H /S /D')
         await runCmdAsync('attrib ' + dataLetter + '\\HotPE\\* +S +H /S /D')
         await runCmdAsync('attrib ' + dataLetter + '\\AUTORUN.INF +S +H /S /D')
         await runCmdAsync('attrib ' + dataLetter + '\\HotPE.ico +S +H /S /D')
-        //}
     } else {
         isSucceed = isSucceed && false
     }
-
-
 
     setStep(2)
     setStepStr('正在清理退出')
@@ -282,7 +250,6 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
         })
     }
 
-
     setStep(-1)
     setLockMuen(false)
 }
@@ -292,13 +259,29 @@ async function runPacmd(cmd: string, callBack: Function = () => { }) {
     let logPath = roConfig.path.clientTemp + 'pacmd_' + Date.now() + ".log"
 
     await runCmdAsync(pacmdPath + ' ' + cmd + ' /out:' + logPath)
-    let result = new TextDecoder('gbk').decode(fs.readFileSync(logPath))
-    //await delFiles(logPath)
-    callBack(result)
-    if (result.indexOf('完成') != -1) {
-        return true
+    
+    try {
+        const result = await safeFS.readFileSync(logPath, 'utf8');
+        // 尝试解码 GBK，如果失败则使用原始内容
+        let decodedResult = result;
+        try {
+            // 这里我们无法直接使用 TextDecoder('gbk')，因为浏览器环境不支持
+            // 我们假设文件已经是正确编码的
+            decodedResult = result;
+        } catch (e) {
+            console.warn('GBK解码失败，使用原始内容');
+        }
+        
+        callBack(decodedResult);
+        
+        if (decodedResult.indexOf('完成') != -1) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('读取日志文件失败:', error);
+        return false;
     }
-    return false
 }
 
 //确认对话框

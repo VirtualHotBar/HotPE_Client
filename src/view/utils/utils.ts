@@ -1,21 +1,19 @@
-const fs = window.require('fs')
-//let ini = require('ini');
+import { safeFS } from "./safeAPI";
 import ini from 'ini'
 import { config, roConfig } from "../services/config";
 import { runCmd, runCmdAsync, runCmdSync } from "./command";
 import { disksInfo, partitionInfo } from '../type/config';
 
 //解析JOSN文件
-export function parseJosnFile(path: string) {
-
-    return (JSON.parse(fs.readFileSync(path, 'utf8')))
+export async function parseJosnFile(path: string) {
+    const content = await safeFS.readFileSync(path, 'utf8');
+    return JSON.parse(content);
 }
 
 //写入JOSN文件
-export function writeJosnFile(path: string, jsonData: object) {
-    return (fs.writeFileSync(path, JSON.stringify(jsonData), 'utf8'))
+export async function writeJosnFile(path: string, jsonData: object) {
+    return await safeFS.writeFileSync(path, JSON.stringify(jsonData), 'utf8');
 }
-
 
 //string是否为json格式
 export function isJSON(str: string) {
@@ -36,26 +34,26 @@ export function isJSON(str: string) {
 }
 
 //读取Hotpe配置
-export function readHotPEConfig(drive: string) {
-    return ini.parse(fs.readFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini").toString());
+export async function readHotPEConfig(drive: string) {
+    const content = await safeFS.readFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini");
+    return ini.parse(content);
 }
-
 
 //保存Hotpe配置
-export function writeHotPEConfig(drive: string, obj: object) {
-    return fs.writeFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini", ini.encode(obj))
+export async function writeHotPEConfig(drive: string, obj: object) {
+    return await safeFS.writeFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini", ini.encode(obj));
 }
 
 //读取Hotpe设置
-export function readHotPESetting(drive: string) {
-    return ini.parse(fs.readFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini").toString());
+export async function readHotPESetting(drive: string) {
+    const content = await safeFS.readFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini");
+    return ini.parse(content);
 }
 
 //读取Hotpe设置
-export function writeHotPESetting(drive: string, obj: object) {
-    return fs.writeFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini", ini.encode(obj))
+export async function writeHotPESetting(drive: string, obj: object) {
+    return await safeFS.writeFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini", ini.encode(obj));
 }
-
 
 //解压文件7Z
 export function unZipFile(filePath: string, outDir: string) {
@@ -74,26 +72,18 @@ export function unZipFile(filePath: string, outDir: string) {
             }
         })
     })
-
 }
 
 //判断是否为HotPE盘
-export function isHotPEDrive(drive: string) {
-    return (fs.existsSync(drive.substring(0,1) + ':\\HotPE\\confi.ini') && fs.existsSync(drive.substring(0,1) + ':\\HotPEModule\\'))
+export async function isHotPEDrive(drive: string) {
+    const configExists = await safeFS.existsSync(drive.substring(0,1) + ':\\HotPE\\confi.ini');
+    const moduleExists = await safeFS.existsSync(drive.substring(0,1) + ':\\HotPEModule\\');
+    return configExists && moduleExists;
 }
 
 //判断文件是否存在
-export function isFileExisted(path_way: string) {
-    return new Promise<boolean>((resolve, reject) => {
-        fs.access(path_way, (err: any) => {
-            if (err) {
-                resolve(false);//"不存在"
-                //reject(false);//"不存在"
-            } else {
-                resolve(true);//"存在"
-            }
-        })
-    })
+export async function isFileExisted(path_way: string) {
+    return await safeFS.access(path_way);
 };
 
 //取对象成员数
@@ -148,64 +138,34 @@ export async function traverseFiles(path: string) {
 export async function copyFile(path: string, toPath: string) {
     return new Promise<boolean>((resolve, reject) => {
         if (path != toPath) {
-            fs.cp(path, toPath, (err: any) => {
-                if (err) { console.error(err) }
-                resolve(!err)
-            });
+            safeFS.cp(path, toPath).then(
+                () => resolve(true),
+                (error) => {
+                    console.error(error);
+                    resolve(false);
+                }
+            );
         } else {
             resolve(true)
         }
-
-
-
-        /*         let cmd = 'copy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /Y'
-        
-                runCmd(cmd, (back: string) => {
-                    console.log(back);
-                }, (end: number) => {
-                    if (end == 0) {
-                        resolve(true);
-                    } else {
-                        console.error(Error('Command execution failed:' + cmd));
-                        resolve(false);
-                        //reject(false)
-                    }
-                }) */
     })
 }
-
-
 
 //复制目录
 export async function copyDir(path: string, toPath: string) {
     return new Promise<boolean>((resolve, reject) => {
         // 复制目录
-        fs.cp(path, toPath, { recursive: true }, (err: any) => {
-            if (err) { console.error(err) }
-            resolve(!err)
-        });
-
-
-
-
-        /*         let cmd = 'robocopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + ' /E'
-        
-                runCmd(cmd, (back: string) => {
-                    console.log(back);
-                }, (end: number) => {
-                    if (end == 0) {
-                        resolve(true);
-                    } else {
-                        
-                        //reject(false)
-                    }
-                }) */
+        safeFS.cp(path, toPath, { recursive: true }).then(
+            () => resolve(true),
+            (error) => {
+                console.error(error);
+                resolve(false);
+            }
+        );
     })
-
 }
 
 export async function delFiles(path: string) {
-
     return new Promise<boolean>((resolve, reject) => {
         let cmd = 'del ' + dealStrForCmd(path) + ' /F /S /Q'
 
@@ -221,11 +181,9 @@ export async function delFiles(path: string) {
             }
         })
     })
-
 }
 
 export async function delDir(path: string) {
-
     return new Promise<boolean>((resolve, reject) => {
         let cmd = 'rd ' + dealStrForCmd(path) + ' /S /Q'
 
@@ -241,11 +199,9 @@ export async function delDir(path: string) {
             }
         })
     })
-
 }
 
 export async function moveFiles(path: string, toPath: string) {
-
     return new Promise<boolean>((resolve, reject) => {
         let cmd = 'move /Y ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath)
         runCmd(cmd, (back: string) => {
@@ -260,61 +216,35 @@ export async function moveFiles(path: string, toPath: string) {
             }
         })
     })
-
 }
 
 export async function makeDir(path: string) {
-
     return new Promise<boolean>((resolve, reject) => {
-        if (fs.existsSync(path)) {
-            resolve(true)
-        } else {
-            resolve(fs.mkdirSync(path, { recursive: true }) != undefined)
-        }
-
-
-        /*         let cmd = 'mkdir ' + dealStrForCmd(path)
-                runCmd(cmd, (back: string) => {
-                    console.log(back);
-                }, (end: number) => {
-                    if (end == 0) {
-                        resolve(true);
-                    } else {
-                        console.error(Error('Command execution failed:' + cmd))
+        safeFS.existsSync(path).then(exists => {
+            if (exists) {
+                resolve(true);
+            } else {
+                safeFS.mkdirSync(path, { recursive: true }).then(
+                    () => resolve(true),
+                    (error) => {
+                        console.error(error);
                         resolve(false);
-                        //reject(false)
                     }
-                }) */
-    })
-
-}
-
-//获取分区信息
-/* export async function getPartitionInfo() {
-    return new Promise<boolean>(async (resolve, reject) => {
-        const returnStr = await runCmdSync(roConfig.path.tools + 'CxDir.exe  -mohong')
-        console.log(returnStr);
-        
-
+                );
+            }
+        });
     })
 }
- */
-
 
 //文件重命名
 export async function reNameFile(filePath: string, newFilePath: string) {
-    let isSucceed = true
-
-    await fs.rename(filePath, newFilePath, function (err: any) {
-        if (err) {
-            isSucceed = false
-            throw err
-        } else {
-            isSucceed = true
-        }
-    })
-
-    return isSucceed
+    try {
+        await safeFS.rename(filePath, newFilePath);
+        return true;
+    } catch (error) {
+        console.error('重命名失败:', error);
+        return false;
+    }
 }
 
 //  格式化文件大小

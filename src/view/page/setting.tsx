@@ -8,7 +8,7 @@ import { updateState } from '../controller/init';
 import { AppTest } from '../controller/test';
 import { setThemeMode } from '../controller/setting/themeMode';
 import { runCmdSync } from '../utils/command';
-const { shell, ipcRenderer } = require('electron')
+
 
 const { Text, Paragraph, Title } = Typography;
 
@@ -57,7 +57,7 @@ export default function Setting(props: any) {
                                 </div>
                                 <div style={{ textAlign: 'right', width: '100%' }}>
                                     <Button style={{ marginTop: '10px' }} onClick={() => {
-                                        const wallTemp: Array<string> = ipcRenderer.sendSync('file:getOpenPath', '')
+                                        const wallTemp: Array<string> = window.electronAPI.getOpenPath('')
                                         if (wallTemp != null && wallTemp != undefined) {
                                             if (wallTemp.length > 0) {
                                                 setting.pe.wallpaper = wallTemp[0]
@@ -135,7 +135,7 @@ export default function Setting(props: any) {
                         </Col>
                     </Row>
                     <Card style={{ marginBottom: "20px" }} title='工具' >
-                        <Button onClick={() => { ipcRenderer.send('windows:openDevTools') }}>打开开发工具</Button>
+                        <Button onClick={() => { window.electronAPI.openDevTools() }}>打开开发工具</Button>
                         <Button style={{ marginLeft: '8px' }} onClick={() => { AppTest() }}>测试</Button>
                         <Button style={{ marginLeft: '8px' }} onClick={() => { runCmdSync('notepad.exe ./resources/config.json') }}>编辑配置文件</Button>
                     </Card>

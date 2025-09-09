@@ -4,7 +4,7 @@ import { runCmdAsync } from '../../utils/command';
 import { copyDir, copyFile, dealStrForCmd, delDir, isFileExisted, takeLeftStr, unZipFile } from '../../utils/utils';
 import { checkIsReady } from './check';
 
-const { shell, ipcRenderer } = require('electron')
+
 
 const tempPathSource = roConfig.path.clientTemp + 'install\\SourceFiles\\'
 const tempPathISO = roConfig.path.clientTemp + 'install\\ISOFile\\'
@@ -12,7 +12,7 @@ const tempPathISO = roConfig.path.clientTemp + 'install\\ISOFile\\'
 export async function makeISOFile(setStep: Function, setStepStr: Function,setLockMuen: Function) {
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
-    let ISOSavePath = ipcRenderer.sendSync('file:getSavePath', roConfig.environment.desktopDir + 'HotPE-' + takeLeftStr(config.resources.pe.new, '.'))
+    let ISOSavePath = window.electronAPI.getSavePath(roConfig.environment.desktopDir + 'HotPE-' + takeLeftStr(config.resources.pe.new, '.'))
     if (ISOSavePath == undefined) { return }
 
     setLockMuen(true)

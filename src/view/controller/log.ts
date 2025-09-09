@@ -1,5 +1,5 @@
 //日志处理(错误处理)
-const { shell, ipcRenderer } = require('electron')
+// 使用安全的 electronAPI 替代直接 require('electron')
 
 import { Modal } from "@douyinfe/semi-ui";
 import { ReactNode } from "react";
@@ -34,7 +34,7 @@ async function errorThrowToUser(message: string) {
 
     let content = '请尝试重启程序，并记录控制台错误信息向开发者反馈，' + '错误信息：' + message
 
-    ipcRenderer.send('windows:openDevTools')
+    window.electronAPI?.openDevTools?.()
     //提示错误
     await errorDialog('发生错误！', content)
 }

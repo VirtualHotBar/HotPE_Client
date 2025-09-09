@@ -1,9 +1,7 @@
 import { delFiles, isJSON, parseJosnFile, writeJosnFile } from "../utils/utils"
 import { Config } from "../type/config"
 import { runCmdSync } from "../utils/command"
-
-const fs = window.require('fs')
-
+import { safeFS } from "../utils/safeAPI"
 
 //全局数据库
 
@@ -24,7 +22,7 @@ const roConfig = {
         }
     },
     path: {
-        execDir: process.cwd() + '\\',
+        execDir: '', // 将在初始化时异步设置
         tools: '.\\resources\\tools\\',
         clientTemp: '.\\resources\\temp\\',
         resources: {
@@ -33,17 +31,45 @@ const roConfig = {
         }
     },
     environment: {
-        sysLetter: runCmdSync('echo %SystemDrive%').substring(0, 2),
-        temp: runCmdSync('echo %temp%').replaceAll('\r\n', '')+'\\',
-        userName: runCmdSync('echo %UserName%').replaceAll('\r\n', ''),
-        desktopDir: runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\').replaceAll('\r\n', ''),
+        sysLetter: '', // 将在初始化时异步设置
+        temp: '', // 将在初始化时异步设置
+        userName: '', // 将在初始化时异步设置
+        desktopDir: '', // 将在初始化时异步设置
         /* arch:runCmdSync('echo %PROCESSOR_ARCHITECTURE%').replaceAll('\r\n', ''),//系统架构 */
+    }
+}
+
+// 异步初始化环境变量
+async function initializeEnvironment() {
+    try {
+        // 获取当前工作目录
+        const execDir = await runCmdSync('cd');
+        roConfig.path.execDir = execDir.replaceAll('\r\n', '') + '\\';
+        
+        const sysLetter = await runCmdSync('echo %SystemDrive%');
+        roConfig.environment.sysLetter = sysLetter.substring(0, 2);
+        
+        const temp = await runCmdSync('echo %temp%');
+        roConfig.environment.temp = temp.replaceAll('\r\n', '') + '\\';
+        
+        const userName = await runCmdSync('echo %UserName%');
+        roConfig.environment.userName = userName.replaceAll('\r\n', '');
+        
+        const desktopDir = await runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\');
+        roConfig.environment.desktopDir = desktopDir.replaceAll('\r\n', '');
+    } catch (error) {
+        console.error('初始化环境变量失败:', error);
+        // 设置默认值
+        roConfig.path.execDir = 'C:\\';
+        roConfig.environment.sysLetter = 'C:';
+        roConfig.environment.temp = 'C:\\temp\\';
+        roConfig.environment.userName = 'User';
+        roConfig.environment.desktopDir = 'C:\\Users\\User\\Desktop\\';
     }
 }
 
 //动态配置================================================================================================
 const configPath = './resources/config.json'
-
 
 //默认配置
 let config: Config = {
@@ -128,21 +154,39 @@ let config: Config = {
     }
 }
 
-if (fs.existsSync(configPath) && isJSON(fs.readFileSync(configPath, 'utf8'))) {
-    //如果配置文件存在且为json，则读取配置
-
-    config =  Object.assign(config,parseJosnFile(configPath))//合并
-
-} else {
-    //如果配置文件不存在，则使用默认配置
-    //默认配置
-
-    saveConfig()
+// 异步初始化配置
+async function initializeConfig() {
+    try {
+        const configExists = await safeFS.existsSync(configPath);
+        if (configExists) {
+            const configContent = await safeFS.readFileSync(configPath, 'utf8');
+            if (isJSON(configContent)) {
+                const loadedConfig = JSON.parse(configContent);
+                config = Object.assign(config, loadedConfig); // 合并
+            } else {
+                // 如果配置文件不是有效JSON，使用默认配置并保存
+                await saveConfig();
+            }
+        } else {
+            // 如果配置文件不存在，使用默认配置并保存
+            await saveConfig();
+        }
+    } catch (error) {
+        console.error('初始化配置失败:', error);
+        // 使用默认配置
+        await saveConfig();
+    }
 }
 
 //保存配置
-function saveConfig() {
-    writeJosnFile(configPath, config)
+async function saveConfig() {
+    await writeJosnFile(configPath, config);
+}
+
+// 导出初始化函数
+export async function initializeAll() {
+    await initializeEnvironment();
+    await initializeConfig();
 }
 
 export { config, roConfig, saveConfig }

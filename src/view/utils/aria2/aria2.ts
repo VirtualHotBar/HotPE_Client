@@ -1,7 +1,4 @@
-
-
-const fs = window.require('fs')
-const path = window.require('path')
+import { safeFS, safePath } from "../safeAPI";
 import { runCmd } from "../command"
 import { dealStrForCmd, delFiles, takeMidStr, takeRightStr } from '../utils'
 
@@ -21,8 +18,6 @@ const sourceAria2Path = roConfig.path.tools + 'aria2c.exe'
 //内部变量
 //let aria2Path;
 
-
-
 class Aria2 {
     #aria2Path: string = '';
     #FilePath: string = ''
@@ -33,10 +28,12 @@ class Aria2 {
 
         //复制
         async function copyAria2(toPath: string) {
-            await fs.copyFile(sourceAria2Path, toPath, (err: any) => {
-                if (err) { Error('aria2:Copying aria2 file failed') } else (console.log('copy')
-                )
-            })
+            try {
+                await safeFS.copyFile(sourceAria2Path, toPath);
+                console.log('copy');
+            } catch (err) {
+                console.error('aria2:Copying aria2 file failed', err);
+            }
         }
 
         copyAria2(this.#aria2Path)
@@ -56,8 +53,6 @@ class Aria2 {
         cmd = cmd + ' --check-certificate=false'//关闭ssl检查
         cmd = cmd + ' --force-save=false'//不保存下载记录，不创建.aria2文件
         console.log(cmd);
-
-
 
         //返回Aria2属性，初始化
         let tempAria2Attrib: Aria2Attrib = ({
@@ -82,7 +77,7 @@ class Aria2 {
                 //速度speed,str.substring(str.indexOf("DL:") + 3, str.indexOf("iB ETA")) + 'B/S'
                 tempAria2Attrib.speed = takeMidStr(print, 'DL:', 'iB ETA') + 'B/s'
 
-                //进度百分比,Number(str.substring(str.indexOf("B(") + 2, str.indexOf("%)"))))
+                //进度百分比,Number(str.substring(str.indexOf("B(") + 2, str.indexOf("%)")))
                 tempAria2Attrib.percentage = Number(takeMidStr(print, 'B(', '%)'))
 
                 //剩余时间 remainder
@@ -93,8 +88,6 @@ class Aria2 {
 
                 //已下载大小,newSize
                 tempAria2Attrib.newSize = takeRightStr(takeMidStr(print, '[#', 'iB/'), ' ') + 'B'
-
-
 
             } else {
                 //正在请求， if (print.indexOf('[NOTICE]') != -1)
@@ -117,8 +110,10 @@ class Aria2 {
         )
 
     }
-    stop(callback: Function) {//停止下载 ,回调函数:返回是否停止成功
-        let cmd = 'taskkill /T /F /IM ' + dealStrForCmd(path.basename(this.#aria2Path))
+    
+    async stop(callback: Function) {//停止下载 ,回调函数:返回是否停止成功
+        const basename = await safePath.basename(this.#aria2Path);
+        let cmd = 'taskkill /T /F /IM ' + dealStrForCmd(basename);
 
         runCmd(cmd, (print: string) => {
             console.log(print);
@@ -129,8 +124,6 @@ class Aria2 {
             await delFiles(this.#FilePath + '.aria2')
             callback(await delFiles(this.#FilePath))
 
-
-
             /* if (e == 0) {//0:成功
                 callback(true)
                 console.log('成功', e);
@@ -139,9 +132,7 @@ class Aria2 {
                 console.log('失败', e);
             } */
 
-
         })
-
 
     };
 

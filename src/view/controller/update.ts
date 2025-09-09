@@ -6,9 +6,7 @@ import { Aria2Attrib } from '../type/aria2'
 import { runCmd, runCmdAsync, runCmdSync } from '../utils/command'
 import { exitapp } from '../layout/header'
 import { Notification } from '@douyinfe/semi-ui'
-
-const path = window.require('path')
-const fs = window.require('fs')
+import { safeFS, safePath } from '../utils/safeAPI'
 
 //检查更新,pe and client
 export async function checkUpdate() {
@@ -19,8 +17,6 @@ export async function checkUpdate() {
         config.resources.client.update = data.data.client
     })
     .catch(e => console.log(Error(e)))
-
-
 
     //await checkPEUpdate()
     //await checkClientUpdate()
@@ -33,7 +29,6 @@ export async function checkUpdate() {
         config.state.resUpdate = 'without'
     }
 }
-
 
 //更新客户端
 export function updateClient(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
@@ -57,7 +52,6 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
         callback(updateStep, tempAria2Attrib)
 
         if (tempAria2Attrib.state == 'done') {
-
             //isDlOk = true
             fitClient()
         }
@@ -70,55 +64,57 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
         setDlPercent(100)
         setDlSpeed('正在部署更新，请等待软件重启')
 
-
-        /*         fs.copyDir((err: any) => {
-                    if (err) { Error('aria2:Copying aria2 file failed') } else (console.log('copy')
-                    )
-                }); */
-        //await copyDir(roConfig.path.tools + '7z\\', roConfig.path.resources.client + '7z\\')
-        //, (err: any) => { if (err) { Error('update:Copying update file failed') } else (console.log('copy')) }
-
-        /* await fs.mkdir(roConfig.path.tools + '7z\\') */
-        await fs.copyFile(roConfig.path.tools + '7z\\7z.exe', roConfig.path.resources.client + '7z.exe', () => { })
-        await fs.copyFile(roConfig.path.tools + '7z\\7z.dll', roConfig.path.resources.client + '7z.dll', () => { })
-
-        //await fs.copyFile(roConfig.path.tools + 'update\\update.exe', roConfig.path.resources.client + 'update.exe', () => { })
-
-        restartClient()
+        try {
+            // 复制必要的文件
+            await safeFS.copyFile(roConfig.path.tools + '7z\\7z.exe', roConfig.path.resources.client + '7z.exe');
+            await safeFS.copyFile(roConfig.path.tools + '7z\\7z.dll', roConfig.path.resources.client + '7z.dll');
+            
+            restartClient()
+        } catch (error) {
+            console.error('复制更新文件失败:', error);
+        }
     }
 
     //重启客户端
-    function restartClient() {
+    async function restartClient() {
         updateStep = 'restart'
         //callback(updateStep, tempAria2Attrib)
 
-        const updateBatSource = fs.readFileSync(roConfig.path.tools + 'update\\update.bat', 'utf8')
+        try {
+            const updateBatSource = await safeFS.readFileSync(roConfig.path.tools + 'update\\update.bat', 'utf8');
 
-        let updateBat = updateBatSource.replaceAll('{pack}', roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.fileName)
-        updateBat = updateBat.replaceAll('{clientDir}', roConfig.path.execDir)
+            let updateBat = updateBatSource.replaceAll('{pack}', roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.fileName)
+            updateBat = updateBat.replaceAll('{clientDir}', roConfig.path.execDir)
 
-        let batPath = roConfig.path.resources.client + 'update.bat'
-        fs.writeFileSync(batPath, updateBat, 'utf8')
+            let batPath = roConfig.path.resources.client + 'update.bat'
+            await safeFS.writeFileSync(batPath, updateBat, 'utf8');
 
-        runCmdSync('start cmd /c ' + batPath)
+            await runCmdSync('start cmd /c ' + batPath);
 
-        //退出
-        exitapp()
+            //退出
+            exitapp()
+        } catch (error) {
+            console.error('重启客户端失败:', error);
+        }
     }
-
 }
 
 //更新完成后提示
-export function updateDoneTip() {
-    if (fs.existsSync(roConfig.path.execDir + 'update.mark')) {//标记文件
+export async function updateDoneTip() {
+    const markFile = roConfig.path.execDir + 'update.mark';
+    
+    if (await safeFS.existsSync(markFile)) {//标记文件
+        try {
+            // 删除标记文件 - 这里需要通过命令行删除，因为我们没有实现 unlink API
+            await runCmdSync(`del "${markFile}"`);
 
-        fs.unlinkSync(roConfig.path.execDir + 'update.mark')
-
-        Notification.success({
-            title: '更新完成',
-            content: '客户端已经成功更新到最新版本！',
-            duration: 30,
-        })
-
+            Notification.success({
+                title: '更新完成',
+                content: '客户端已经成功更新到最新版本！',
+                duration: 30,
+            })
+        } catch (error) {
+            console.error('删除更新标记文件失败:', error);
+        }
     }
 }

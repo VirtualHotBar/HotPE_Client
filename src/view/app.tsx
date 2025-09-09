@@ -5,14 +5,48 @@ import Page from './page/page.tsx'
 import { Layout, Nav, Button, Notification, Badge } from '@douyinfe/semi-ui';
 import { IconAppCenter, IconHelpCircle, IconPaperclip, IconHome, IconSetting } from '@douyinfe/semi-icons';
 import { HPMDLRender, HPMDlList, HPMListOnline } from './services/hpm.ts';
+import { initializeAll } from './services/config';
 
 const { Header, Sider, Content } = Layout;
 
 export default function App() {
-
-
     const [navKey, setNavKey] = useState('Home');
     const [lockMuen, setLockMuen] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    // 初始化配置
+    useEffect(() => {
+        const initialize = async () => {
+            try {
+                await initializeAll();
+                setIsInitialized(true);
+            } catch (error) {
+                console.error('应用初始化失败:', error);
+                Notification.error({
+                    title: '初始化失败',
+                    content: '应用初始化过程中出现错误，某些功能可能无法正常使用。',
+                    duration: 10,
+                });
+                setIsInitialized(true); // 即使失败也继续运行
+            }
+        };
+        initialize();
+    }, []);
+
+    // 如果还未初始化完成，显示加载状态
+    if (!isInitialized) {
+        return (
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh',
+                fontSize: '16px'
+            }}>
+                正在初始化应用...
+            </div>
+        );
+    }
 
     function upNavKey(navKey_: string) {
 

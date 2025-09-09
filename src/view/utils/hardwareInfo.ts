@@ -1,8 +1,7 @@
 import { roConfig } from "../services/config";
 import { runCmd, runCmdAsync } from "./command";
 import { delFiles, isFileExisted } from "./utils";
-const fs = window.require('fs')
-
+import { safeFS } from "./safeAPI";
 
 export function getHardwareInfo(parameter: string) {
     return new Promise(async function (resolve, reject) {
@@ -16,18 +15,15 @@ export function getHardwareInfo(parameter: string) {
         let hwinfo = ''
 
         if (await isFileExisted(outPath)) {
-            hwinfo = fs.readFileSync(outPath).toString()
+            hwinfo = await safeFS.readFileSync(outPath);
             await delFiles(outPath)
         } else {
-            hwinfo='{}'
+            hwinfo='{}';
         }
 
         //console.log(hwinfo);
         //resolve(JSON.parse(hwinfo))//完成返回
         resolve(eval('(' + hwinfo + ')'))//完成返回
 
-
-    }
-    )
+    })
 }
-

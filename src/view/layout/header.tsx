@@ -7,16 +7,13 @@ import { HPMListOnline, HPMSearch } from '../services/hpm';
 import { HPM } from '../type/hpm';
 import { AutoCompleteItems } from '@douyinfe/semi-ui/lib/es/autoComplete';
 
-const { shell, ipcRenderer } = require('electron')
-//import {shell, ipcRenderer} from 'electron';
-
 export function exitapp() {
     saveConfig()
-    ipcRenderer.send('exitapp')
+    window.electronAPI.exitApp()
 };
 
 function windows_mini() {
-    ipcRenderer.send('windows:mini')
+    window.electronAPI.minimizeWindow()
 }
 
 export default function Header_(props: any) {
