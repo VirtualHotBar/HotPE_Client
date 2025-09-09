@@ -82,7 +82,8 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     });
 
     //获取数据分区盘符失败后重新获取
-    if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter)) {
+
+    if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter)|| !dataLetter) {
         await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')//卸载盘符
         dataLetter = await getUsableLetter()//取个没被占用(可用)的盘符
         isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)//重新分配盘符
@@ -140,7 +141,6 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
             duration: 10,
         })
     }
-
 }
 
 //还原U盘
@@ -238,7 +238,7 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
 
     //let dataLetter = (await getUsableLetter() as string).substring(0, 2)
     //await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)
-    if (dataLetter != '') {
+    if (dataLetter !== '') {
         //if (await letterIsExist(dataLetter)) {
         //复制数据区文件
         await copyDir(tempDataPath, dataLetter + '\\')

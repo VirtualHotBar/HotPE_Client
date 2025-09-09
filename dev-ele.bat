@@ -3,4 +3,4 @@
 @echo off
 cd /d "%~dp0"
 chcp 65001
-cnpm run dev-ele
+npm run dev-ele
