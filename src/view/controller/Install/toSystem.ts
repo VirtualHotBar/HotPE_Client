@@ -17,11 +17,11 @@ const tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
 //更新标记
 let isUpdate = false
 
-export async function installToSystem(setCurrentStep: Function, setStepStr: Function, setLockMuen: Function) {
+export async function installToSystem(setCurrentStep: Function, setStepStr: Function, onMenuLockChange: Function) {
 
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
-    setLockMuen(true)
+    onMenuLockChange(true)
 
     console.log('installToSystem');
     setCurrentStep(0)
@@ -105,12 +105,12 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     }
 
     setCurrentStep(-1)
-    setLockMuen(false)
+    onMenuLockChange(false)
 }
 
-export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen: Function) {
+export async function uninstallToSystem(setIsUninstalling: Function, onMenuLockChange: Function) {
     setIsUninstalling(true)
-    setLockMuen(true)
+    onMenuLockChange(true)
 
     await runCmdAsync(bcdeditPath + ' /delete ' + GUID2 + ' /f')
     await runCmdAsync(bcdeditPath + ' /delete ' + GUID1 + ' /f')
@@ -131,19 +131,19 @@ export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen
         })
     }
 
-    setLockMuen(false)
+    onMenuLockChange(false)
     setIsUninstalling(false)
 }
 
-export async function updatePEForSys(setIsUninstalling: Function, setCurrentStep: Function, setStepStr: Function, setLockMuen: Function) {
+export async function updatePEForSys(setIsUninstalling: Function, setCurrentStep: Function, setStepStr: Function, onMenuLockChange: Function) {
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
-    setLockMuen(true)
+    onMenuLockChange(true)
     isUpdate = true
 
-    await uninstallToSystem(setIsUninstalling, setLockMuen)
+    await uninstallToSystem(setIsUninstalling, onMenuLockChange)
 
-    await installToSystem(setCurrentStep, setStepStr, setLockMuen)
+    await installToSystem(setCurrentStep, setStepStr, onMenuLockChange)
 
     //更新PE安装状态
     await checkPEDrive()
@@ -155,5 +155,5 @@ export async function updatePEForSys(setIsUninstalling: Function, setCurrentStep
     })
 
     isUpdate = false
-    setLockMuen(false)
+    onMenuLockChange(false)
 }

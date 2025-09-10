@@ -9,13 +9,13 @@ import { checkIsReady } from './check';
 const tempPathSource = roConfig.path.clientTemp + 'install\\SourceFiles\\'
 const tempPathISO = roConfig.path.clientTemp + 'install\\ISOFile\\'
 
-export async function makeISOFile(setStep: Function, setStepStr: Function,setLockMuen: Function) {
+export async function makeISOFile(setStep: Function, setStepStr: Function,onMenuLockChange: Function) {
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
     let ISOSavePath = window.electronAPI.dialog.getSavePath(roConfig.environment.desktopDir + 'HotPE-' + takeLeftStr(config.resources.pe.new, '.'))
     if (ISOSavePath == undefined) { return }
 
-    setLockMuen(true)
+    onMenuLockChange(true)
     setStep(0)
 
     //当前操作是否成功
@@ -55,6 +55,6 @@ export async function makeISOFile(setStep: Function, setStepStr: Function,setLoc
         })
     }
 
-    setLockMuen(false)
+    onMenuLockChange(false)
     setStep(-1)
 }

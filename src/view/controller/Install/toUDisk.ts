@@ -17,7 +17,7 @@ const booticePath = roConfig.path.tools + 'BOOTICE.exe'
 const pecmdPath = roConfig.path.tools + 'PECMD.exe'
 const fbplusPath = roConfig.path.tools + 'fbplus.exe'
 
-export async function installToUDisk(diskIndex: string, setStep: Function, setStepStr: Function, setLockMuen: Function) {
+export async function installToUDisk(diskIndex: string, setStep: Function, setStepStr: Function, onMenuLockChange: Function) {
     console.log('diskIndex' + diskIndex);
 
     if (!checkIsReady()) { return };// 检查是否准备就绪 
@@ -27,7 +27,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
         '由于制作启动U盘会格式化U盘，请备份好数据后再操作!建议暂时关闭杀软。\r\n'
         + '继续写入请点[确定]，点[取消]取消写入。\r\n')) { return };
 
-    setLockMuen(true)
+    onMenuLockChange(true)
     setStep(0)
 
     //当前操作是否成功
@@ -110,7 +110,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     await checkPEDrive()
 
     setStep(-1)
-    setLockMuen(false)
+    onMenuLockChange(false)
 
     if (isSucceed) {
         Notification.success({
@@ -128,14 +128,14 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 }
 
 //还原U盘
-export async function UnInstallToUDisk(diskIndex: string, setStep: Function, setStepStr: Function, setLockMuen: Function) {
+export async function UnInstallToUDisk(diskIndex: string, setStep: Function, setStepStr: Function, onMenuLockChange: Function) {
     //确认对话框
     if (!await confirmDialog('请确认',
         '还原U盘将进行格式化，请备份好数据后再操作!建议暂时关闭杀软。\n\r'
         + '继续还原请点[确定]，点[取消]取消还原。\n\r')) { return };
 
     setStep(-2)
-    setLockMuen(true)
+    onMenuLockChange(true)
 
     //当前操作是否成功
     let isSucceed = true
@@ -163,7 +163,7 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
     await checkPEDrive()
 
     setStep(-1)
-    setLockMuen(false)
+    onMenuLockChange(false)
 
     if (isSucceed) {
         Notification.success({
@@ -181,11 +181,11 @@ export async function UnInstallToUDisk(diskIndex: string, setStep: Function, set
 }
 
 //更新PE，免格
-export async function updatePEForUDisk(diskIndex: string, setStep: Function, setStepStr: Function, setLockMuen: Function) {
+export async function updatePEForUDisk(diskIndex: string, setStep: Function, setStepStr: Function, onMenuLockChange: Function) {
 
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
-    setLockMuen(true)
+    onMenuLockChange(true)
     setStep(0)
 
     //当前操作是否成功
@@ -251,7 +251,7 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
     }
 
     setStep(-1)
-    setLockMuen(false)
+    onMenuLockChange(false)
 }
 
 //运行傲梅

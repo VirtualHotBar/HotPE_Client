@@ -35,7 +35,7 @@ export default function Home(props: any) {
     //下载PE资源，更新\noDown
     function toDlPERes() {
         //锁定菜单
-        props.setLockMuen(true)
+        props.onMenuLockChange(true)
         setDlPercent(0)
 
         dlPERes(setDlPercent, setDlSpeed, (back: Aria2Attrib) => {
@@ -56,7 +56,7 @@ export default function Home(props: any) {
                     })
                 }
                 //解锁菜单
-                props.setLockMuen(false)
+                props.onMenuLockChange(false)
             }
         })
     }
@@ -111,7 +111,7 @@ export default function Home(props: any) {
                         toDlPERes()
                     } else if (config.state.resUpdate == 'needUpdateClient') {
                         //锁定菜单
-                        props.setLockMuen(true)
+                        props.onMenuLockChange(true)
                         setDlPercent(0)
                         updateClient(setDlPercent, setDlSpeed, (aria2Back: Aria2Attrib, updateStep: string) => {
                             console.log(updateStep);
@@ -120,7 +120,7 @@ export default function Home(props: any) {
                                 setDlPercent(-1)
 
                                 //解锁菜单
-                                props.setLockMuen(false)
+                                props.onMenuLockChange(false)
 
                                 Notification.error({
                                     title: '下载失败',
@@ -156,17 +156,17 @@ export default function Home(props: any) {
         content = <>
             <div ><span style={{ fontSize: '80px', fontFamily: 'emoji' }}>🤔</span>{/* <Help theme="outline" size="90" fill="#4a90e2" /> */}</div>
             <h3>现在并未检测到有HotPE的安装,请插入已安装的U盘或开始安装</h3>
-            <Button onClick={() => { props.upNavKey('SetupToSys') }} type='primary' style={{ marginRight: 8 }}>安装到系统</Button>
-            <Button onClick={() => { props.upNavKey('SetupToUDisk') }} type='primary' style={{ marginRight: 8 }}>安装到U盘</Button>
-            <Button onClick={() => { props.upNavKey('MakeISO') }} type='primary' style={{ marginRight: 8 }}>生成ISO镜像</Button>
+            <Button onClick={() => { props.onNavigate('SetupToSys') }} type='primary' style={{ marginRight: 8 }}>安装到系统</Button>
+            <Button onClick={() => { props.onNavigate('SetupToUDisk') }} type='primary' style={{ marginRight: 8 }}>安装到U盘</Button>
+            <Button onClick={() => { props.onNavigate('MakeISO') }} type='primary' style={{ marginRight: 8 }}>生成ISO镜像</Button>
         </>
     } else if (config.state.install == 'ready') {
         content = <>
             <div ><span style={{ fontSize: '80px', fontFamily: 'emoji' }}>😊</span>{/* <EmotionHappy theme="outline" size="90" fill="#4a90e2" /> */}</div>
             <h3>你的HotPE已准备就绪,你可以进行更改</h3>
-            <Button onClick={() => { props.upNavKey('HPMDl') }} type='primary' style={{ marginRight: 8 }}>模块下载</Button>
-            <Button onClick={() => { props.upNavKey('HPMMgr') }} type='primary' style={{ marginRight: 8 }}>模块管理</Button>
-            <Button onClick={() => { props.upNavKey('Setting') }} type='primary' style={{ marginRight: 8 }}>PE设置</Button>
+            <Button onClick={() => { props.onNavigate('HPMDl') }} type='primary' style={{ marginRight: 8 }}>模块下载</Button>
+            <Button onClick={() => { props.onNavigate('HPMMgr') }} type='primary' style={{ marginRight: 8 }}>模块管理</Button>
+            <Button onClick={() => { props.onNavigate('Setting') }} type='primary' style={{ marginRight: 8 }}>PE设置</Button>
         </>
     }
 

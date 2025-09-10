@@ -12,9 +12,9 @@ import { getHotPEDriveVer } from '../../controller/Install/check';
 //let uDiskRefreshing =false
 
 
-async function UDiskRefres(steUDiskRefreshing: Function, setLockMuen: Function) {
+async function UDiskRefres(steUDiskRefreshing: Function, onMenuLockChange: Function) {
     steUDiskRefreshing(true)
-    setLockMuen(true)
+    onMenuLockChange(true)
 
     //更新PE安装
     await checkPEDrive()//getdiskinfo()
@@ -22,7 +22,7 @@ async function UDiskRefres(steUDiskRefreshing: Function, setLockMuen: Function) 
     console.log(config.environment.ware.disks);
 
     steUDiskRefreshing(false)
-    setLockMuen(false)
+    onMenuLockChange(false)
 }
 
 export default function SetupToUDisk(props: any) {
@@ -98,15 +98,15 @@ export default function SetupToUDisk(props: any) {
                         console.log(value, selectPEVersion);
                     }} />
 
-                {!uDiskRefreshing ? <Button type="primary" icon={<IconRefresh />} style={{ marginLeft: 8, marginTop: -4 }} aria-label="刷新" onClick={async () => { await UDiskRefres(steUDiskRefreshing, props.setLockMuen); }} /> : <Spin size="middle" />}
+                {!uDiskRefreshing ? <Button type="primary" icon={<IconRefresh />} style={{ marginLeft: 8, marginTop: -4 }} aria-label="刷新" onClick={async () => { await UDiskRefres(steUDiskRefreshing, props.onMenuLockChange); }} /> : <Spin size="middle" />}
                 <br /><br />
                 {selectUDiskIndex != '' ?//操作按钮
                     <>{selectPEVersion == '' ? <Button theme='solid' type='primary' disabled={uDiskRefreshing} onClick={() => {
-                        if (selectUDiskIndex != '') { installToUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }
+                        if (selectUDiskIndex != '') { installToUDisk(selectUDiskIndex, setStep, setStepStr, props.onMenuLockChange) }
                         console.log(selectPEVersion, selectUDiskIndex, selectPEVersion);
                     }}>开始安装</Button> : <>
-                        {/* 更新按钮，更新判断 */Number(selectPEVersion) < Number(takeLeftStr(config.resources.pe.new, '.')) ? <Button type='primary' disabled={uDiskRefreshing} onClick={() => { updatePEForUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }}>免格更新</Button> : <></>}
-                        <Button disabled={uDiskRefreshing} style={{ marginLeft: 8 }} onClick={() => { UnInstallToUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }} type='danger'>还原U盘</Button>
+                        {/* 更新按钮，更新判断 */Number(selectPEVersion) < Number(takeLeftStr(config.resources.pe.new, '.')) ? <Button type='primary' disabled={uDiskRefreshing} onClick={() => { updatePEForUDisk(selectUDiskIndex, setStep, setStepStr, props.onMenuLockChange) }}>免格更新</Button> : <></>}
+                        <Button disabled={uDiskRefreshing} style={{ marginLeft: 8 }} onClick={() => { UnInstallToUDisk(selectUDiskIndex, setStep, setStepStr, props.onMenuLockChange) }} type='danger'>还原U盘</Button>
                     </>}</> : <></>}
 
             </div>
