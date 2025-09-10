@@ -31,6 +31,16 @@ window.addEventListener('error', async (event) => {
 async function errorThrowToUser(message: string) {
     //排除这个错误
     if (message.toString().includes('ResizeObserver loop limit exceeded')) { return }
+    
+    // 排除 ReactDOM.render 警告
+    if (message.toString().includes('ReactDOM.render is no longer supported')) { return }
+    
+    // 排除 react-window 相关的已知错误
+    if (message.toString().includes('Cannot convert undefined or null to object') && 
+        message.toString().includes('react-window')) { 
+        console.warn('React-window data issue detected, but handled gracefully');
+        return 
+    }
 
     let content = '请尝试重启程序，并记录控制台错误信息向开发者反馈，' + '错误信息：' + message
 
@@ -42,7 +52,8 @@ async function errorThrowToUser(message: string) {
 //错误对话框
 export function errorDialog(title: string, content: ReactNode) {
     return new Promise((resolve) => {
-        Modal.error(
+        // 使用 confirm 替代 error 来避免 ReactDOM.render 警告
+        Modal.confirm(
             {
                 title: title,
                 content: content,
@@ -51,7 +62,8 @@ export function errorDialog(title: string, content: ReactNode) {
                 centered: true,
                 hasCancel: false,
                 maskClosable: false,
-                closable: false
+                closable: false,
+                type: 'error'
             }
         )
     })

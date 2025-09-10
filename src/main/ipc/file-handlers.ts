@@ -5,6 +5,18 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
 
+// 文件系统操作类型
+interface MkdirOptions {
+  recursive?: boolean;
+  mode?: string | number;
+}
+
+interface CpOptions {
+  recursive?: boolean;
+  force?: boolean;
+  preserveTimestamps?: boolean;
+}
+
 export function setupFileHandlers(): void {
   // 读取文件
   ipcMain.handle('fs:readFile', async (_, filePath: string, encoding?: BufferEncoding) => {
@@ -40,7 +52,7 @@ export function setupFileHandlers(): void {
   });
 
   // 创建目录
-  ipcMain.handle('fs:mkdir', async (_, dirPath: string, options?: any) => {
+  ipcMain.handle('fs:mkdir', async (_, dirPath: string, options?: MkdirOptions) => {
     try {
       fs.mkdirSync(dirPath, options || { recursive: true });
       return true;
@@ -63,7 +75,7 @@ export function setupFileHandlers(): void {
   });
 
   // 复制文件或目录
-  ipcMain.handle('fs:cp', async (_, src: string, dest: string, options?: any) => {
+  ipcMain.handle('fs:cp', async (_, src: string, dest: string, options?: CpOptions) => {
     return new Promise<boolean>((resolve, reject) => {
       fs.cp(src, dest, options || {}, (err) => {
         if (err) {

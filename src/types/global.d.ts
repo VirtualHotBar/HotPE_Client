@@ -2,6 +2,8 @@
  * 全局类型定义
  */
 
+import { MkdirOptions, CpOptions } from '../view/types/fs-types';
+
 // Electron API 类型定义
 interface ElectronAPI {
   // 窗口控制
@@ -17,9 +19,9 @@ interface ElectronAPI {
     writeFile: (filePath: string, data: string, encoding?: string) => Promise<boolean>;
     exists: (filePath: string) => Promise<boolean>;
     access: (filePath: string) => Promise<boolean>;
-    mkdir: (dirPath: string, options?: any) => Promise<boolean>;
+    mkdir: (dirPath: string, options?: MkdirOptions) => Promise<boolean>;
     copyFile: (src: string, dest: string) => Promise<boolean>;
-    cp: (src: string, dest: string, options?: any) => Promise<boolean>;
+    cp: (src: string, dest: string, options?: CpOptions) => Promise<boolean>;
     rename: (oldPath: string, newPath: string) => Promise<boolean>;
   };
 

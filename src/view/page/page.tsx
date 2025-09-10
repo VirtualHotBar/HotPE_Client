@@ -10,7 +10,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 const { Text } = Typography;
 
 // 懒加载页面组件
-const Home = lazy(() => import('./home'));
+const Home = lazy(() => import('./Home'));
 const SetupToSys = lazy(() => import('./setup/setupToSys'));
 const SetupToUDisk = lazy(() => import('./setup/setupToUDisk'));
 const MakeISO = lazy(() => import('./setup/makeISO'));
@@ -29,8 +29,8 @@ interface PageProps {
 
 // 页面组件通用属性类型
 interface BasePageProps {
-  onNavigate?: (page: string) => void;
-  onMenuLockChange?: (locked: boolean) => void;
+  onNavigate: (page: string) => void;
+  onMenuLockChange: (locked: boolean) => void;
 }
 
 // 加载组件
@@ -53,15 +53,15 @@ function LoadingSpinner() {
 
 // 页面配置映射
 const pageComponents: Record<PageType, React.ComponentType<BasePageProps>> = {
-  [PAGES.HOME]: Home,
-  [PAGES.SETUP_TO_SYS]: SetupToSys,
-  [PAGES.SETUP_TO_UDISK]: SetupToUDisk,
-  [PAGES.MAKE_ISO]: MakeISO,
-  [PAGES.HPM_DOWNLOAD]: HPMDl,
-  [PAGES.HPM_MANAGER]: HPMMgr,
-  [PAGES.TASK_MANAGER]: TaskMgr,
-  [PAGES.DOCS]: Docs,
-  [PAGES.SETTING]: Setting,
+  [PAGES.HOME]: Home as React.ComponentType<BasePageProps>,
+  [PAGES.SETUP_TO_SYS]: SetupToSys as React.ComponentType<BasePageProps>,
+  [PAGES.SETUP_TO_UDISK]: SetupToUDisk as React.ComponentType<BasePageProps>,
+  [PAGES.MAKE_ISO]: MakeISO as React.ComponentType<BasePageProps>,
+  [PAGES.HPM_DOWNLOAD]: HPMDl as React.ComponentType<BasePageProps>,
+  [PAGES.HPM_MANAGER]: HPMMgr as React.ComponentType<BasePageProps>,
+  [PAGES.TASK_MANAGER]: TaskMgr as React.ComponentType<BasePageProps>,
+  [PAGES.DOCS]: Docs as React.ComponentType<BasePageProps>,
+  [PAGES.SETTING]: Setting as React.ComponentType<BasePageProps>,
 };
 
 /**

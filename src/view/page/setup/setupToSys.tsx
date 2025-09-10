@@ -4,8 +4,9 @@ import { Windows, Check } from '@icon-park/react';
 import { config } from '../../services/config';
 import { installToSystem, uninstallToSystem, updatePEForSys } from '../../controller/Install/toSystem';
 import { takeLeftStr } from '../../utils/utils';
+import { SetupToSysPageProps } from '../../types/page-props';
 
-export default function SetupToSys(props:any) {
+export default function SetupToSys(props: SetupToSysPageProps) {
     const [currentStep, setCurrentStep] = useState(-1)//当前步骤
     const [stepStr, setStepStr] = useState("")//步骤文本
     const [isUninstalling, setIsUninstalling] = useState(false)

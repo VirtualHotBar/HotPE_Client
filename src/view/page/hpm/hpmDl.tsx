@@ -1,15 +1,13 @@
-import React, { useReducer, useEffect } from 'react';
-import { Button, Nav, Spin, Typography } from '@douyinfe/semi-ui';
+import React, { useReducer, useEffect, useState } from 'react';
+import { Button, Nav, Spin } from '@douyinfe/semi-ui';
+import { List } from 'react-window';
 import { HPMDLRender, HPMListOnline, HPMSearch } from '../../services/hpm';
 import type { HPM } from '../../type/hpm';
 import type { HPMTab as HPMTabType } from '../../type/page/hpm/hpmDl';
-import { FixedSizeList } from 'react-window';
 
 import { formatSize } from '../../utils/utils';
 import { isHPMinDlList, getHPMDlPercent, newHPMDl } from '../../controller/hpm/hpmDl';
 import { isHPMHaveLocal } from '../../controller/hpm/checkHpmFiles';
-
-const { Text } = Typography;
 
 
 
@@ -17,6 +15,8 @@ let selectHPMClassIndex = 0
 
 export default function HPMDl() {
     const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新组件
+    const [isInitialized, setIsInitialized] = useState(false);
+    
     function setSelectHPMClassIndex(index: number) {
         selectHPMClassIndex = index
         forceUpdate()
@@ -27,14 +27,26 @@ export default function HPMDl() {
 
     HPMSearch.callRefres = forceUpdate
 
+    // 检查数据是否已初始化
+    useEffect(() => {
+        if (HPMListOnline && Array.isArray(HPMListOnline)) {
+            setIsInitialized(true);
+        }
+    }, [HPMListOnline]);
+
     //模块分类
     function HPMClassItems() {
         let items = []
         if (HPMSearch.value != '') {
             items.push({ itemKey: -1, text: '搜索' })
         }
-        for (let i in HPMListOnline) {
-            items.push({ itemKey: Number(i), text: HPMListOnline[i]?.class || '' })
+        if (HPMListOnline && Array.isArray(HPMListOnline) && HPMListOnline.length > 0) {
+            for (let i = 0; i < HPMListOnline.length; i++) {
+                const hpmClass = HPMListOnline[i]
+                if (hpmClass && hpmClass.class) {
+                    items.push({ itemKey: i, text: hpmClass.class })
+                }
+            }
         }
         return items
     }
@@ -42,26 +54,35 @@ export default function HPMDl() {
 
     //模块列表
     let HPMItems: Array<HPM> = []
-    if (selectHPMClassIndex == -1) {
-        //搜索模块
-        for (let i in HPMListOnline) {
-            if (HPMListOnline[i]?.class == '推荐') {
-                continue
-            }
+    if (HPMListOnline && Array.isArray(HPMListOnline) && HPMListOnline.length > 0) {
+        if (selectHPMClassIndex == -1) {
+            //搜索模块
+            for (let i = 0; i < HPMListOnline.length; i++) {
+                const hpmClass = HPMListOnline[i]
+                if (!hpmClass || hpmClass.class === '推荐') {
+                    continue
+                }
 
-            let HPMListTemp = HPMListOnline[i]?.list || []
+                const HPMListTemp = hpmClass.list || []
 
-            for (let i_ in HPMListTemp) {
-                let tempHPM: HPM | undefined = HPMListTemp[i_]
-                if (!tempHPM) continue;
-                if ((tempHPM.name+tempHPM.description+tempHPM.maker).toLowerCase().includes(HPMSearch.value.toLowerCase())) {
-                    HPMItems.push(tempHPM)
+                for (let j = 0; j < HPMListTemp.length; j++) {
+                    const tempHPM = HPMListTemp[j]
+                    if (!tempHPM) continue;
+                    if ((tempHPM.name + tempHPM.description + tempHPM.maker).toLowerCase().includes(HPMSearch.value.toLowerCase())) {
+                        HPMItems.push(tempHPM)
+                    }
                 }
             }
+        } else {
+            const selectedClass = HPMListOnline[selectHPMClassIndex]
+            if (selectedClass && selectedClass.list) {
+                HPMItems = selectedClass.list.filter(item => item != null && item != undefined)
+            }
         }
-    } else {
-        HPMItems = HPMListOnline[selectHPMClassIndex]?.list || []
     }
+
+    // 确保HPMItems始终是一个有效的数组
+    HPMItems = Array.isArray(HPMItems) ? HPMItems : []
 
 
 
@@ -73,11 +94,14 @@ export default function HPMDl() {
             HPMSearch.select = false
         } else {
             if (selectHPMClassIndex == -1 && HPMSearch.value == '') {
-                setSelectHPMClassIndex(0)
+                // 确保有可用的分类才设置索引
+                if (HPMListOnline && Array.isArray(HPMListOnline) && HPMListOnline.length > 0) {
+                    setSelectHPMClassIndex(0)
+                }
             }
         }
 
-    })
+    }, [selectHPMClassIndex])
 
 
 
@@ -88,8 +112,7 @@ export default function HPMDl() {
 
             <div style={{ height: '100%' }}>
                 <Nav
-                    defaultSelectedKeys={[selectHPMClassIndex]}
-                    //selectedKeys={[selectHPMClassIndex]}
+                    selectedKeys={[String(selectHPMClassIndex)]}
                     style={{ height: '100%', width: '120px' }}
                     bodyStyle={{ height: 'calc(100% - 15px)', }}
                     defaultOpenKeys={[]}
@@ -102,15 +125,37 @@ export default function HPMDl() {
             <div style={{ height: '100% ', width: '100%', textAlign: 'center' }}>
 
                 <div style={{ height: '100%', width: '100%' }}>
-                  {React.createElement(FixedSizeList as any, {
-                    height: 500,
-                    itemCount: HPMItems.length,
-                    itemSize: 70,
-                    width: 500,
-                    children: ({ index, style }: { index: number; style: React.CSSProperties }) => (
-                      HPMItems[index] ? <HPMTab Row={{ index, style }} HPM={HPMItems[index]!} ></HPMTab> : null
-                    )
-                  })}
+                  {!isInitialized ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                      加载中...
+                    </div>
+                  ) : HPMListOnline && Array.isArray(HPMListOnline) && HPMListOnline.length > 0 && HPMItems.length > 0 ? (
+                    <List
+                      height={500}
+                      itemCount={HPMItems.length}
+                      itemSize={70}
+                      width={500}
+                      itemData={HPMItems}
+                    >
+                      {({ index, style, data }: { index: number; style: React.CSSProperties; data: Array<HPM> }) => {
+                        // 确保 data 是数组且 index 在有效范围内
+                        if (!Array.isArray(data) || index < 0 || index >= data.length) {
+                          return <div style={style}></div>;
+                        }
+                        
+                        const hpmItem = data[index];
+                        return hpmItem ? (
+                          <HPMTab Row={{ index, style }} HPM={hpmItem} />
+                        ) : (
+                          <div style={style}></div>
+                        );
+                      }}
+                    </List>
+                  ) : (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                      没有找到相关模块
+                    </div>
+                  )}
                 </div>
             </div>
         </div>
@@ -128,24 +173,28 @@ function HPMTab(props: HPMTabType) {
             HPMDLRender.callRefreshDlTab.push(forceUpdate)
         }
 
-    })
+    }, [props.HPM])
 
     return <div style={props.Row.style}>
         <div style={{ height: '100%', display: 'flex', border: '1px solid var(--semi-color-border)' }} >
             <div style={{ width: "calc(100% - 115px)", textAlign: 'left', padding: 10 }}>
-                <a style={{ whiteSpace: 'nowrap' }}>
-                    <a style={{ color: 'var(--semi-color-text-0)', fontWeight: 'bold', verticalAlign: 'middle' }}>{props.HPM.name}</a>
-                    <Text style={{ color: 'var(--semi-color-text-1)', marginLeft: '10px', verticalAlign: 'middle' }} ellipsis={{ showTooltip: true }}>{`${props.HPM.version} | ${props.HPM.maker} | ${formatSize(props.HPM.size)}`}</Text>
-                </a>
+                <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <span style={{ color: 'var(--semi-color-text-0)', fontWeight: 'bold', verticalAlign: 'middle' }}>{props.HPM.name}</span>
+                    <span style={{ color: 'var(--semi-color-text-1)', marginLeft: '10px', verticalAlign: 'middle' }}>{`${props.HPM.version} | ${props.HPM.maker} | ${formatSize(props.HPM.size)}`}</span>
+                </div>
 
                 <br />
-                <Text style={{ marginTop: '5px' }} ellipsis={{ showTooltip: true }}>{props.HPM.description}</Text>
+                <div style={{ marginTop: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {props.HPM.description}
+                </div>
                 <br />
             </div>
 
             <div style={{ display: 'flex', textAlign: 'right', justifyContent: 'flex-end', width: "55px", padding: '0px' }}>
                 {isHPMHaveLocal(props.HPM) ? <>
-                    <Text style={{ marginTop: "40%", width: '100%', marginRight: '-14px' }} >已安装</Text></>
+                    <div style={{ marginTop: "40%", width: '100%', marginRight: '-14px' }}>
+                        已安装
+                    </div></>
                     : <>
                         {!isHPMinDlList(props.HPM)
                             ? <Button style={{ marginTop: "35%", marginRight: '-20px' }} onClick={() => {
@@ -155,7 +204,9 @@ function HPMTab(props: HPMTabType) {
                             : <>{
                                 getHPMDlPercent(props.HPM) > -1
                                     ? <Spin style={{ marginTop: "40%", width: '100%', marginRight: '-20px' }} tip={getHPMDlPercent(props.HPM) + '%'} />
-                                    : <Text style={{ marginTop: "40%", width: '100%', marginRight: '-14px' }} type="danger" >出错</Text>
+                                    : <div style={{ marginTop: "40%", width: '100%', marginRight: '-14px', color: 'var(--semi-color-danger)' }}>
+                                        出错
+                                    </div>
                             }
 
                             </>}

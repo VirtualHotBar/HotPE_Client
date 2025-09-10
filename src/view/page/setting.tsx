@@ -8,6 +8,7 @@ import { updateState } from '../controller/init';
 import { AppTest } from '../controller/test';
 import { setThemeMode } from '../controller/setting/themeMode';
 import { runCmdSync } from '../utils/command';
+import { SettingPageProps, ThemeMode, TreeSelectOption } from '../types/page-props';
 
 
 const { Text } = Typography;
@@ -20,7 +21,7 @@ const { Text } = Typography;
 
 
 
-export default function Setting(props: any) {
+export default function Setting(props: SettingPageProps) {
 
     const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
 
@@ -100,7 +101,7 @@ export default function Setting(props: any) {
 
                     <br /><br />
 
-                    颜色模式：<TreeSelect defaultValue={config.setting.client.themeMode} onSelect={(value: any) => { config.setting.client.themeMode = value; setThemeMode(config.setting.client.themeMode) }} style={{ width: 130 }} treeData={[{ label: '跟随系统', value: 'auto', key: 'auto' }, { label: '浅色', value: 'light', key: 'light' }, { label: '深色', value: 'dark', key: 'dark' }]} />
+                    颜色模式：<TreeSelect defaultValue={config.setting.client.themeMode} onSelect={(value: string) => { config.setting.client.themeMode = value as ThemeMode; setThemeMode(config.setting.client.themeMode) }} style={{ width: 130 }} treeData={[{ label: '跟随系统', value: 'auto', key: 'auto' }, { label: '浅色', value: 'light', key: 'light' }, { label: '深色', value: 'dark', key: 'dark' }]} />
                     <br />
                     <br />
                     当前操作的HotPE安装{config.environment.HotPEDrive.all.length > 1 ? <Text onClick={() => { HotPEDriveChoose(() => { forceUpdate() }) }} link>(选择)</Text> : <></>}：{config.environment.HotPEDrive.new.letter}
@@ -174,7 +175,7 @@ export function HotPEDriveChoose(callback: Function) {
     if (config.environment.HotPEDrive.all.length > 1/*  && HotPEDriveChooseOk == false */) {
         /* HotPEDriveChooseOk = true */
 
-        let driveData = config.environment.HotPEDrive.all.map(function callback(currentValue: any, index: number) {
+        let driveData: TreeSelectOption[] = config.environment.HotPEDrive.all.map(function callback(currentValue: { letter: string }, index: number) {
             return { label: currentValue.letter, value: currentValue.letter, key: index.toString() }
         })
 

@@ -10,6 +10,7 @@ import {
   SUCCESS_MESSAGES,
   type NotificationType 
 } from '../constants';
+import { NotificationConfig, ToastConfig } from '../types/notification-types';
 
 // 通知选项类型
 export interface NotificationOptions {
@@ -100,13 +101,13 @@ export class NotificationManager {
    * 显示成功通知
    */
   public success(options: NotificationOptions): void {
-    const config: any = {
+    const config: NotificationConfig = {
       title: options.title || '成功',
       content: options.content,
       duration: options.duration || this.defaultDuration,
-      position: options.position || 'topRight' as const,
+      position: options.position || 'topRight',
       showClose: options.showClose ?? true,
-      theme: options.theme || 'light' as const,
+      theme: options.theme || 'light',
     };
 
     if (options.onClick) {
@@ -124,13 +125,13 @@ export class NotificationManager {
    * 显示错误通知
    */
   public error(options: NotificationOptions): void {
-    const config: any = {
+    const config: NotificationConfig = {
       title: options.title || '错误',
       content: options.content,
       duration: options.duration || this.defaultDuration * 2, // 错误通知显示更久
-      position: options.position || 'topRight' as const,
+      position: options.position || 'topRight',
       showClose: options.showClose ?? true,
-      theme: options.theme || 'light' as const,
+      theme: options.theme || 'light',
     };
 
     if (options.onClick) {
@@ -148,13 +149,13 @@ export class NotificationManager {
    * 显示警告通知
    */
   public warning(options: NotificationOptions): void {
-    const config: any = {
+    const config: NotificationConfig = {
       title: options.title || '警告',
       content: options.content,
       duration: options.duration || this.defaultDuration,
-      position: options.position || 'topRight' as const,
+      position: options.position || 'topRight',
       showClose: options.showClose ?? true,
-      theme: options.theme || 'light' as const,
+      theme: options.theme || 'light',
     };
 
     if (options.onClick) {
@@ -172,13 +173,13 @@ export class NotificationManager {
    * 显示信息通知
    */
   public info(options: NotificationOptions): void {
-    const config: any = {
+    const config: NotificationConfig = {
       title: options.title || '信息',
       content: options.content,
       duration: options.duration || this.defaultDuration,
-      position: options.position || 'topRight' as const,
+      position: options.position || 'topRight',
       showClose: options.showClose ?? true,
-      theme: options.theme || 'light' as const,
+      theme: options.theme || 'light',
     };
 
     if (options.onClick) {
@@ -196,10 +197,10 @@ export class NotificationManager {
    * 显示Toast消息
    */
   public toast(type: NotificationType, options: ToastOptions): void {
-    const config: any = {
+    const config: ToastConfig = {
       content: options.content,
       duration: options.duration || this.defaultDuration / 2, // Toast显示时间更短
-      position: options.position || 'top' as const,
+      position: options.position || 'top',
       showClose: options.showClose ?? false,
     };
 

@@ -68,7 +68,7 @@ export function isValidJSON(str: string): boolean {
 /**
  * 安全解析JSON
  */
-export function safeParseJSON<T = any>(str: string): Result<T> {
+export function safeParseJSON<T = unknown>(str: string): Result<T> {
   try {
     const data = JSON.parse(str);
     return createSuccess(data);
@@ -81,7 +81,7 @@ export function safeParseJSON<T = any>(str: string): Result<T> {
  * 安全字符串化JSON
  */
 export function safeStringifyJSON(
-  obj: any, 
+  obj: unknown, 
   space?: number
 ): Result<string> {
   try {
@@ -104,7 +104,7 @@ export async function createDirectory(dirPath: string): Promise<Result<boolean>>
 /**
  * 读取JSON文件
  */
-export async function readJSONFile<T = any>(filePath: string): Promise<Result<T>> {
+export async function readJSONFile<T = unknown>(filePath: string): Promise<Result<T>> {
   const fileResult = await safeAsync(() => safeFS.readFileSync(filePath, 'utf8'));
   
   if (!fileResult.success) {
@@ -124,7 +124,7 @@ export async function readJSONFile<T = any>(filePath: string): Promise<Result<T>
  */
 export async function writeJSONFile(
   filePath: string, 
-  data: any, 
+  data: unknown, 
   space = 2
 ): Promise<Result<boolean>> {
   const stringifyResult = safeStringifyJSON(data, space);
@@ -169,7 +169,7 @@ export function delay(ms: number): Promise<void> {
 /**
  * 防抖函数
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -189,7 +189,7 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * 节流函数
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -308,7 +308,7 @@ export function deepClone<T>(obj: T): T {
 /**
  * 检查对象是否为空
  */
-export function isEmpty(obj: any): boolean {
+export function isEmpty(obj: unknown): boolean {
   if (obj == null) return true;
   if (typeof obj === 'string' || Array.isArray(obj)) return obj.length === 0;
   if (typeof obj === 'object') return Object.keys(obj).length === 0;
@@ -319,7 +319,7 @@ export function isEmpty(obj: any): boolean {
  * 安全获取对象属性
  */
 export function safeGet<T>(
-  obj: any, 
+  obj: unknown, 
   path: string | string[], 
   defaultValue?: T
 ): T | undefined {
@@ -330,43 +330,43 @@ export function safeGet<T>(
     if (current == null || typeof current !== 'object') {
       return defaultValue;
     }
-    current = current[key];
+    current = (current as Record<string, unknown>)[key];
   }
   
-  return current !== undefined ? current : defaultValue;
+  return current !== undefined ? current as T : defaultValue;
 }
 
 /**
  * 类型守卫 - 检查是否为字符串
  */
-export function isString(value: any): value is string {
+export function isString(value: unknown): value is string {
   return typeof value === 'string';
 }
 
 /**
  * 类型守卫 - 检查是否为数字
  */
-export function isNumber(value: any): value is number {
+export function isNumber(value: unknown): value is number {
   return typeof value === 'number' && !isNaN(value);
 }
 
 /**
  * 类型守卫 - 检查是否为布尔值
  */
-export function isBoolean(value: any): value is boolean {
+export function isBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean';
 }
 
 /**
  * 类型守卫 - 检查是否为对象
  */
-export function isObject(value: any): value is Record<string, any> {
+export function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 /**
  * 类型守卫 - 检查是否为数组
  */
-export function isArray<T>(value: any): value is T[] {
+export function isArray<T>(value: unknown): value is T[] {
   return Array.isArray(value);
 }

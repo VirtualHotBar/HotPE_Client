@@ -7,6 +7,7 @@ import { IconRefresh } from '@douyinfe/semi-icons';
 import { UnInstallToUDisk, installToUDisk, updatePEForUDisk } from '../../controller/Install/toUDisk';
 import { checkPEDrive } from '../../controller/condition';
 import { getHotPEDriveVer } from '../../controller/Install/check';
+import { SetupToUDiskPageProps, TreeSelectOption } from '../../types/page-props';
 
 
 //let uDiskRefreshing =false
@@ -25,17 +26,17 @@ async function UDiskRefres(steUDiskRefreshing: Function, onMenuLockChange: Funct
     onMenuLockChange(false)
 }
 
-export default function SetupToUDisk(props: any) {
+export default function SetupToUDisk(props: SetupToUDiskPageProps) {
     useReducer(x => x + 1, 0);//刷新页面
     const [uDiskRefreshing, steUDiskRefreshing] = useState(false)
 
     const [step, setStep] = useState(-1)//步骤   -1:无操作，-2：加载(还原)
-    const [stepStr, setStepStr] = useState(-1)//步骤文本
+    const [stepStr, setStepStr] = useState<string | number>(-1)//步骤文本
 
     //选择的U盘索引
     let temp = ''
 
-    let driveDataTemp: Array<any> = []
+    let driveDataTemp: TreeSelectOption[] = []
     for (let i in config.environment.ware.disks) {
         const disk = config.environment.ware.disks[i]
         if (!disk) continue
@@ -52,7 +53,7 @@ export default function SetupToUDisk(props: any) {
         const label = disk.index + ':' + disk.name + '(' + disk.size + ',' + letter.toString() + ')'
 
         if (disk.movable) {//可移动
-            driveDataTemp.push({ label: label, value: disk.index, key: i })
+            driveDataTemp.push({ label: label, value: disk.index.toString(), key: i })
         }
     }
     /*     if (driveDataTemp.length > 0) {
@@ -66,7 +67,7 @@ export default function SetupToUDisk(props: any) {
 
     useEffect(() => {
         if (selectUDiskIndex == '' && driveDataTemp.length > 0) {
-            setSelectUDiskIndex(driveDataTemp[0].value.toString())
+            setSelectUDiskIndex(driveDataTemp[0]?.value || '')
         }
 
         if (getHotPEDriveVer(Number(selectUDiskIndex)) != selectPEVersion) {
@@ -92,10 +93,11 @@ export default function SetupToUDisk(props: any) {
                     dropdownStyle={{ overflow: 'auto' }}
                     treeData={driveDataTemp}
                     disabled={uDiskRefreshing}
-                    onChange={(value: any) => {
-                        setSelectPEVersion(getHotPEDriveVer(Number(value)))
-                        setSelectUDiskIndex(value)
-                        console.log(value, selectPEVersion);
+                    onChange={(value, _node) => {
+                        const stringValue = Array.isArray(value) ? value[0]?.toString() || '' : value?.toString() || '';
+                        setSelectPEVersion(getHotPEDriveVer(Number(stringValue)))
+                        setSelectUDiskIndex(stringValue)
+                        console.log(stringValue, selectPEVersion);
                     }} />
 
                 {!uDiskRefreshing ? <Button type="primary" icon={<IconRefresh />} style={{ marginLeft: 8, marginTop: -4 }} aria-label="刷新" onClick={async () => { await UDiskRefres(steUDiskRefreshing, props.onMenuLockChange); }} /> : <Spin size="middle" />}

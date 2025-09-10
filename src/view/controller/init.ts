@@ -123,7 +123,7 @@ async function checkEnvironment() {
 //系统信息
 export async function getSystemInfo() {
     /*     //system
-        let temp = (await getHardwareInfo('--sys') as any).System
+        let temp = (await getHardwareInfo('--sys') as Record<string, unknown>).System as Record<string, string>
         config.environment.ware.system.os = temp['OS']
         config.environment.ware.system.userName = temp['Username']
         config.environment.ware.system.buildNumber = temp['Build Number']

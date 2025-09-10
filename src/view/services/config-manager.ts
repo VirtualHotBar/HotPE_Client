@@ -275,9 +275,9 @@ export class ConfigManager {
   /**
    * 深度更新配置
    */
-  public deepUpdateConfig(path: string[], value: any): void {
+  public deepUpdateConfig(path: string[], value: unknown): void {
     const keys = path;
-    let current: any = this._config;
+    let current: Record<string, unknown> = this._config as unknown as Record<string, unknown>;
     
     for (let i = 0; i < keys.length - 1; i++) {
       // 检查 current 是否为对象且不为 null
@@ -291,22 +291,22 @@ export class ConfigManager {
         return;
       }
       if (!(key in current)) {
-        (current as Record<string, any>)[key] = {};
+        current[key] = {};
       }
       
       // 获取下一个对象
-      const next = (current as Record<string, any>)[key];
+      const next = current[key];
       if (next == null || typeof next !== 'object') {
         return;
       }
-      current = next;
+      current = next as Record<string, unknown>;
     }
     
     // 安全地设置最终值
     if (current != null && typeof current === 'object') {
       const lastKey = keys[keys.length - 1];
       if (lastKey !== undefined) {
-        (current as Record<string, any>)[lastKey] = value;
+        current[lastKey] = value;
       }
     }
   }
@@ -316,11 +316,11 @@ export class ConfigManager {
    */
   public getConfigValue<T>(path: string[], defaultValue?: T): T {
     const keys = path;
-    let current: any = this._config;
+    let current: unknown = this._config;
     
     for (const key of keys) {
-      if (current && typeof current === 'object' && key in current) {
-        current = current[key];
+      if (current && typeof current === 'object' && current !== null && key in current) {
+        current = (current as Record<string, unknown>)[key];
       } else {
         return defaultValue as T;
       }

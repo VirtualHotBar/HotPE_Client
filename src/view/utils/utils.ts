@@ -123,7 +123,7 @@ export function takeRightStr(str: string, taggedStr: string) {
 }
 
 //删除数组中的空值
-export function filterArrayNull(arr: Array<any>) {
+export function filterArrayNull(arr: Array<string>) {
     return arr.filter((s) => { return s && s.trim() }).reverse()
 }
 

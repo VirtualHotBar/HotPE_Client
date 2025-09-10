@@ -3,6 +3,8 @@
  * 所有操作都通过主进程的 IPC 通信完成
  */
 
+import { MkdirOptions, CpOptions, SpawnResult, ErrorCallback } from '../types/fs-types';
+
 // 文件系统操作
 export const safeFS = {
   /**
@@ -36,7 +38,7 @@ export const safeFS = {
   /**
    * 创建目录
    */
-  mkdirSync: async (dirPath: string, options?: any): Promise<boolean> => {
+  mkdirSync: async (dirPath: string, options?: MkdirOptions): Promise<boolean> => {
     return await window.electronAPI.fs.mkdir(dirPath, options);
   },
 
@@ -50,7 +52,7 @@ export const safeFS = {
   /**
    * 复制文件或目录
    */
-  cp: async (src: string, dest: string, options?: any): Promise<boolean> => {
+  cp: async (src: string, dest: string, options?: CpOptions): Promise<boolean> => {
     return await window.electronAPI.fs.cp(src, dest, options);
   },
 
@@ -74,7 +76,7 @@ export const safeChildProcess = {
   /**
    * 异步执行命令，支持实时输出
    */
-  spawn: async (command: string): Promise<{ success: boolean, output: string, code: number }> => {
+  spawn: async (command: string): Promise<SpawnResult> => {
     return await window.electronAPI.cmd.spawn(command);
   },
 
@@ -138,32 +140,32 @@ export const compatFS = {
     return safeFS.existsSync(filePath);
   },
   
-  access: (filePath: string, callback: (err: any) => void): void => {
+  access: (filePath: string, callback: ErrorCallback): void => {
     safeFS.access(filePath).then(
       (exists) => callback(exists ? null : new Error('File not accessible')),
       (error) => callback(error)
     );
   },
   
-  mkdirSync: (dirPath: string, options?: any): Promise<boolean> => {
+  mkdirSync: (dirPath: string, options?: MkdirOptions): Promise<boolean> => {
     return safeFS.mkdirSync(dirPath, options);
   },
   
-  copyFile: (src: string, dest: string, callback: (err: any) => void): void => {
+  copyFile: (src: string, dest: string, callback: ErrorCallback): void => {
     safeFS.copyFile(src, dest).then(
       () => callback(null),
       (error) => callback(error)
     );
   },
   
-  cp: (src: string, dest: string, options: any, callback: (err: any) => void): void => {
+  cp: (src: string, dest: string, options: CpOptions, callback: ErrorCallback): void => {
     safeFS.cp(src, dest, options).then(
       () => callback(null),
       (error) => callback(error)
     );
   },
   
-  rename: (oldPath: string, newPath: string, callback: (err: any) => void): void => {
+  rename: (oldPath: string, newPath: string, callback: ErrorCallback): void => {
     safeFS.rename(oldPath, newPath).then(
       () => callback(null),
       (error) => callback(error)
@@ -177,8 +179,8 @@ export const compatChildProcess = {
   },
   
   spawn: (shell: string, args: string[]): {
-    stdout: { on: (event: string, callback: (data: any) => void) => void },
-    stderr: { on: (event: string, callback: (data: any) => void) => void },
+    stdout: { on: (event: string, callback: (data: Buffer) => void) => void },
+    stderr: { on: (event: string, callback: (data: Buffer) => void) => void },
     on: (event: string, callback: (code: number) => void) => void
   } => {
     const command = `${shell} ${args.join(' ')}`;
@@ -201,14 +203,14 @@ export const compatChildProcess = {
     
     return {
       stdout: {
-        on: (event: string, callback: (data: any) => void) => {
+        on: (event: string, callback: (data: Buffer) => void) => {
           if (event === 'data') {
-            outputCallback = callback;
+            outputCallback = (data: string) => callback(Buffer.from(data));
           }
         }
       },
       stderr: {
-        on: (_event: string, _callback: (data: any) => void) => {
+        on: (_event: string, _callback: (data: Buffer) => void) => {
           // errorCallback is not used in current implementation
         }
       },

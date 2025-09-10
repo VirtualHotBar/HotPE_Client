@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown'
 import { UpdateLatest } from '../type/update';
 import { updateClient, updateDoneTip } from '../controller/update';
 import { formatSize } from '../utils/utils';
+import { HomePageProps } from '../types/page-props';
 
 let updatePromptOk = false//更新提示
 
@@ -16,7 +17,7 @@ let dlSpeed = 'OKB/S'//下载速度
 
 
 
-export default function Home(props: any) {
+export default function Home(props: HomePageProps) {
     const [, forceUpdate] = useReducer(x => x + 1, 0);//刷新页面
 
     let welcomeStr = '欢迎使用HotPE客户端！';

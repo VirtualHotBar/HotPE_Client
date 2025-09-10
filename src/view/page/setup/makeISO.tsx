@@ -3,10 +3,11 @@ import { Button, Spin } from '@douyinfe/semi-ui';
 import { Cd } from '@icon-park/react';
 
 import { makeISOFile } from '../../controller/Install/makeISO';
+import { MakeISOPageProps } from '../../types/page-props';
 
-export default function MakeISO(props:any) {
+export default function MakeISO(props: MakeISOPageProps) {
     const [step, setStep] = useState(-1)//步骤   -1:无操作，>-1:正在操作
-    const [stepStr, setStepStr] = useState(-1)//步骤文本
+    const [stepStr, setStepStr] = useState<string | number>(-1)//步骤文本
 
 
 

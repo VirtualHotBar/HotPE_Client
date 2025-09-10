@@ -4,6 +4,18 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 
+// 文件系统操作类型
+interface MkdirOptions {
+  recursive?: boolean;
+  mode?: string | number;
+}
+
+interface CpOptions {
+  recursive?: boolean;
+  force?: boolean;
+  preserveTimestamps?: boolean;
+}
+
 // 定义 API 接口类型
 interface ElectronAPI {
   windows: {
@@ -16,9 +28,9 @@ interface ElectronAPI {
     writeFile: (filePath: string, data: string, encoding?: string) => Promise<boolean>;
     exists: (filePath: string) => Promise<boolean>;
     access: (filePath: string) => Promise<boolean>;
-    mkdir: (dirPath: string, options?: any) => Promise<boolean>;
+    mkdir: (dirPath: string, options?: MkdirOptions) => Promise<boolean>;
     copyFile: (src: string, dest: string) => Promise<boolean>;
-    cp: (src: string, dest: string, options?: any) => Promise<boolean>;
+    cp: (src: string, dest: string, options?: CpOptions) => Promise<boolean>;
     rename: (oldPath: string, newPath: string) => Promise<boolean>;
   };
   cmd: {
@@ -62,11 +74,11 @@ const electronAPI: ElectronAPI = {
       ipcRenderer.invoke('fs:exists', filePath),
     access: (filePath: string) => 
       ipcRenderer.invoke('fs:access', filePath),
-    mkdir: (dirPath: string, options?: any) => 
+    mkdir: (dirPath: string, options?: MkdirOptions) => 
       ipcRenderer.invoke('fs:mkdir', dirPath, options),
     copyFile: (src: string, dest: string) => 
       ipcRenderer.invoke('fs:copyFile', src, dest),
-    cp: (src: string, dest: string, options?: any) => 
+    cp: (src: string, dest: string, options?: CpOptions) => 
       ipcRenderer.invoke('fs:cp', src, dest, options),
     rename: (oldPath: string, newPath: string) => 
       ipcRenderer.invoke('fs:rename', oldPath, newPath),

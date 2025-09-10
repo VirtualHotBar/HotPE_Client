@@ -9,5 +9,12 @@ export default defineConfig({
   base: './',
   build: {
     outDir: '../../dist/view',
+    rollupOptions: {
+      external: [],
+    },
+  },
+  optimizeDeps: {
+    include: ['react-window'],
+    force: true,
   },
 });

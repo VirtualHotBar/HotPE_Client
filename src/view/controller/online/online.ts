@@ -23,16 +23,30 @@ export async function getHPMList() {
     await fetch(config.api.api + 'API/HotPE/GetHPMList/').then(response => response.json())
         .then(data => {
             if (data.state == "success") {
-                let HPMListOnlineTemp = data.data.map((hpmClassSrc: any) => {
-                    let hpmList = hpmClassSrc.list.map((hpmSrc: any) => {
+                let HPMListOnlineTemp = data.data.map((hpmClassSrc: {
+                    name: string;
+                    class: string;
+                    list: Array<{
+                        name: string;
+                        size: number;
+                        modified: string;
+                        link: string;
+                    }>;
+                }) => {
+                    let hpmList = hpmClassSrc.list.map((hpmSrc: {
+                        name: string;
+                        size: number;
+                        modified: string;
+                        link: string;
+                    }) => {
                         let hpmInfo =(hpmSrc.name.substring(0,hpmSrc.name.length-4)).split('_')
                         let HPM:HPM = {
                             fileName: hpmSrc.name,
                             size: hpmSrc.size,
-                            name: hpmInfo[0],
-                            maker: hpmInfo[1],
-                            version: hpmInfo[2],
-                            description: hpmInfo[3],
+                            name: hpmInfo[0] || '',
+                            maker: hpmInfo[1] || '',
+                            version: hpmInfo[2] || '',
+                            description: hpmInfo[3] || '',
                             time:new Date(hpmSrc.modified),
                             dlLink: hpmSrc.link
                         } 

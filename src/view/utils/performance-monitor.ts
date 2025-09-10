@@ -40,7 +40,7 @@ export interface PerformanceEvent {
   startTime: number;
   endTime: number;
   duration: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // 性能警告类型
@@ -64,7 +64,7 @@ export class PerformanceMonitor {
   private warnings: PerformanceWarning[] = [];
   private listeners: Set<(metrics: PerformanceMetrics) => void> = new Set();
   private warningListeners: Set<(warning: PerformanceWarning) => void> = new Set();
-  private monitoringInterval?: any;
+  private monitoringInterval: NodeJS.Timeout | undefined;
   private frameCounter = 0;
   private lastFrameTime = 0;
   private droppedFrames = 0;
@@ -124,7 +124,7 @@ export class PerformanceMonitor {
     
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
-      this.monitoringInterval = null;
+      this.monitoringInterval = undefined;
     }
 
     console.log('性能监控已停止');
@@ -161,7 +161,7 @@ export class PerformanceMonitor {
   /**
    * 记录性能事件
    */
-  public recordEvent(name: string, metadata?: Record<string, any>): () => void {
+  public recordEvent(name: string, metadata?: Record<string, unknown>): () => void {
     const startTime = performance.now();
     
     return () => {
@@ -193,7 +193,7 @@ export class PerformanceMonitor {
   public async measureAsync<T>(
     name: string,
     fn: () => Promise<T>,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> {
     const endEvent = this.recordEvent(name, metadata);
     
@@ -213,7 +213,7 @@ export class PerformanceMonitor {
   public measure<T>(
     name: string,
     fn: () => T,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): T {
     const endEvent = this.recordEvent(name, metadata);
     
@@ -345,7 +345,7 @@ export class PerformanceMonitor {
     try {
       // 尝试使用 performance.memory (Chrome)
       if ('memory' in performance) {
-        const memory = (performance as any).memory;
+        const memory = (performance as { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
         const used = memory.usedJSHeapSize;
         const total = memory.totalJSHeapSize;
         const percentage = (used / total) * 100;
@@ -582,16 +582,16 @@ export const startPerformanceMonitoring = (interval?: number) =>
 export const stopPerformanceMonitoring = () => 
   performanceMonitor.stopMonitoring();
 
-export const recordPerformanceEvent = (name: string, metadata?: Record<string, any>) => 
+export const recordPerformanceEvent = (name: string, metadata?: Record<string, unknown>) => 
   performanceMonitor.recordEvent(name, metadata);
 
-export const measurePerformance = <T>(name: string, fn: () => T, metadata?: Record<string, any>) => 
+export const measurePerformance = <T>(name: string, fn: () => T, metadata?: Record<string, unknown>) => 
   performanceMonitor.measure(name, fn, metadata);
 
 export const measureAsyncPerformance = <T>(
   name: string, 
   fn: () => Promise<T>, 
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ) => performanceMonitor.measureAsync(name, fn, metadata);
 
 export const getPerformanceMetrics = () => 
