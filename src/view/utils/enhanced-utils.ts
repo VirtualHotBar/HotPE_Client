@@ -7,9 +7,7 @@ import { safeFS } from './safeAPI';
 /**
  * 结果类型 - 用于错误处理
  */
-export type Result<T, E = Error> = 
-  | { success: true; data: T }
-  | { success: false; error: E };
+export type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E };
 
 /**
  * 创建成功结果
@@ -28,9 +26,7 @@ export function createError<E = Error>(error: E): Result<never, E> {
 /**
  * 安全执行异步函数
  */
-export async function safeAsync<T>(
-  fn: () => Promise<T>
-): Promise<Result<T>> {
+export async function safeAsync<T>(fn: () => Promise<T>): Promise<Result<T>> {
   try {
     const data = await fn();
     return createSuccess(data);
@@ -55,8 +51,8 @@ export function safeSync<T>(fn: () => T): Result<T> {
  * 检查字符串是否为有效JSON
  */
 export function isValidJSON(str: string): boolean {
-  if (typeof str !== 'string') return false;
-  
+  if (typeof str !== 'string') {return false;}
+
   try {
     JSON.parse(str);
     return true;
@@ -80,10 +76,7 @@ export function safeParseJSON<T = unknown>(str: string): Result<T> {
 /**
  * 安全字符串化JSON
  */
-export function safeStringifyJSON(
-  obj: unknown, 
-  space?: number
-): Result<string> {
+export function safeStringifyJSON(obj: unknown, space?: number): Result<string> {
   try {
     const str = JSON.stringify(obj, null, space);
     return createSuccess(str);
@@ -106,7 +99,7 @@ export async function createDirectory(dirPath: string): Promise<Result<boolean>>
  */
 export async function readJSONFile<T = unknown>(filePath: string): Promise<Result<T>> {
   const fileResult = await safeAsync(() => safeFS.readFileSync(filePath, 'utf8'));
-  
+
   if (!fileResult.success) {
     return createError(new Error(`读取文件失败: ${fileResult.error.message}`));
   }
@@ -123,12 +116,12 @@ export async function readJSONFile<T = unknown>(filePath: string): Promise<Resul
  * 写入JSON文件
  */
 export async function writeJSONFile(
-  filePath: string, 
-  data: unknown, 
+  filePath: string,
+  data: unknown,
   space = 2
 ): Promise<Result<boolean>> {
   const stringifyResult = safeStringifyJSON(data, space);
-  
+
   if (!stringifyResult.success) {
     return createError(new Error(`JSON序列化失败: ${stringifyResult.error.message}`));
   }
@@ -174,12 +167,12 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
   wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
-  
+
   return (...args: Parameters<T>) => {
     if (timeout) {
       clearTimeout(timeout);
     }
-    
+
     timeout = setTimeout(() => {
       func(...args);
     }, wait);
@@ -194,10 +187,10 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
   wait: number
 ): (...args: Parameters<T>) => void {
   let lastTime = 0;
-  
+
   return (...args: Parameters<T>) => {
     const now = Date.now();
-    
+
     if (now - lastTime >= wait) {
       lastTime = now;
       func(...args);
@@ -214,21 +207,21 @@ export async function retry<T>(
   delayMs = 1000
 ): Promise<Result<T>> {
   let lastError: Error = new Error('未知错误');
-  
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const result = await safeAsync(fn);
-    
+
     if (result.success) {
       return result;
     }
-    
+
     lastError = result.error;
-    
+
     if (attempt < maxAttempts) {
       await delay(delayMs * attempt); // 指数退避
     }
   }
-  
+
   return createError(new Error(`重试${maxAttempts}次后仍然失败: ${lastError.message}`));
 }
 
@@ -236,12 +229,12 @@ export async function retry<T>(
  * 格式化文件大小
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 B';
-  
+  if (bytes === 0) {return '0 B';}
+
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 }
 
@@ -250,11 +243,11 @@ export function formatFileSize(bytes: number): string {
  */
 export function formatTime(date: Date | string | number): string {
   const d = new Date(date);
-  
+
   if (isNaN(d.getTime())) {
     return '无效时间';
   }
-  
+
   return d.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
@@ -269,9 +262,9 @@ export function formatTime(date: Date | string | number): string {
  * 生成UUID
  */
 export function generateUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -283,15 +276,15 @@ export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
-  
+
   if (obj instanceof Date) {
     return new Date(obj.getTime()) as unknown as T;
   }
-  
+
   if (obj instanceof Array) {
     return obj.map(item => deepClone(item)) as unknown as T;
   }
-  
+
   if (typeof obj === 'object') {
     const cloned = {} as T;
     for (const key in obj) {
@@ -301,7 +294,7 @@ export function deepClone<T>(obj: T): T {
     }
     return cloned;
   }
-  
+
   return obj;
 }
 
@@ -309,31 +302,27 @@ export function deepClone<T>(obj: T): T {
  * 检查对象是否为空
  */
 export function isEmpty(obj: unknown): boolean {
-  if (obj == null) return true;
-  if (typeof obj === 'string' || Array.isArray(obj)) return obj.length === 0;
-  if (typeof obj === 'object') return Object.keys(obj).length === 0;
+  if (obj == null) {return true;}
+  if (typeof obj === 'string' || Array.isArray(obj)) {return obj.length === 0;}
+  if (typeof obj === 'object') {return Object.keys(obj).length === 0;}
   return false;
 }
 
 /**
  * 安全获取对象属性
  */
-export function safeGet<T>(
-  obj: unknown, 
-  path: string | string[], 
-  defaultValue?: T
-): T | undefined {
+export function safeGet<T>(obj: unknown, path: string | string[], defaultValue?: T): T | undefined {
   const keys = Array.isArray(path) ? path : path.split('.');
   let current = obj;
-  
+
   for (const key of keys) {
     if (current == null || typeof current !== 'object') {
       return defaultValue;
     }
     current = (current as Record<string, unknown>)[key];
   }
-  
-  return current !== undefined ? current as T : defaultValue;
+
+  return current !== undefined ? (current as T) : defaultValue;
 }
 
 /**

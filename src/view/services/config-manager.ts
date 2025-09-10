@@ -203,13 +203,13 @@ export class ConfigManager {
     try {
       // 获取当前工作目录
       const execDir = await runCmdSync('cd');
-      this._roConfig.path.execDir = execDir.replaceAll('\r\n', '') + '\\';
+      this._roConfig.path.execDir = `${execDir.replaceAll('\r\n', '')  }\\`;
 
       const sysLetter = await runCmdSync('echo %SystemDrive%');
       this._roConfig.environment.sysLetter = sysLetter.substring(0, 2);
 
       const temp = await runCmdSync('echo %temp%');
-      this._roConfig.environment.temp = temp.replaceAll('\r\n', '') + '\\';
+      this._roConfig.environment.temp = `${temp.replaceAll('\r\n', '')  }\\`;
 
       const userName = await runCmdSync('echo %UserName%');
       this._roConfig.environment.userName = userName.replaceAll('\r\n', '');
@@ -278,13 +278,13 @@ export class ConfigManager {
   public deepUpdateConfig(path: string[], value: unknown): void {
     const keys = path;
     let current: Record<string, unknown> = this._config as unknown as Record<string, unknown>;
-    
+
     for (let i = 0; i < keys.length - 1; i++) {
       // 检查 current 是否为对象且不为 null
       if (current == null || typeof current !== 'object') {
         return;
       }
-      
+
       // 安全地访问属性
       const key = keys[i];
       if (key === undefined) {
@@ -293,7 +293,7 @@ export class ConfigManager {
       if (!(key in current)) {
         current[key] = {};
       }
-      
+
       // 获取下一个对象
       const next = current[key];
       if (next == null || typeof next !== 'object') {
@@ -301,7 +301,7 @@ export class ConfigManager {
       }
       current = next as Record<string, unknown>;
     }
-    
+
     // 安全地设置最终值
     if (current != null && typeof current === 'object') {
       const lastKey = keys[keys.length - 1];
@@ -317,7 +317,7 @@ export class ConfigManager {
   public getConfigValue<T>(path: string[], defaultValue?: T): T {
     const keys = path;
     let current: unknown = this._config;
-    
+
     for (const key of keys) {
       if (current && typeof current === 'object' && current !== null && key in current) {
         current = (current as Record<string, unknown>)[key];
@@ -325,7 +325,7 @@ export class ConfigManager {
         return defaultValue as T;
       }
     }
-    
+
     return current as T;
   }
 

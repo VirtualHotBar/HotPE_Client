@@ -49,14 +49,14 @@ export class CommandExecutor {
    * 同步执行命令
    */
   public async execSync(
-    command: string, 
+    command: string,
     options: Omit<CommandOptions, 'onOutput'> = {}
   ): Promise<Result<string>> {
     const { timeout = 30000, retries = 1, retryDelay = 1000 } = options;
 
     const executeCommand = async (): Promise<string> => {
       const startTime = Date.now();
-      
+
       // 创建超时Promise
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => {
@@ -70,7 +70,7 @@ export class CommandExecutor {
       try {
         const result = await Promise.race([commandPromise, timeoutPromise]);
         const duration = Date.now() - startTime;
-        
+
         console.log(`命令执行完成 (${duration}ms): ${command}`);
         return result;
       } catch (error) {
@@ -91,19 +91,14 @@ export class CommandExecutor {
    * 异步执行命令（支持实时输出）
    */
   public async spawn(
-    command: string, 
+    command: string,
     options: CommandOptions = {}
   ): Promise<Result<CommandResult>> {
-    const { 
-      timeout = 60000, 
-      retries = 1, 
-      retryDelay = 1000,
-      onOutput 
-    } = options;
+    const { timeout = 60000, retries = 1, retryDelay = 1000, onOutput } = options;
 
     const executeCommand = async (): Promise<CommandResult> => {
       const startTime = Date.now();
-      
+
       // 添加输出监听器
       if (onOutput) {
         this.addOutputListener(onOutput);
@@ -120,11 +115,11 @@ export class CommandExecutor {
         // 执行命令
         const commandPromise = window.electronAPI.cmd.spawn(command);
         const result = await Promise.race([commandPromise, timeoutPromise]);
-        
+
         const duration = Date.now() - startTime;
-        
+
         console.log(`异步命令执行完成 (${duration}ms): ${command}`, result);
-        
+
         return {
           ...result,
           duration,
@@ -152,22 +147,22 @@ export class CommandExecutor {
     options: CommandOptions = {}
   ): Promise<Result<CommandResult[]>> {
     const results: CommandResult[] = [];
-    
+
     for (const command of commands) {
       const result = await this.spawn(command, options);
-      
+
       if (!result.success) {
         return result as Result<CommandResult[]>;
       }
-      
+
       results.push(result.data);
-      
+
       // 如果命令失败，停止执行后续命令
       if (!result.data.success) {
         break;
       }
     }
-    
+
     return { success: true, data: results };
   }
 
@@ -218,7 +213,7 @@ export class CommandExecutor {
     ];
 
     const info: Record<string, string> = {};
-    
+
     for (const command of commands) {
       const result = await this.execSync(command);
       if (result.success) {
@@ -265,23 +260,21 @@ export class CommandExecutor {
 export const commandExecutor = CommandExecutor.getInstance();
 
 // 便捷函数导出
-export const execSync = (command: string, options?: Omit<CommandOptions, 'onOutput'>) => 
+export const execSync = (command: string, options?: Omit<CommandOptions, 'onOutput'>) =>
   commandExecutor.execSync(command, options);
 
-export const spawn = (command: string, options?: CommandOptions) => 
+export const spawn = (command: string, options?: CommandOptions) =>
   commandExecutor.spawn(command, options);
 
-export const execBatch = (commands: string[], options?: CommandOptions) => 
+export const execBatch = (commands: string[], options?: CommandOptions) =>
   commandExecutor.execBatch(commands, options);
 
-export const execPowerShell = (script: string, options?: CommandOptions) => 
+export const execPowerShell = (script: string, options?: CommandOptions) =>
   commandExecutor.execPowerShell(script, options);
 
-export const execBatchFile = (filePath: string, args?: string[], options?: CommandOptions) => 
+export const execBatchFile = (filePath: string, args?: string[], options?: CommandOptions) =>
   commandExecutor.execBatchFile(filePath, args, options);
 
-export const commandExists = (command: string) => 
-  commandExecutor.commandExists(command);
+export const commandExists = (command: string) => commandExecutor.commandExists(command);
 
-export const getSystemInfo = () => 
-  commandExecutor.getSystemInfo();
+export const getSystemInfo = () => commandExecutor.getSystemInfo();

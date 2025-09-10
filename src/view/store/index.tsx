@@ -11,14 +11,14 @@ export interface AppState {
   isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
-  
+
   // 导航状态
   currentPage: string;
   isMenuLocked: boolean;
-  
+
   // 配置状态
   config: Config | null;
-  
+
   // UI状态
   theme: 'light' | 'dark' | 'auto';
   sidebarCollapsed: boolean;
@@ -54,37 +54,37 @@ function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'SET_INITIALIZED':
       return { ...state, isInitialized: action.payload };
-    
+
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
-    
+
     case 'SET_ERROR':
       return { ...state, error: action.payload, isLoading: false };
-    
+
     case 'SET_CURRENT_PAGE':
       return { ...state, currentPage: action.payload };
-    
+
     case 'SET_MENU_LOCKED':
       return { ...state, isMenuLocked: action.payload };
-    
+
     case 'SET_CONFIG':
       return { ...state, config: action.payload };
-    
+
     case 'UPDATE_CONFIG':
       return {
         ...state,
         config: state.config ? { ...state.config, ...action.payload } : null,
       };
-    
+
     case 'SET_THEME':
       return { ...state, theme: action.payload };
-    
+
     case 'TOGGLE_SIDEBAR':
       return { ...state, sidebarCollapsed: !state.sidebarCollapsed };
-    
+
     case 'RESET_STATE':
       return initialState;
-    
+
     default:
       return state;
   }
@@ -174,11 +174,7 @@ export function AppProvider({ children }: AppProviderProps) {
     resetState,
   };
 
-  return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 }
 
 // Hook 用于使用 Context

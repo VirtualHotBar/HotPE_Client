@@ -51,7 +51,7 @@ export function setupCommandHandlers(mainWindow: Electron.BrowserWindow): void {
 
   // 异步执行命令，支持实时输出
   ipcMain.handle('cmd:spawn', async (_, command: string) => {
-    return new Promise<{ success: boolean; output: string; code: number }>((resolve) => {
+    return new Promise<{ success: boolean; output: string; code: number }>(resolve => {
       const encoding = getSystemEncoding();
       const child = spawn('cmd.exe', ['/c', command]);
       let output = '';

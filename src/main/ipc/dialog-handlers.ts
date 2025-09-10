@@ -11,9 +11,7 @@ export function setupDialogHandlers(): void {
       title: '请选择文件保存位置',
       buttonLabel: '保存',
       defaultPath: message.toString(),
-      filters: [
-        { name: '镜像文件', extensions: ['iso'] },
-      ],
+      filters: [{ name: '镜像文件', extensions: ['iso'] }],
     });
   });
 
@@ -23,9 +21,7 @@ export function setupDialogHandlers(): void {
       title: '请选择壁纸文件',
       buttonLabel: '打开',
       defaultPath: message.toString(),
-      filters: [
-        { name: 'jpg图片文件', extensions: ['jpg', 'jpeg'] },
-      ],
+      filters: [{ name: 'jpg图片文件', extensions: ['jpg', 'jpeg'] }],
     });
   });
 }

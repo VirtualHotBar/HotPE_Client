@@ -6,7 +6,7 @@ import { setupIpcHandlers, cleanupIpcHandlers } from './ipc';
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
 
-// 是否为开发模式 
+// 是否为开发模式
 const isDev = process.env['NODE_ENV'] === 'development' || !app.isPackaged;
 
 // 主窗口实例
@@ -49,7 +49,7 @@ function createMainWindow(): BrowserWindow {
   }
 
   // 拦截新窗口打开，使用系统浏览器
-  window.webContents.setWindowOpenHandler((details) => {
+  window.webContents.setWindowOpenHandler(details => {
     shell.openExternal(details.url);
     return { action: 'deny' };
   });
@@ -91,4 +91,3 @@ app.on('activate', () => {
 app.on('before-quit', () => {
   cleanupIpcHandlers();
 });
-

@@ -121,7 +121,7 @@ export class PerformanceMonitor {
     }
 
     this.isMonitoring = false;
-    
+
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = undefined;
@@ -163,11 +163,11 @@ export class PerformanceMonitor {
    */
   public recordEvent(name: string, metadata?: Record<string, unknown>): () => void {
     const startTime = performance.now();
-    
+
     return () => {
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       const event: PerformanceEvent = {
         name,
         startTime,
@@ -175,14 +175,14 @@ export class PerformanceMonitor {
         duration,
         ...(metadata && { metadata }),
       };
-      
+
       this.events.push(event);
-      
+
       // 限制事件历史大小
       if (this.events.length > 1000) {
         this.events = this.events.slice(-500);
       }
-      
+
       console.log(`性能事件: ${name} 耗时 ${duration.toFixed(2)}ms`);
     };
   }
@@ -196,7 +196,7 @@ export class PerformanceMonitor {
     metadata?: Record<string, unknown>
   ): Promise<T> {
     const endEvent = this.recordEvent(name, metadata);
-    
+
     try {
       const result = await fn();
       endEvent();
@@ -210,13 +210,9 @@ export class PerformanceMonitor {
   /**
    * 测量同步函数执行时间
    */
-  public measure<T>(
-    name: string,
-    fn: () => T,
-    metadata?: Record<string, unknown>
-  ): T {
+  public measure<T>(name: string, fn: () => T, metadata?: Record<string, unknown>): T {
     const endEvent = this.recordEvent(name, metadata);
-    
+
     try {
       const result = fn();
       endEvent();
@@ -270,20 +266,22 @@ export class PerformanceMonitor {
   } {
     const events = this.getEvents();
     const warnings = this.getWarnings();
-    
+
     // 计算统计信息
-    const averageEventDuration = events.length > 0 
-      ? events.reduce((sum, event) => sum + event.duration, 0) / events.length 
-      : 0;
-    
-    const slowestEvents = events
-      .sort((a, b) => b.duration - a.duration)
-      .slice(0, 10);
-    
-    const warningCount = warnings.reduce((count, warning) => {
-      count[warning.type] = (count[warning.type] || 0) + 1;
-      return count;
-    }, {} as Record<string, number>);
+    const averageEventDuration =
+      events.length > 0
+        ? events.reduce((sum, event) => sum + event.duration, 0) / events.length
+        : 0;
+
+    const slowestEvents = events.sort((a, b) => b.duration - a.duration).slice(0, 10);
+
+    const warningCount = warnings.reduce(
+      (count, warning) => {
+        count[warning.type] = (count[warning.type] || 0) + 1;
+        return count;
+      },
+      {} as Record<string, number>
+    );
 
     return {
       summary: this.getMetrics(),
@@ -312,10 +310,10 @@ export class PerformanceMonitor {
     try {
       // 收集内存信息
       const memoryInfo = await this.getMemoryInfo();
-      
+
       // 收集CPU信息
       const cpuInfo = await this.getCPUInfo();
-      
+
       // 更新指标
       this.metrics = {
         ...this.metrics,
@@ -345,14 +343,18 @@ export class PerformanceMonitor {
     try {
       // 尝试使用 performance.memory (Chrome)
       if ('memory' in performance) {
-        const memory = (performance as { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+        const memory = (
+          performance as {
+            memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number };
+          }
+        ).memory;
         const used = memory.usedJSHeapSize;
         const total = memory.totalJSHeapSize;
         const percentage = (used / total) * 100;
-        
+
         return { used, total, percentage };
       }
-      
+
       // 回退到估算
       return {
         used: 0,
@@ -375,10 +377,10 @@ export class PerformanceMonitor {
     try {
       // 获取CPU核心数
       const cores = navigator.hardwareConcurrency || 4;
-      
+
       // CPU使用率需要通过主进程获取
       const usage = 0; // 这里可以通过IPC从主进程获取实际CPU使用率
-      
+
       return { usage, cores };
     } catch (error) {
       return { usage: 0, cores: 4 };
@@ -391,11 +393,11 @@ export class PerformanceMonitor {
   private calculateFPS(): number {
     const now = performance.now();
     const deltaTime = now - this.lastFrameTime;
-    
+
     if (deltaTime > 0) {
       return Math.round(1000 / deltaTime);
     }
-    
+
     return 60; // 默认值
   }
 
@@ -405,20 +407,20 @@ export class PerformanceMonitor {
   private setupFrameMonitoring(): void {
     const frameCallback = (timestamp: number) => {
       this.frameCounter++;
-      
+
       if (this.lastFrameTime > 0) {
         const deltaTime = timestamp - this.lastFrameTime;
-        
+
         // 检测掉帧（超过16.67ms表示低于60fps）
         if (deltaTime > 16.67) {
           this.droppedFrames++;
         }
       }
-      
+
       this.lastFrameTime = timestamp;
       requestAnimationFrame(frameCallback);
     };
-    
+
     requestAnimationFrame(frameCallback);
   }
 
@@ -427,13 +429,13 @@ export class PerformanceMonitor {
    */
   private checkPerformanceWarnings(): void {
     const { memory, cpu, rendering } = this.metrics;
-    
+
     // 检查内存使用率
     this.checkThreshold('memory', memory.percentage, this.thresholds.memory, '内存使用率');
-    
+
     // 检查CPU使用率
     this.checkThreshold('cpu', cpu.usage, this.thresholds.cpu, 'CPU使用率');
-    
+
     // 检查FPS
     this.checkThreshold('fps', rendering.fps, this.thresholds.fps, 'FPS', true);
   }
@@ -450,7 +452,7 @@ export class PerformanceMonitor {
   ): void {
     let level: PerformanceWarning['level'] | null = null;
     let threshold = 0;
-    
+
     if (reverse) {
       // 对于FPS，值越低越严重
       if (value <= thresholds.critical) {
@@ -482,7 +484,7 @@ export class PerformanceMonitor {
         threshold = thresholds.low;
       }
     }
-    
+
     if (level) {
       const warning: PerformanceWarning = {
         type,
@@ -492,7 +494,7 @@ export class PerformanceMonitor {
         threshold,
         timestamp: new Date(),
       };
-      
+
       this.addWarning(warning);
     }
   }
@@ -502,20 +504,21 @@ export class PerformanceMonitor {
    */
   private addWarning(warning: PerformanceWarning): void {
     // 避免重复警告（5秒内同类型警告只记录一次）
-    const recentWarning = this.warnings.find(w => 
-      w.type === warning.type && 
-      w.level === warning.level &&
-      Date.now() - w.timestamp.getTime() < 5000
+    const recentWarning = this.warnings.find(
+      w =>
+        w.type === warning.type &&
+        w.level === warning.level &&
+        Date.now() - w.timestamp.getTime() < 5000
     );
-    
+
     if (!recentWarning) {
       this.warnings.push(warning);
-      
+
       // 限制警告历史大小
       if (this.warnings.length > 100) {
         this.warnings = this.warnings.slice(-50);
       }
-      
+
       // 通知警告监听器
       this.notifyWarningListeners(warning);
     }
@@ -576,29 +579,28 @@ export class PerformanceMonitor {
 export const performanceMonitor = PerformanceMonitor.getInstance();
 
 // 便捷函数导出
-export const startPerformanceMonitoring = (interval?: number) => 
+export const startPerformanceMonitoring = (interval?: number) =>
   performanceMonitor.startMonitoring(interval);
 
-export const stopPerformanceMonitoring = () => 
-  performanceMonitor.stopMonitoring();
+export const stopPerformanceMonitoring = () => performanceMonitor.stopMonitoring();
 
-export const recordPerformanceEvent = (name: string, metadata?: Record<string, unknown>) => 
+export const recordPerformanceEvent = (name: string, metadata?: Record<string, unknown>) =>
   performanceMonitor.recordEvent(name, metadata);
 
-export const measurePerformance = <T>(name: string, fn: () => T, metadata?: Record<string, unknown>) => 
-  performanceMonitor.measure(name, fn, metadata);
+export const measurePerformance = <T>(
+  name: string,
+  fn: () => T,
+  metadata?: Record<string, unknown>
+) => performanceMonitor.measure(name, fn, metadata);
 
 export const measureAsyncPerformance = <T>(
-  name: string, 
-  fn: () => Promise<T>, 
+  name: string,
+  fn: () => Promise<T>,
   metadata?: Record<string, unknown>
 ) => performanceMonitor.measureAsync(name, fn, metadata);
 
-export const getPerformanceMetrics = () => 
-  performanceMonitor.getMetrics();
+export const getPerformanceMetrics = () => performanceMonitor.getMetrics();
 
-export const getPerformanceReport = () => 
-  performanceMonitor.getPerformanceReport();
+export const getPerformanceReport = () => performanceMonitor.getPerformanceReport();
 
-export const exportPerformanceData = () => 
-  performanceMonitor.exportData();
+export const exportPerformanceData = () => performanceMonitor.exportData();

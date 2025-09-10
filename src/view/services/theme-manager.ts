@@ -46,7 +46,7 @@ export class ThemeManager {
 
     // 从本地存储加载主题
     this.loadThemeFromStorage();
-    
+
     // 应用初始主题
     this.applyTheme();
   }
@@ -90,20 +90,20 @@ export class ThemeManager {
    */
   public setTheme(theme: ThemeMode): void {
     const oldTheme = this.currentTheme;
-    
+
     if (oldTheme === theme) {
       return;
     }
 
     this.currentTheme = theme;
     this.config.mode = theme;
-    
+
     // 保存到本地存储
     this.saveThemeToStorage();
-    
+
     // 应用主题
     this.applyTheme();
-    
+
     // 触发主题变更事件
     this.notifyThemeChange(oldTheme, theme);
   }
@@ -114,13 +114,13 @@ export class ThemeManager {
   public updateConfig(updates: Partial<Omit<ThemeConfig, 'mode'>>): void {
     const oldConfig = { ...this.config };
     this.config = { ...this.config, ...updates };
-    
+
     // 保存到本地存储
     this.saveThemeToStorage();
-    
+
     // 重新应用主题
     this.applyTheme();
-    
+
     // 触发配置变更事件
     this.notifyConfigChange(oldConfig, this.config);
   }
@@ -187,20 +187,20 @@ export class ThemeManager {
   private applyTheme(): void {
     const actualTheme = this.getActualTheme();
     const body = document.body;
-    
+
     // 移除旧的主题类
     body.classList.remove('theme-light', 'theme-dark');
-    
+
     // 添加新的主题类
     body.classList.add(`theme-${actualTheme}`);
-    
+
     // 设置Semi UI主题
     if (actualTheme === 'dark') {
       body.setAttribute('theme-mode', 'dark');
     } else {
       body.removeAttribute('theme-mode');
     }
-    
+
     // 应用自定义CSS变量
     this.applyCSSVariables();
   }
@@ -211,19 +211,19 @@ export class ThemeManager {
   private applyCSSVariables(): void {
     const root = document.documentElement;
     const { primaryColor, borderRadius, fontSize, fontFamily } = this.config;
-    
+
     if (primaryColor) {
       root.style.setProperty('--theme-primary-color', primaryColor);
     }
-    
+
     if (borderRadius !== undefined) {
       root.style.setProperty('--theme-border-radius', `${borderRadius}px`);
     }
-    
+
     if (fontSize !== undefined) {
       root.style.setProperty('--theme-font-size', `${fontSize}px`);
     }
-    
+
     if (fontFamily) {
       root.style.setProperty('--theme-font-family', fontFamily);
     }
@@ -236,7 +236,7 @@ export class ThemeManager {
     if (this.currentTheme === THEME_MODES.AUTO) {
       // 重新应用主题
       this.applyTheme();
-      
+
       // 触发主题变更事件
       this.notifyThemeChange(THEME_MODES.AUTO, THEME_MODES.AUTO);
     }
@@ -251,7 +251,7 @@ export class ThemeManager {
       newTheme,
       config: this.getConfig(),
     };
-    
+
     this.listeners.forEach(listener => {
       try {
         listener(event);
@@ -270,7 +270,7 @@ export class ThemeManager {
       newTheme: newConfig.mode,
       config: newConfig,
     };
-    
+
     this.listeners.forEach(listener => {
       try {
         listener(event);
@@ -318,17 +318,17 @@ export class ThemeManager {
       fontSize: 14,
       fontFamily: 'HarmonyOS Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
     };
-    
+
     const oldTheme = this.currentTheme;
     this.config = defaultConfig;
     this.currentTheme = defaultConfig.mode;
-    
+
     // 保存到本地存储
     this.saveThemeToStorage();
-    
+
     // 应用主题
     this.applyTheme();
-    
+
     // 触发主题变更事件
     this.notifyThemeChange(oldTheme, defaultConfig.mode);
   }
@@ -363,7 +363,7 @@ export class ThemeManager {
   public applyPreset(presetName: string): void {
     const presets = this.getThemePresets();
     const preset = presets[presetName];
-    
+
     if (preset) {
       this.updateConfig(preset);
     }
@@ -389,11 +389,11 @@ export const toggleTheme = () => themeManager.toggleTheme();
 export const isDarkTheme = () => themeManager.isDarkTheme();
 export const isLightTheme = () => themeManager.isLightTheme();
 export const isAutoTheme = () => themeManager.isAutoTheme();
-export const addThemeChangeListener = (listener: (event: ThemeChangeEvent) => void) => 
+export const addThemeChangeListener = (listener: (event: ThemeChangeEvent) => void) =>
   themeManager.addThemeChangeListener(listener);
-export const removeThemeChangeListener = (listener: (event: ThemeChangeEvent) => void) => 
+export const removeThemeChangeListener = (listener: (event: ThemeChangeEvent) => void) =>
   themeManager.removeThemeChangeListener(listener);
-export const updateThemeConfig = (updates: Partial<Omit<ThemeConfig, 'mode'>>) => 
+export const updateThemeConfig = (updates: Partial<Omit<ThemeConfig, 'mode'>>) =>
   themeManager.updateConfig(updates);
 export const resetTheme = () => themeManager.resetTheme();
 export const applyThemePreset = (presetName: string) => themeManager.applyPreset(presetName);

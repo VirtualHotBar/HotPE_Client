@@ -1,4 +1,4 @@
-import { config } from "../../services/config";
+import { config } from '../../services/config';
 
 // 设置颜色模式的函数
 export function setThemeMode(mode: 'dark' | 'light' | 'auto'): void {
@@ -16,14 +16,14 @@ export function setThemeMode(mode: 'dark' | 'light' | 'auto'): void {
       isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
       break;
   }
-  
+
   // 根据模式设置页面主题和背景颜色
   if (isDarkMode) {
     body.setAttribute('theme-mode', 'dark');
-    body.style.backgroundColor = "#2E2E2E";
+    body.style.backgroundColor = '#2E2E2E';
   } else {
     body.setAttribute('theme-mode', 'light');
-    body.style.backgroundColor = "#FFFFFF";
+    body.style.backgroundColor = '#FFFFFF';
   }
 }
 

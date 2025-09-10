@@ -28,14 +28,17 @@ export function setupFileHandlers(): void {
   });
 
   // 写入文件
-  ipcMain.handle('fs:writeFile', async (_, filePath: string, data: string, encoding?: BufferEncoding) => {
-    try {
-      fs.writeFileSync(filePath, data, { encoding: encoding || 'utf8' });
-      return true;
-    } catch (error) {
-      throw new Error(`写入文件失败: ${error}`);
+  ipcMain.handle(
+    'fs:writeFile',
+    async (_, filePath: string, data: string, encoding?: BufferEncoding) => {
+      try {
+        fs.writeFileSync(filePath, data, { encoding: encoding || 'utf8' });
+        return true;
+      } catch (error) {
+        throw new Error(`写入文件失败: ${error}`);
+      }
     }
-  });
+  );
 
   // 检查文件是否存在
   ipcMain.handle('fs:exists', async (_, filePath: string) => {
@@ -44,8 +47,8 @@ export function setupFileHandlers(): void {
 
   // 检查文件访问权限
   ipcMain.handle('fs:access', async (_, filePath: string) => {
-    return new Promise<boolean>((resolve) => {
-      fs.access(filePath, (err) => {
+    return new Promise<boolean>(resolve => {
+      fs.access(filePath, err => {
         resolve(!err);
       });
     });
@@ -64,7 +67,7 @@ export function setupFileHandlers(): void {
   // 复制文件
   ipcMain.handle('fs:copyFile', async (_, src: string, dest: string) => {
     return new Promise<boolean>((resolve, reject) => {
-      fs.copyFile(src, dest, (err) => {
+      fs.copyFile(src, dest, err => {
         if (err) {
           reject(new Error(`复制文件失败: ${err}`));
         } else {
@@ -77,7 +80,7 @@ export function setupFileHandlers(): void {
   // 复制文件或目录
   ipcMain.handle('fs:cp', async (_, src: string, dest: string, options?: CpOptions) => {
     return new Promise<boolean>((resolve, reject) => {
-      fs.cp(src, dest, options || {}, (err) => {
+      fs.cp(src, dest, options || {}, err => {
         if (err) {
           reject(new Error(`复制失败: ${err}`));
         } else {
@@ -90,7 +93,7 @@ export function setupFileHandlers(): void {
   // 重命名文件
   ipcMain.handle('fs:rename', async (_, oldPath: string, newPath: string) => {
     return new Promise<boolean>((resolve, reject) => {
-      fs.rename(oldPath, newPath, (err) => {
+      fs.rename(oldPath, newPath, err => {
         if (err) {
           reject(new Error(`重命名失败: ${err}`));
         } else {

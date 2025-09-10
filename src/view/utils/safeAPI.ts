@@ -61,7 +61,7 @@ export const safeFS = {
    */
   rename: async (oldPath: string, newPath: string): Promise<boolean> => {
     return await window.electronAPI.fs.rename(oldPath, newPath);
-  }
+  },
 };
 
 // 命令执行操作
@@ -92,7 +92,7 @@ export const safeChildProcess = {
    */
   removeOutputListener: (): void => {
     window.electronAPI.cmd.removeOutputListener();
-  }
+  },
 };
 
 // Path 操作
@@ -123,7 +123,7 @@ export const safePath = {
    */
   extname: async (filePath: string): Promise<string> => {
     return await window.electronAPI.path.extname(filePath);
-  }
+  },
 };
 
 // 兼容性封装，模拟原有的同步 API
@@ -131,104 +131,107 @@ export const compatFS = {
   readFileSync: (filePath: string, encoding?: string): Promise<string> => {
     return safeFS.readFileSync(filePath, encoding);
   },
-  
+
   writeFileSync: (filePath: string, data: string, encoding?: string): Promise<boolean> => {
     return safeFS.writeFileSync(filePath, data, encoding);
   },
-  
+
   existsSync: (filePath: string): Promise<boolean> => {
     return safeFS.existsSync(filePath);
   },
-  
+
   access: (filePath: string, callback: ErrorCallback): void => {
     safeFS.access(filePath).then(
-      (exists) => callback(exists ? null : new Error('File not accessible')),
-      (error) => callback(error)
+      exists => callback(exists ? null : new Error('File not accessible')),
+      error => callback(error)
     );
   },
-  
+
   mkdirSync: (dirPath: string, options?: MkdirOptions): Promise<boolean> => {
     return safeFS.mkdirSync(dirPath, options);
   },
-  
+
   copyFile: (src: string, dest: string, callback: ErrorCallback): void => {
     safeFS.copyFile(src, dest).then(
       () => callback(null),
-      (error) => callback(error)
+      error => callback(error)
     );
   },
-  
+
   cp: (src: string, dest: string, options: CpOptions, callback: ErrorCallback): void => {
     safeFS.cp(src, dest, options).then(
       () => callback(null),
-      (error) => callback(error)
+      error => callback(error)
     );
   },
-  
+
   rename: (oldPath: string, newPath: string, callback: ErrorCallback): void => {
     safeFS.rename(oldPath, newPath).then(
       () => callback(null),
-      (error) => callback(error)
+      error => callback(error)
     );
-  }
+  },
 };
 
 export const compatChildProcess = {
   execSync: (command: string): Promise<string> => {
     return safeChildProcess.execSync(command);
   },
-  
-  spawn: (shell: string, args: string[]): {
-    stdout: { on: (event: string, callback: (data: Buffer) => void) => void },
-    stderr: { on: (event: string, callback: (data: Buffer) => void) => void },
-    on: (event: string, callback: (code: number) => void) => void
+
+  spawn: (
+    shell: string,
+    args: string[]
+  ): {
+    stdout: { on: (event: string, callback: (data: Buffer) => void) => void };
+    stderr: { on: (event: string, callback: (data: Buffer) => void) => void };
+    on: (event: string, callback: (code: number) => void) => void;
   } => {
     const command = `${shell} ${args.join(' ')}`;
     let outputCallback: ((data: string) => void) | null = null;
     let exitCallback: ((code: number) => void) | null = null;
-    
+
     // 启动命令执行
     safeChildProcess.spawn(command).then(result => {
       if (exitCallback) {
         exitCallback(result.code);
       }
     });
-    
+
     // 设置输出监听
     safeChildProcess.onOutput((data: string) => {
       if (outputCallback) {
         outputCallback(data);
       }
     });
-    
+
     return {
       stdout: {
         on: (event: string, callback: (data: Buffer) => void) => {
           if (event === 'data') {
             outputCallback = (data: string) => callback(Buffer.from(data));
           }
-        }
+        },
       },
       stderr: {
         on: (_event: string, _callback: (data: Buffer) => void) => {
           // errorCallback is not used in current implementation
-        }
+        },
       },
       on: (event: string, callback: (code: number) => void) => {
         if (event === 'exit') {
           exitCallback = callback;
         }
-      }
+      },
     };
-  }
+  },
 };
 
 export const compatPath = {
   join: (...paths: string[]): Promise<string> => {
     return safePath.join(...paths);
   },
-  
+
   basename: (filePath: string): Promise<string> => {
     return safePath.basename(filePath);
-  }
+  },
 };

@@ -3,12 +3,12 @@
  */
 
 import { Notification, Toast } from '@douyinfe/semi-ui';
-import { 
-  NOTIFICATION_TYPES, 
-  DEFAULT_VALUES, 
-  ERROR_MESSAGES, 
+import {
+  NOTIFICATION_TYPES,
+  DEFAULT_VALUES,
+  ERROR_MESSAGES,
   SUCCESS_MESSAGES,
-  type NotificationType 
+  type NotificationType,
 } from '../constants';
 import { NotificationConfig, ToastConfig } from '../types/notification-types';
 
@@ -75,11 +75,7 @@ export class NotificationManager {
   /**
    * 添加到历史记录
    */
-  private addToHistory(
-    type: NotificationType,
-    title: string | undefined,
-    content: string
-  ): void {
+  private addToHistory(type: NotificationType, title: string | undefined, content: string): void {
     const record: NotificationRecord = {
       id: this.generateId(),
       type,
@@ -264,7 +260,7 @@ export class NotificationManager {
   public showError(errorKey: keyof typeof ERROR_MESSAGES, details?: string): void {
     const message = ERROR_MESSAGES[errorKey];
     const content = details ? `${message}: ${details}` : message;
-    
+
     this.error({
       content,
       duration: 5000, // 错误消息显示更久
@@ -277,7 +273,7 @@ export class NotificationManager {
   public showSuccess(successKey: keyof typeof SUCCESS_MESSAGES, details?: string): void {
     const message = SUCCESS_MESSAGES[successKey];
     const content = details ? `${message}: ${details}` : message;
-    
+
     this.success({
       content,
     });
@@ -378,41 +374,38 @@ export class NotificationManager {
 export const notificationManager = NotificationManager.getInstance();
 
 // 便捷函数导出
-export const showSuccess = (options: NotificationOptions) => 
-  notificationManager.success(options);
+export const showSuccess = (options: NotificationOptions) => notificationManager.success(options);
 
-export const showError = (options: NotificationOptions) => 
-  notificationManager.error(options);
+export const showError = (options: NotificationOptions) => notificationManager.error(options);
 
-export const showWarning = (options: NotificationOptions) => 
-  notificationManager.warning(options);
+export const showWarning = (options: NotificationOptions) => notificationManager.warning(options);
 
-export const showInfo = (options: NotificationOptions) => 
-  notificationManager.info(options);
+export const showInfo = (options: NotificationOptions) => notificationManager.info(options);
 
-export const successToast = (content: string, options?: Omit<ToastOptions, 'content'>) => 
+export const successToast = (content: string, options?: Omit<ToastOptions, 'content'>) =>
   notificationManager.successToast(content, options);
 
-export const errorToast = (content: string, options?: Omit<ToastOptions, 'content'>) => 
+export const errorToast = (content: string, options?: Omit<ToastOptions, 'content'>) =>
   notificationManager.errorToast(content, options);
 
-export const warningToast = (content: string, options?: Omit<ToastOptions, 'content'>) => 
+export const warningToast = (content: string, options?: Omit<ToastOptions, 'content'>) =>
   notificationManager.warningToast(content, options);
 
-export const infoToast = (content: string, options?: Omit<ToastOptions, 'content'>) => 
+export const infoToast = (content: string, options?: Omit<ToastOptions, 'content'>) =>
   notificationManager.infoToast(content, options);
 
-export const showPredefinedError = (errorKey: keyof typeof ERROR_MESSAGES, details?: string) => 
+export const showPredefinedError = (errorKey: keyof typeof ERROR_MESSAGES, details?: string) =>
   notificationManager.showError(errorKey, details);
 
-export const showPredefinedSuccess = (successKey: keyof typeof SUCCESS_MESSAGES, details?: string) => 
-  notificationManager.showSuccess(successKey, details);
+export const showPredefinedSuccess = (
+  successKey: keyof typeof SUCCESS_MESSAGES,
+  details?: string
+) => notificationManager.showSuccess(successKey, details);
 
-export const showLoading = (content: string, duration?: number) => 
+export const showLoading = (content: string, duration?: number) =>
   notificationManager.showLoading(content, duration);
 
-export const showProgress = (content: string, progress: number) => 
+export const showProgress = (content: string, progress: number) =>
   notificationManager.showProgress(content, progress);
 
-export const closeAllNotifications = () => 
-  notificationManager.closeAll();
+export const closeAllNotifications = () => notificationManager.closeAll();

@@ -1,4 +1,4 @@
-import { safeChildProcess } from "./safeAPI";
+import { safeChildProcess } from './safeAPI';
 
 // 同步执行命令行
 export async function runCmdSync(cmd: string): Promise<string> {
@@ -11,26 +11,33 @@ export async function runCmdSync(cmd: string): Promise<string> {
 }
 
 // 异步执行命令行，并通过回调返回结果
-export function runCmd(cmd: string, returnstr: (data: string) => void, end: (code: number) => void) {
+export function runCmd(
+  cmd: string,
+  returnstr: (data: string) => void,
+  end: (code: number) => void
+) {
   let outputBuffer = '';
-  
+
   // 设置输出监听
   safeChildProcess.onOutput((data: string) => {
     outputBuffer += data;
     returnstr(data);
   });
-  
+
   // 执行命令
-  safeChildProcess.spawn(cmd).then(result => {
-    console.info(`${result.code} Command: ${cmd}`);
-    end(result.code);
-    // 清理监听器
-    safeChildProcess.removeOutputListener();
-  }).catch(error => {
-    console.error('命令执行失败:', error);
-    end(1);
-    safeChildProcess.removeOutputListener();
-  });
+  safeChildProcess
+    .spawn(cmd)
+    .then(result => {
+      console.info(`${result.code} Command: ${cmd}`);
+      end(result.code);
+      // 清理监听器
+      safeChildProcess.removeOutputListener();
+    })
+    .catch(error => {
+      console.error('命令执行失败:', error);
+      end(1);
+      safeChildProcess.removeOutputListener();
+    });
 }
 
 // 异步执行命令行，并通过 Promise 返回结果

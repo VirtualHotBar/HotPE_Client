@@ -85,13 +85,16 @@ export class ErrorBoundary extends Component<Props, State> {
             alignItems: 'center',
           }}
         >
-          <IconAlertTriangle size="extra-large" style={{ color: 'var(--semi-color-danger)', marginBottom: '16px' }} />
-          
+          <IconAlertTriangle
+            size='extra-large'
+            style={{ color: 'var(--semi-color-danger)', marginBottom: '16px' }}
+          />
+
           <Title heading={3} style={{ marginBottom: '8px' }}>
             应用出现错误
           </Title>
-          
-          <Text type="secondary" style={{ marginBottom: '24px', maxWidth: '500px' }}>
+
+          <Text type='secondary' style={{ marginBottom: '24px', maxWidth: '500px' }}>
             很抱歉，应用遇到了一个意外错误。您可以尝试重新加载页面或重启应用。
           </Text>
 
@@ -124,16 +127,10 @@ export class ErrorBoundary extends Component<Props, State> {
           )}
 
           <Space>
-            <Button
-              icon={<IconRefresh />}
-              onClick={this.handleRetry}
-              type="primary"
-            >
+            <Button icon={<IconRefresh />} onClick={this.handleRetry} type='primary'>
               重试
             </Button>
-            <Button onClick={this.handleReload}>
-              重新加载
-            </Button>
+            <Button onClick={this.handleReload}>重新加载</Button>
           </Space>
         </div>
       );

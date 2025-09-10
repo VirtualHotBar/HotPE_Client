@@ -248,10 +248,10 @@ export const EVENTS = {
 } as const;
 
 // 类型导出
-export type PageType = typeof PAGES[keyof typeof PAGES];
-export type ThemeMode = typeof THEME_MODES[keyof typeof THEME_MODES];
-export type InstallState = typeof INSTALL_STATES[keyof typeof INSTALL_STATES];
-export type UpdateState = typeof UPDATE_STATES[keyof typeof UPDATE_STATES];
-export type NotificationType = typeof NOTIFICATION_TYPES[keyof typeof NOTIFICATION_TYPES];
-export type SystemArch = typeof SYSTEM_ARCH[keyof typeof SYSTEM_ARCH];
-export type FirmwareType = typeof FIRMWARE_TYPES[keyof typeof FIRMWARE_TYPES];
+export type PageType = (typeof PAGES)[keyof typeof PAGES];
+export type ThemeMode = (typeof THEME_MODES)[keyof typeof THEME_MODES];
+export type InstallState = (typeof INSTALL_STATES)[keyof typeof INSTALL_STATES];
+export type UpdateState = (typeof UPDATE_STATES)[keyof typeof UPDATE_STATES];
+export type NotificationType = (typeof NOTIFICATION_TYPES)[keyof typeof NOTIFICATION_TYPES];
+export type SystemArch = (typeof SYSTEM_ARCH)[keyof typeof SYSTEM_ARCH];
+export type FirmwareType = (typeof FIRMWARE_TYPES)[keyof typeof FIRMWARE_TYPES];

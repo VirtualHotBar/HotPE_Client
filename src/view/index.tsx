@@ -36,7 +36,7 @@ function StartPage() {
     const startApp = async () => {
       try {
         await initClient(setStartStr);
-        
+
         if (mounted) {
           // 初始化完成，渲染主应用
           root.render(
@@ -65,42 +65,40 @@ function StartPage() {
   // 如果有错误，显示错误信息
   if (error) {
     return (
-      <div 
-        style={{ 
-          textAlign: 'center', 
+      <div
+        style={{
+          textAlign: 'center',
           padding: '40px',
           height: '100vh',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
       >
-        <Text type="danger" style={{ marginBottom: '16px', fontSize: '18px', fontWeight: 'bold' }}>
+        <Text type='danger' style={{ marginBottom: '16px', fontSize: '18px', fontWeight: 'bold' }}>
           应用启动失败
         </Text>
-        <Text type="secondary">{error}</Text>
+        <Text type='secondary'>{error}</Text>
       </div>
     );
   }
 
   // 显示加载界面
   return (
-    <div 
-      className="loading" 
-      style={{ 
-        textAlign: 'center', 
+    <div
+      className='loading'
+      style={{
+        textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh'
+        height: '100vh',
       }}
     >
-      <Spin size="large" />
-      <Text style={{ marginTop: '16px' }}>
-        正在启动：{startStr}
-      </Text>
+      <Spin size='large' />
+      <Text style={{ marginTop: '16px' }}>正在启动：{startStr}</Text>
     </div>
   );
 }
@@ -113,4 +111,3 @@ root.render(
     </ErrorBoundary>
   </StrictMode>
 );
-

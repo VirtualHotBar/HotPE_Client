@@ -45,7 +45,7 @@ function LoadingSpinner() {
         flexDirection: 'column',
       }}
     >
-      <Spin size="large" />
+      <Spin size='large' />
       <Text style={{ marginTop: '16px' }}>加载中...</Text>
     </div>
   );
@@ -83,12 +83,10 @@ export default function Page({ currentPage, onNavigate, onMenuLockChange }: Page
           flexDirection: 'column',
         }}
       >
-        <Text type="danger" style={{ fontSize: '18px', marginBottom: '8px' }}>
+        <Text type='danger' style={{ fontSize: '18px', marginBottom: '8px' }}>
           页面未找到
         </Text>
-        <Text type="secondary">
-          请求的页面 "{currentPage}" 不存在
-        </Text>
+        <Text type='secondary'>请求的页面 "{currentPage}" 不存在</Text>
       </div>
     );
   }
@@ -103,15 +101,12 @@ export default function Page({ currentPage, onNavigate, onMenuLockChange }: Page
             textAlign: 'center',
           }}
         >
-          <Text type="danger">页面加载失败</Text>
+          <Text type='danger'>页面加载失败</Text>
         </div>
       }
     >
       <Suspense fallback={<LoadingSpinner />}>
-        <PageComponent
-          onNavigate={onNavigate}
-          onMenuLockChange={onMenuLockChange}
-        />
+        <PageComponent onNavigate={onNavigate} onMenuLockChange={onMenuLockChange} />
       </Suspense>
     </ErrorBoundary>
   );

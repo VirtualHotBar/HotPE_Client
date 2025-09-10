@@ -1,11 +1,16 @@
-
 body {
   color: 'var(--semi-color-text-0)';
   background-color: 'var( --semi-color-bg-0)';
   overflow-x: auto;
 }
 
-h1,h2,h3,h4,h5,h6,p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   color: var(--semi-color-text-0);
 }
 
@@ -15,13 +20,13 @@ div.loading {
 
 /* 字体 */
 @font-face {
-  font-family: "Inter";
-  src: url("./assets/font/HarmonyOS_Sans_Regular.ttf") format("truetype");
+  font-family: 'Inter';
+  src: url('./assets/font/HarmonyOS_Sans_Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: "Inter-Bold";
-  src: url("./assets/font/HarmonyOS_Sans_Bold.ttf") format("truetype");
+  font-family: 'Inter-Bold';
+  src: url('./assets/font/HarmonyOS_Sans_Bold.ttf') format('truetype');
 }
 
 @font-face {
@@ -37,23 +42,23 @@ div.loading {
 
 ::-webkit-scrollbar-track {
   width: 6px;
-  background: rgba(#101F1C, 0.1);
+  background: rgba(#101f1c, 0.1);
   -webkit-border-radius: 2em;
   -moz-border-radius: 2em;
   border-radius: 2em;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(144,147,153,.5);
+  background-color: rgba(144, 147, 153, 0.5);
   background-clip: padding-box;
   min-height: 28px;
   -webkit-border-radius: 2em;
   -moz-border-radius: 2em;
   border-radius: 2em;
-  transition: background-color .3s;
+  transition: background-color 0.3s;
   cursor: pointer;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(144,147,153,.3);
+  background-color: rgba(144, 147, 153, 0.3);
 }

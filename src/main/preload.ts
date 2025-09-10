@@ -66,30 +66,24 @@ const electronAPI: ElectronAPI = {
 
   // 文件系统操作
   fs: {
-    readFile: (filePath: string, encoding?: string) => 
+    readFile: (filePath: string, encoding?: string) =>
       ipcRenderer.invoke('fs:readFile', filePath, encoding),
-    writeFile: (filePath: string, data: string, encoding?: string) => 
+    writeFile: (filePath: string, data: string, encoding?: string) =>
       ipcRenderer.invoke('fs:writeFile', filePath, data, encoding),
-    exists: (filePath: string) => 
-      ipcRenderer.invoke('fs:exists', filePath),
-    access: (filePath: string) => 
-      ipcRenderer.invoke('fs:access', filePath),
-    mkdir: (dirPath: string, options?: MkdirOptions) => 
+    exists: (filePath: string) => ipcRenderer.invoke('fs:exists', filePath),
+    access: (filePath: string) => ipcRenderer.invoke('fs:access', filePath),
+    mkdir: (dirPath: string, options?: MkdirOptions) =>
       ipcRenderer.invoke('fs:mkdir', dirPath, options),
-    copyFile: (src: string, dest: string) => 
-      ipcRenderer.invoke('fs:copyFile', src, dest),
-    cp: (src: string, dest: string, options?: CpOptions) => 
+    copyFile: (src: string, dest: string) => ipcRenderer.invoke('fs:copyFile', src, dest),
+    cp: (src: string, dest: string, options?: CpOptions) =>
       ipcRenderer.invoke('fs:cp', src, dest, options),
-    rename: (oldPath: string, newPath: string) => 
-      ipcRenderer.invoke('fs:rename', oldPath, newPath),
+    rename: (oldPath: string, newPath: string) => ipcRenderer.invoke('fs:rename', oldPath, newPath),
   },
 
   // 命令执行
   cmd: {
-    execSync: (command: string) => 
-      ipcRenderer.invoke('cmd:execSync', command),
-    spawn: (command: string) => 
-      ipcRenderer.invoke('cmd:spawn', command),
+    execSync: (command: string) => ipcRenderer.invoke('cmd:execSync', command),
+    spawn: (command: string) => ipcRenderer.invoke('cmd:spawn', command),
     onOutput: (callback: (data: string) => void) => {
       ipcRenderer.on('cmd:output', (_, data) => callback(data));
     },
@@ -100,22 +94,16 @@ const electronAPI: ElectronAPI = {
 
   // 路径操作
   path: {
-    join: (...paths: string[]) => 
-      ipcRenderer.invoke('path:join', ...paths),
-    basename: (filePath: string) => 
-      ipcRenderer.invoke('path:basename', filePath),
-    dirname: (filePath: string) => 
-      ipcRenderer.invoke('path:dirname', filePath),
-    extname: (filePath: string) => 
-      ipcRenderer.invoke('path:extname', filePath),
+    join: (...paths: string[]) => ipcRenderer.invoke('path:join', ...paths),
+    basename: (filePath: string) => ipcRenderer.invoke('path:basename', filePath),
+    dirname: (filePath: string) => ipcRenderer.invoke('path:dirname', filePath),
+    extname: (filePath: string) => ipcRenderer.invoke('path:extname', filePath),
   },
 
   // 对话框
   dialog: {
-    getSavePath: (defaultPath: string) => 
-      ipcRenderer.sendSync('file:getSavePath', defaultPath),
-    getOpenPath: (defaultPath: string) => 
-      ipcRenderer.sendSync('file:getOpenPath', defaultPath),
+    getSavePath: (defaultPath: string) => ipcRenderer.sendSync('file:getSavePath', defaultPath),
+    getOpenPath: (defaultPath: string) => ipcRenderer.sendSync('file:getOpenPath', defaultPath),
   },
 };
 

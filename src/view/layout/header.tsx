@@ -61,47 +61,47 @@ export default function Header({ onNavigate }: HeaderProps) {
   }, []);
 
   return (
-    <div className="topbarLeft" style={{ height: '100%', width: '100%' }}>
-      <Nav 
-        mode="horizontal" 
-        defaultSelectedKeys={['Home']} 
+    <div className='topbarLeft' style={{ height: '100%', width: '100%' }}>
+      <Nav
+        mode='horizontal'
+        defaultSelectedKeys={['Home']}
         style={{ height: '100%', width: '100%' }}
       >
         <Nav.Header style={{ marginLeft: '-15px', width: '150px' }}>
-          <img 
-            src="img/logo256.png" 
-            height={30} 
-            alt="HotPE Logo"
+          <img
+            src='img/logo256.png'
+            height={30}
+            alt='HotPE Logo'
             style={{ verticalAlign: 'middle' }}
           />
-          <span 
-            style={{ 
-              color: 'var(--semi-color-text-0)', 
+          <span
+            style={{
+              color: 'var(--semi-color-text-0)',
               margin: '0px 10px 0 10px',
-              verticalAlign: 'middle'
+              verticalAlign: 'middle',
             }}
           >
             HotPE Client
           </span>
         </Nav.Header>
 
-        <Nav.Footer 
-          style={{ 
-            width: '100%', 
-            display: 'flex', 
-            textAlign: 'right', 
-            justifyContent: 'flex-end' 
+        <Nav.Footer
+          style={{
+            width: '100%',
+            display: 'flex',
+            textAlign: 'right',
+            justifyContent: 'flex-end',
           }}
         >
           <div style={{ width: '100%', textAlign: 'center' }}>
             <Input
-              className="topbarSearch"
-              style={{ 
-                width: '50%', 
-                minWidth: '250px', 
-                height: '28px' 
+              className='topbarSearch'
+              style={{
+                width: '50%',
+                minWidth: '250px',
+                height: '28px',
               }}
-              placeholder="输入关键词，回车搜索模块"
+              placeholder='输入关键词，回车搜索模块'
               prefix={<IconSearch />}
               value={searchValue}
               onChange={handleSearchChange}
@@ -109,23 +109,23 @@ export default function Header({ onNavigate }: HeaderProps) {
               showClear
             />
           </div>
-          
+
           <Button
             onClick={handleMinimize}
-            theme="borderless"
-            type="tertiary"
+            theme='borderless'
+            type='tertiary'
             style={{ margin: '-8px 0px 0px 100px' }}
-            aria-label="最小化窗口"
+            aria-label='最小化窗口'
           >
             <IconMinus />
           </Button>
-          
+
           <Button
             onClick={handleClose}
-            theme="borderless"
-            type="danger"
+            theme='borderless'
+            type='danger'
             style={{ margin: '-8px -25px 0px 0px' }}
-            aria-label="关闭应用"
+            aria-label='关闭应用'
           >
             <IconClose />
           </Button>
@@ -166,9 +166,6 @@ function SearchBox(){
         />
     );
 } */
-
-
-
 
 /* class CustomOptionDemo extends React.Component {
     constructor() {
@@ -237,5 +234,3 @@ function SearchBox(){
         );
     }
 }  */
-
-
