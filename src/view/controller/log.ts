@@ -43,12 +43,12 @@ async function errorThrowToUser(message: string) {
     return;
   }
 
-  // 排除 react-window 相关的已知错误
+  // 排除虚拟化列表相关的已知错误
   if (
     message.toString().includes('Cannot convert undefined or null to object') &&
-    message.toString().includes('react-window')
+    message.toString().includes('VirtualizedList')
   ) {
-    console.warn('React-window data issue detected, but handled gracefully');
+    console.warn('VirtualizedList data issue detected, but handled gracefully');
     return;
   }
 
@@ -76,7 +76,6 @@ export function errorDialog(title: string, content: ReactNode) {
       hasCancel: false,
       maskClosable: false,
       closable: false,
-      type: 'error',
     });
   });
 }

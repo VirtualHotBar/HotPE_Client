@@ -1,5 +1,5 @@
 import { config, roConfig } from '../services/config';
-import { Aria2Attrib } from '../type/aria2';
+import { Aria2Attrib } from '../../types/aria2';
 import { Aria2 } from '../utils/aria2/aria2';
 import { checkPERes } from './condition';
 import { updateState } from './init';

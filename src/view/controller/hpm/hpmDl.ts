@@ -2,9 +2,9 @@
 
 import { Notification, Toast } from '@douyinfe/semi-ui';
 import { config } from '../../services/config';
-import { HPMDLRender, HPMDlList } from '../../services/hpm';
-import { Aria2Attrib } from '../../type/aria2';
-import { HPM, HPMDl } from '../../type/hpm';
+import {HPMDLRender,  HPMDlList } from '../../services/hpm';
+import { Aria2Attrib } from '../../../types/aria2';
+import { HPM, HPMDl } from '../../../types/hpm';
 import { Aria2 } from '../../utils/aria2/aria2';
 import { checkHPMFiles } from './checkHpmFiles';
 import { isHPMReady } from './hpm';
@@ -140,7 +140,7 @@ function delHPMDlFromList(HPMInfo: HPM) {
 //更新界面实时
 function refreshRender() {
   HPMDLRender.callRefreshPage(); //页
-  HPMDLRender.callRefreshDlTab.map(fn => {
+  HPMDLRender.callRefreshDlTab.map((fn: Function)=> {
     fn();
   }); //标签
 }

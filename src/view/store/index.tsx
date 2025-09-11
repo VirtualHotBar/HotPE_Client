@@ -3,7 +3,7 @@
  */
 
 import React, { createContext, useContext, useReducer, ReactNode, useCallback } from 'react';
-import { Config } from '../type/config';
+import { Config } from '../../types/config';
 
 // 状态类型定义
 export interface AppState {

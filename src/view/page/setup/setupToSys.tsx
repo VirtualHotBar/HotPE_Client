@@ -8,7 +8,7 @@ import {
   updatePEForSys,
 } from '../../controller/Install/toSystem';
 import { takeLeftStr } from '../../utils/utils';
-import { SetupToSysPageProps } from '../../types/page-props';
+import { SetupToSysPageProps } from '../../../types/page-props';
 
 export default function SetupToSys(props: SetupToSysPageProps) {
   const [currentStep, setCurrentStep] = useState(-1); //当前步骤

@@ -15,7 +15,11 @@ export interface SpawnResult {
   success: boolean;
   output: string;
   code: number;
+  commandId?: string;
 }
+
+// 导入命令相关类型
+export type { CommandOutput, CommandResult } from './command';
 
 export interface ProcessOutput {
   stdout: { on: (event: string, callback: (data: Buffer) => void) => void };

@@ -1,14 +1,14 @@
 import { Notification } from '@douyinfe/semi-ui';
 import { config } from '../../services/config';
-import { HPM } from '../../type/hpm';
+import { HPM } from '../../../types/hpm';
 import { takeLeftStr } from '../../utils/utils';
-import { runCmdSync } from '../../utils/command';
+import { runCmdAsync } from '../../utils/command';
 
 //通过文件名，和路径获取HPMInfo
 export async function getHPMinfoLocal(HPMFilePath: string, HPMFileName: string) {
   try {
     // 使用 dir 命令获取文件信息
-    const dirOutput = await runCmdSync(`dir "${HPMFilePath}${HPMFileName}" /Q`);
+    const dirOutput = await runCmdAsync(`dir "${HPMFilePath}${HPMFileName}" /Q`);
 
     // 解析文件大小和时间信息
     const lines = dirOutput.split('\n');

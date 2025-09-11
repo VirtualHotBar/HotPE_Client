@@ -2,10 +2,10 @@
  * 配置管理器 - 重构后的配置管理系统
  */
 
-import { Config } from '../type/config';
+import { Config } from '../../types/config';
 import { safeFS } from '../utils/safeAPI';
 import { isJSON, writeJosnFile } from '../utils/utils';
-import { runCmdSync } from '../utils/command';
+import { runCmdAsync } from '../utils/command';
 
 // 只读配置类型
 interface ReadOnlyConfig {
@@ -202,19 +202,19 @@ export class ConfigManager {
   private async initializeEnvironment(): Promise<void> {
     try {
       // 获取当前工作目录
-      const execDir = await runCmdSync('cd');
+      const execDir = await runCmdAsync('cd');
       this._roConfig.path.execDir = `${execDir.replaceAll('\r\n', '')  }\\`;
 
-      const sysLetter = await runCmdSync('echo %SystemDrive%');
+      const sysLetter = await runCmdAsync('echo %SystemDrive%');
       this._roConfig.environment.sysLetter = sysLetter.substring(0, 2);
 
-      const temp = await runCmdSync('echo %temp%');
+      const temp = await runCmdAsync('echo %temp%');
       this._roConfig.environment.temp = `${temp.replaceAll('\r\n', '')  }\\`;
 
-      const userName = await runCmdSync('echo %UserName%');
+      const userName = await runCmdAsync('echo %UserName%');
       this._roConfig.environment.userName = userName.replaceAll('\r\n', '');
 
-      const desktopDir = await runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\');
+      const desktopDir = await runCmdAsync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\');
       this._roConfig.environment.desktopDir = desktopDir.replaceAll('\r\n', '');
     } catch (error) {
       console.error('初始化环境变量失败:', error);

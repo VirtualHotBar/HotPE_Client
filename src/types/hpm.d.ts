@@ -1,4 +1,4 @@
-import { Aria2 } from '../utils/aria2/aria2';
+import { Aria2 } from '../view/utils/aria2/aria2';
 import { Aria2Attrib } from './aria2';
 
 interface HPMClass {
@@ -24,11 +24,12 @@ interface HPMDl {
   dlInfo: Aria2Attrib;
 }
 
-interface HPMDLRender {
+interface HPMDLRenderType {
   callRefreshPage: Function;
   callRefreshNav: Function;
   callRefreshResult: Function; //任务结束时更新
   callRefreshDlTab: Array<Function>;
 }
 
-export { HPMClass, HPM, HPMDl, HPMDLRender };
+
+export { HPMClass, HPM, HPMDl,HPMDLRenderType };

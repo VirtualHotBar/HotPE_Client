@@ -1,4 +1,4 @@
-import { HPM } from '../../hpm';
+import { HPM } from './hpm';
 
 interface HPMTab {
   HPM: HPM;

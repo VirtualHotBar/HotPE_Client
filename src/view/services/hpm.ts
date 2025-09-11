@@ -1,4 +1,4 @@
-import type { HPM, HPMClass, HPMDLRender, HPMDl } from '../type/hpm';
+import type { HPM, HPMClass, HPMDl, HPMDLRenderType } from '../../types/hpm';
 
 //在线的HPM列表
 let HPMListOnline: Array<HPMClass> = [];
@@ -17,7 +17,7 @@ const HPMDlList: Array<HPMDl> = [];
     callRender: () => { }
 } */
 
-const HPMDLRender: HPMDLRender = {
+const HPMDLRender: HPMDLRenderType = {
   callRefreshNav: () => {},
   callRefreshPage: () => {},
   callRefreshResult: () => {},

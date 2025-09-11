@@ -11,7 +11,7 @@ import {
 } from '../../controller/Install/toUDisk';
 import { checkPEDrive } from '../../controller/condition';
 import { getHotPEDriveVer } from '../../controller/Install/check';
-import { SetupToUDiskPageProps, TreeSelectOption } from '../../types/page-props';
+import { SetupToUDiskPageProps, TreeSelectOption } from '../../../types/page-props';
 
 //let uDiskRefreshing =false
 

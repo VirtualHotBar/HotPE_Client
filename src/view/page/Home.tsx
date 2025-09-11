@@ -3,12 +3,12 @@ import { Button, Banner, Progress, Notification, Modal, Descriptions } from '@do
 import { DownloadOne } from '@icon-park/react';
 import { config } from '../services/config';
 import { dlPERes } from '../controller/dlRes';
-import { Aria2Attrib } from '../type/aria2';
+import { Aria2Attrib } from '../../types/aria2';
 import ReactMarkdown from 'react-markdown';
-import { UpdateLatest } from '../type/update';
+import { UpdateLatest } from '../../types/update';
 import { updateClient, updateDoneTip } from '../controller/update';
 import { formatSize } from '../utils/utils';
-import { HomePageProps } from '../types/page-props';
+import { HomePageProps } from '../../types/page-props';
 
 let updatePromptOk = false; //更新提示
 
@@ -18,7 +18,7 @@ let dlSpeed = 'OKB/S'; //下载速度
 export default function Home(props: HomePageProps) {
   const [, forceUpdate] = useReducer(x => x + 1, 0); //刷新页面
 
-  const welcomeStr = '欢迎使用HotPE客户端！';
+  const welcomeStr: string = '欢迎使用HotPE客户端！';
   let content = <></>; //页内容
 
   function setDlPercent(percent: number) {
@@ -237,7 +237,7 @@ export default function Home(props: HomePageProps) {
       <div style={{ width: '100%', display: 'flex', whiteSpace: 'nowrap' }}>
         <div style={{ width: 'calc(100% - 150px)' }}>
           {' '}
-          {welcomeStr != '' ? <h2>{welcomeStr}</h2> : <></>}
+          {welcomeStr !== '' ? <h2>{welcomeStr}</h2> : <></>}
         </div>
         <div style={{ width: '150px', textAlign: 'right' }}>{/* <Button>设置</Button> */}</div>
       </div>

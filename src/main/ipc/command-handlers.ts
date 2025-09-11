@@ -5,6 +5,8 @@
 import { ipcMain } from 'electron';
 import { spawn, execSync } from 'child_process';
 import iconv from 'iconv-lite';
+import { randomUUID } from 'crypto';
+import type { CommandOutput, CommandResult } from '../../types/command';
 
 /**
  * 获取系统编码
@@ -38,21 +40,12 @@ function getSystemEncoding(): string {
 }
 
 export function setupCommandHandlers(mainWindow: Electron.BrowserWindow): void {
-  // 同步执行命令
-  ipcMain.handle('cmd:execSync', async (_, command: string) => {
-    try {
-      const encoding = getSystemEncoding();
-      const result = execSync(command);
-      return iconv.decode(result, encoding);
-    } catch (error) {
-      throw new Error(`命令执行失败: ${error}`);
-    }
-  });
 
   // 异步执行命令，支持实时输出
   ipcMain.handle('cmd:spawn', async (_, command: string) => {
-    return new Promise<{ success: boolean; output: string; code: number }>(resolve => {
+    return new Promise<CommandResult>(resolve => {
       const encoding = getSystemEncoding();
+      const commandId = randomUUID(); // 生成唯一命令标识符
       const child = spawn('cmd.exe', ['/c', command]);
       let output = '';
       let errorOutput = '';
@@ -60,21 +53,39 @@ export function setupCommandHandlers(mainWindow: Electron.BrowserWindow): void {
       child.stdout.on('data', (data: Buffer) => {
         const decoded = iconv.decode(data, encoding);
         output += decoded;
-        // 发送实时输出到渲染进程
-        mainWindow.webContents.send('cmd:output', decoded);
+        // 发送实时输出到渲染进程，包含命令标识符
+        mainWindow.webContents.send('cmd:output', {
+          commandId,
+          data: decoded,
+          type: 'stdout'
+        } as CommandOutput);
       });
 
       child.stderr.on('data', (data: Buffer) => {
         const decoded = iconv.decode(data, encoding);
         errorOutput += decoded;
-        console.error(decoded);
+        // 发送错误输出到渲染进程，包含命令标识符
+        mainWindow.webContents.send('cmd:output', {
+          commandId,
+          data: decoded,
+          type: 'stderr'
+        } as CommandOutput);
       });
 
       child.on('exit', (code: number) => {
+        // 发送命令完成信号
+        mainWindow.webContents.send('cmd:output', {
+          commandId,
+          data: '',
+          type: 'exit',
+          code
+        } as CommandOutput);
+        
         resolve({
           success: code === 0,
           output: output + errorOutput,
           code: code || 0,
+          commandId
         });
       });
     });

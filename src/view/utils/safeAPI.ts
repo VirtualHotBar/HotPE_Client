@@ -3,7 +3,7 @@
  * 所有操作都通过主进程的 IPC 通信完成
  */
 
-import { MkdirOptions, CpOptions, SpawnResult, ErrorCallback } from '../types/fs-types';
+import { MkdirOptions, CpOptions, ErrorCallback, CommandOutput, CommandResult } from '../../types/fs-types';
 
 // 文件系统操作
 export const safeFS = {
@@ -67,24 +67,29 @@ export const safeFS = {
 // 命令执行操作
 export const safeChildProcess = {
   /**
-   * 同步执行命令
-   */
-  execSync: async (command: string): Promise<string> => {
-    return await window.electronAPI.cmd.execSync(command);
-  },
-
-  /**
    * 异步执行命令，支持实时输出
    */
-  spawn: async (command: string): Promise<SpawnResult> => {
+  spawn: async (command: string): Promise<CommandResult> => {
     return await window.electronAPI.cmd.spawn(command);
   },
 
   /**
-   * 监听命令输出
+   * 监听命令输出（新格式）
    */
-  onOutput: (callback: (data: string) => void): void => {
+  onOutput: (callback: (output: CommandOutput) => void): void => {
     window.electronAPI.cmd.onOutput(callback);
+  },
+
+  /**
+   * 监听命令输出（兼容旧格式）
+   */
+  onOutputLegacy: (callback: (data: string) => void): void => {
+    const wrappedCallback = (output: CommandOutput) => {
+      if (output.data.trim()) {
+        callback(output.data);
+      }
+    };
+    window.electronAPI.cmd.onOutput(wrappedCallback);
   },
 
   /**
@@ -174,11 +179,7 @@ export const compatFS = {
 };
 
 export const compatChildProcess = {
-  execSync: (command: string): Promise<string> => {
-    return safeChildProcess.execSync(command);
-  },
-
-  spawn: (
+    spawn: (
     shell: string,
     args: string[]
   ): {
@@ -188,6 +189,7 @@ export const compatChildProcess = {
   } => {
     const command = `${shell} ${args.join(' ')}`;
     let outputCallback: ((data: string) => void) | null = null;
+    let errorCallback: ((data: string) => void) | null = null;
     let exitCallback: ((code: number) => void) | null = null;
 
     // 启动命令执行
@@ -197,10 +199,14 @@ export const compatChildProcess = {
       }
     });
 
-    // 设置输出监听
-    safeChildProcess.onOutput((data: string) => {
-      if (outputCallback) {
-        outputCallback(data);
+    // 设置输出监听（使用新格式）
+    safeChildProcess.onOutput((output: CommandOutput) => {
+      if (output.type === 'stdout' && outputCallback && output.data.trim()) {
+        outputCallback(output.data);
+      } else if (output.type === 'stderr' && errorCallback && output.data.trim()) {
+        errorCallback(output.data);
+      } else if (output.type === 'exit' && exitCallback) {
+        exitCallback(output.code || 0);
       }
     });
 
@@ -213,8 +219,10 @@ export const compatChildProcess = {
         },
       },
       stderr: {
-        on: (_event: string, _callback: (data: Buffer) => void) => {
-          // errorCallback is not used in current implementation
+        on: (event: string, callback: (data: Buffer) => void) => {
+          if (event === 'data') {
+            errorCallback = (data: string) => callback(Buffer.from(data));
+          }
         },
       },
       on: (event: string, callback: (code: number) => void) => {

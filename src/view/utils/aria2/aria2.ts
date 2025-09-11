@@ -2,7 +2,7 @@ import { safeFS, safePath } from '../safeAPI';
 import { runCmd } from '../command';
 import { dealStrForCmd, delFiles, takeMidStr, takeRightStr } from '../utils';
 
-import { Aria2Attrib } from '../../type/aria2';
+import { Aria2Attrib } from '../../../types/aria2';
 import { roConfig } from '../../services/config';
 
 //接口

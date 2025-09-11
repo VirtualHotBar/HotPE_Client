@@ -3,6 +3,7 @@
  */
 
 import { contextBridge, ipcRenderer } from 'electron';
+import type { CommandOutput, CommandResult } from '../types/command';
 
 // 文件系统操作类型
 interface MkdirOptions {
@@ -34,13 +35,8 @@ interface ElectronAPI {
     rename: (oldPath: string, newPath: string) => Promise<boolean>;
   };
   cmd: {
-    execSync: (command: string) => Promise<string>;
-    spawn: (command: string) => Promise<{
-      success: boolean;
-      output: string;
-      code: number;
-    }>;
-    onOutput: (callback: (data: string) => void) => void;
+    spawn: (command: string) => Promise<CommandResult>;
+    onOutput: (callback: (output: CommandOutput) => void) => void;
     removeOutputListener: () => void;
   };
   path: {
@@ -82,10 +78,9 @@ const electronAPI: ElectronAPI = {
 
   // 命令执行
   cmd: {
-    execSync: (command: string) => ipcRenderer.invoke('cmd:execSync', command),
     spawn: (command: string) => ipcRenderer.invoke('cmd:spawn', command),
-    onOutput: (callback: (data: string) => void) => {
-      ipcRenderer.on('cmd:output', (_, data) => callback(data));
+    onOutput: (callback: (output: CommandOutput) => void) => {
+      ipcRenderer.on('cmd:output', (_, output: CommandOutput) => callback(output));
     },
     removeOutputListener: () => {
       ipcRenderer.removeAllListeners('cmd:output');

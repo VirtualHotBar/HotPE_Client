@@ -1,6 +1,6 @@
 import { config } from '../../services/config';
 import { HPMListLocal } from '../../services/hpm';
-import { HPM } from '../../type/hpm';
+import { HPM } from '../../../types/hpm';
 import { isFileExisted, takeLeftStr, traverseFiles } from '../../utils/utils';
 import { getHPMinfoLocal } from './hpm';
 

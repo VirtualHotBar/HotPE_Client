@@ -1,6 +1,6 @@
 import { isJSON, writeJosnFile } from '../utils/utils';
-import { Config } from '../type/config';
-import { runCmdSync } from '../utils/command';
+import { Config } from '../../types/config';
+import { runCmdAsync } from '../utils/command';
 import { safeFS } from '../utils/safeAPI';
 
 //全局数据库
@@ -36,7 +36,7 @@ const roConfig = {
     temp: '', // 将在初始化时异步设置
     userName: '', // 将在初始化时异步设置
     desktopDir: '', // 将在初始化时异步设置
-    /* arch:runCmdSync('echo %PROCESSOR_ARCHITECTURE%').replaceAll('\r\n', ''),//系统架构 */
+    /* arch:runCmdAsync('echo %PROCESSOR_ARCHITECTURE%').replaceAll('\r\n', ''),//系统架构 */
   },
 };
 
@@ -44,19 +44,19 @@ const roConfig = {
 async function initializeEnvironment() {
   try {
     // 获取当前工作目录
-    const execDir = await runCmdSync('cd');
+    const execDir = await runCmdAsync('cd');
     roConfig.path.execDir = `${execDir.replaceAll('\r\n', '')  }\\`;
 
-    const sysLetter = await runCmdSync('echo %SystemDrive%');
+    const sysLetter = await runCmdAsync('echo %SystemDrive%');
     roConfig.environment.sysLetter = sysLetter.substring(0, 2);
 
-    const temp = await runCmdSync('echo %temp%');
+    const temp = await runCmdAsync('echo %temp%');
     roConfig.environment.temp = `${temp.replaceAll('\r\n', '')  }\\`;
 
-    const userName = await runCmdSync('echo %UserName%');
+    const userName = await runCmdAsync('echo %UserName%');
     roConfig.environment.userName = userName.replaceAll('\r\n', '');
 
-    const desktopDir = await runCmdSync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\');
+    const desktopDir = await runCmdAsync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\');
     roConfig.environment.desktopDir = desktopDir.replaceAll('\r\n', '');
   } catch (error) {
     console.error('初始化环境变量失败:', error);

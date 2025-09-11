@@ -18,8 +18,8 @@ import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
 import { updateState } from '../controller/init';
 import { AppTest } from '../controller/test';
 import { setThemeMode } from '../controller/setting/themeMode';
-import { runCmdSync } from '../utils/command';
-import { SettingPageProps, ThemeMode, TreeSelectOption } from '../types/page-props';
+import { runCmdAsync } from '../utils/command';
+import { SettingPageProps, ThemeMode, TreeSelectOption } from '../../types/page-props';
 
 const { Text } = Typography;
 
@@ -247,7 +247,7 @@ export default function Setting(props: SettingPageProps) {
             <Button
               style={{ marginLeft: '8px' }}
               onClick={() => {
-                runCmdSync('notepad.exe ./resources/config.json');
+                runCmdAsync('notepad.exe ./resources/config.json');
               }}
             >
               编辑配置文件

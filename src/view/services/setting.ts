@@ -1,4 +1,4 @@
-import { Setting } from '../type/setting';
+import { Setting } from '../../types/setting';
 import { config } from './config';
 
 //这只是传输设置.v,这里在初始化

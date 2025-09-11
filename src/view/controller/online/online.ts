@@ -2,7 +2,7 @@
 
 import { config } from '../../services/config';
 import { setHPMListOnline } from '../../services/hpm';
-import { HPM, HPMClass } from '../../type/hpm';
+import { HPM, HPMClass } from '../../../types/hpm';
 
 //获取公告
 export async function getNotices() {

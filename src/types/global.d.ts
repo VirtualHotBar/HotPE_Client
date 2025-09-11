@@ -2,7 +2,8 @@
  * 全局类型定义
  */
 
-import { MkdirOptions, CpOptions } from '../view/types/fs-types';
+import { MkdirOptions, CpOptions } from './fs-types';
+import { CommandOutput, CommandResult } from './command';
 
 // Electron API 类型定义
 interface ElectronAPI {
@@ -27,13 +28,8 @@ interface ElectronAPI {
 
   // 命令执行
   cmd: {
-    execSync: (command: string) => Promise<string>;
-    spawn: (command: string) => Promise<{
-      success: boolean;
-      output: string;
-      code: number;
-    }>;
-    onOutput: (callback: (data: string) => void) => void;
+    spawn: (command: string) => Promise<CommandResult>;
+    onOutput: (callback: (output: CommandOutput) => void) => void;
     removeOutputListener: () => void;
   };
 

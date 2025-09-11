@@ -10,7 +10,7 @@ import {
   SUCCESS_MESSAGES,
   type NotificationType,
 } from '../constants';
-import { NotificationConfig, ToastConfig } from '../types/notification-types';
+import { NotificationConfig, ToastConfig } from '../../types/notification-types';
 
 // 通知选项类型
 export interface NotificationOptions {

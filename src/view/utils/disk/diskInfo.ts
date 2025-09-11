@@ -1,5 +1,5 @@
 import { config, roConfig } from '../../services/config';
-import { disksInfo, partitionInfo } from '../../type/config';
+import { disksInfo, partitionInfo } from '../../../types/config';
 import { runCmdAsync } from '../command';
 import { filterArrayNull } from '../utils';
 

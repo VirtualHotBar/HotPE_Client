@@ -1,8 +1,8 @@
 import { roConfig, config } from '../services/config';
 import { takeLeftStr } from '../utils/utils';
 import { dlClientRes } from './dlRes';
-import { Aria2Attrib } from '../type/aria2';
-import { runCmdSync } from '../utils/command';
+import { Aria2Attrib } from '../../types/aria2';
+import { runCmdAsync } from '../utils/command';
 import { exitapp } from '../layout/header';
 import { Notification } from '@douyinfe/semi-ui';
 import { safeFS } from '../utils/safeAPI';
@@ -100,7 +100,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
       const batPath = `${roConfig.path.resources.client  }update.bat`;
       await safeFS.writeFileSync(batPath, updateBat, 'utf8');
 
-      await runCmdSync(`start cmd /c ${  batPath}`);
+      await runCmdAsync(`start cmd /c ${  batPath}`);
 
       //退出
       exitapp();
@@ -118,7 +118,7 @@ export async function updateDoneTip() {
     //标记文件
     try {
       // 删除标记文件 - 这里需要通过命令行删除，因为我们没有实现 unlink API
-      await runCmdSync(`del "${markFile}"`);
+      await runCmdAsync(`del "${markFile}"`);
 
       Notification.success({
         title: '更新完成',

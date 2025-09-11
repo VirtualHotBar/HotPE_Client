@@ -4,7 +4,6 @@
     // module: 运行于 Node 的主进程必须遵循 CommonJS 标准
     "module": "CommonJS",
     "lib": ["ESNext", "DOM"],
-    "moduleResolution": "Node",
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
