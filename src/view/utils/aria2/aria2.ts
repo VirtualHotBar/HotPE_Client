@@ -3,7 +3,6 @@ import { runCmd } from '../command';
 import { dealStrForCmd, delFiles, takeMidStr, takeRightStr } from '../utils';
 
 import { Aria2Attrib } from '../../../types/aria2';
-import { roConfig } from '../../services/config';
 
 //接口
 interface Aria2 {
@@ -12,7 +11,11 @@ interface Aria2 {
   //percentage: number,//百分比
 }
 
-const sourceAria2Path = `${roConfig.path.tools}aria2c.exe`;
+// 延迟获取配置，避免初始化顺序问题
+function getSourceAria2Path(): string {
+  const { roConfig } = require('../../services/config');
+  return `${roConfig.path.tools}aria2c.exe`;
+}
 
 //内部变量
 //let aria2Path;
@@ -24,11 +27,13 @@ class Aria2 {
   constructor() {
     //初始化，new时调用
     //创建aria2文件
+    const { roConfig } = require('../../services/config');
     this.#aria2Path = `${roConfig.environment.temp}\\aria2c_${Math.random().toString(36).substring(2, 7)}.exe`; //temp目录+aria2c_随机字符.exe
 
     //复制
     async function copyAria2(toPath: string) {
       try {
+        const sourceAria2Path = getSourceAria2Path();
         await safeFS.copyFile(sourceAria2Path, toPath);
         console.log('copy');
       } catch (err) {

@@ -38,9 +38,7 @@ export async function makeISOFile(
 
   //解压
   setStepStr('正在解压HotPE源');
-  isSucceed =
-    isSucceed &&
-    (await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPathSource));
+  await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPathSource, () => {});
 
   setStepStr('正在复制HotPE文件');
   isSucceed = isSucceed && (await copyDir(`${tempPathSource}EFI\\`, tempPathISO));

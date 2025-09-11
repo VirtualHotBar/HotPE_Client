@@ -1,4 +1,4 @@
-import { config, roConfig } from '../../services/config';
+import { config } from '../../services/config';
 import { disksInfo, partitionInfo } from '../../../types/config';
 import { runCmdAsync } from '../command';
 import { filterArrayNull } from '../utils';
@@ -6,6 +6,7 @@ import { filterArrayNull } from '../utils';
 //获取磁盘信息（更新
 export async function getDisksInfo() {
   //disk
+  const { roConfig } = await import('../../services/config');
   const disksTemp = filterArrayNull(
     (await runCmdAsync(`${roConfig.path.tools}hdd.exe  -mohong`)).replaceAll('	', '|').split('\r\n')
   );
@@ -32,6 +33,7 @@ export async function getDisksInfo() {
 //获取分区信息（更新
 export async function getPartitionsInfo() {
   //partition
+  const { roConfig } = await import('../../services/config');
   const partitionsTemp = filterArrayNull(
     (await runCmdAsync(`${roConfig.path.tools}CxDir.exe  -mohong`))
       .replaceAll('	', '|')
@@ -58,6 +60,7 @@ export async function getPartitionsInfo() {
 
 //获取所有盘符，包括虚拟盘符
 export async function getAllLetterInfo() {
+  const { roConfig } = await import('../../services/config');
   config.environment.ware.allLetter = filterArrayNull(
     (await runCmdAsync(`${roConfig.path.tools}letter.bat`)).split(' ')
   ).reverse(); //翻转
