@@ -41,18 +41,22 @@ export default function SetupToUDisk(props: SetupToUDiskPageProps) {
   const driveDataTemp: TreeSelectOption[] = [];
   for (const i in config.environment.ware.disks) {
     const disk = config.environment.ware.disks[i];
-    if (!disk) {continue;}
+    if (!disk) {
+      continue;
+    }
 
     const letter: Array<string> = [];
     for (const i in config.environment.ware.partitions) {
       const partition = config.environment.ware.partitions[i];
-      if (!partition) {continue;}
+      if (!partition) {
+        continue;
+      }
       if (partition.letter != '' && partition.diskIndex == disk.index) {
         letter.push(partition.letter);
       }
     }
 
-    const label = `${disk.index  }:${  disk.name  }(${  disk.size  },${  letter.toString()  })`;
+    const label = `${disk.index}:${disk.name}(${disk.size},${letter.toString()})`;
 
     if (disk.movable) {
       //可移动

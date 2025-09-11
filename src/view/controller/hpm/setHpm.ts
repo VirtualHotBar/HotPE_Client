@@ -19,7 +19,7 @@ export async function delHPM(fileName: string) {
   delHPMList = Array.from(new Set(delHPMList)); //去重
 
   let isSucceed = true;
-  const HPMDirPath = `${config.environment.HotPEDrive.new.letter  }\\HotPEModule\\`;
+  const HPMDirPath = `${config.environment.HotPEDrive.new.letter}\\HotPEModule\\`;
   isSucceed = isSucceed && (await delFiles(HPMDirPath + fileName));
 
   //刷新
@@ -40,9 +40,9 @@ export async function disableHPM(fileName: string) {
 
   let isSucceed = true;
 
-  const HPMDirPath = `${config.environment.HotPEDrive.new.letter  }\\HotPEModule\\`;
+  const HPMDirPath = `${config.environment.HotPEDrive.new.letter}\\HotPEModule\\`;
   isSucceed =
-    isSucceed && (await reNameFile(HPMDirPath + fileName, `${HPMDirPath + fileName  }.off`));
+    isSucceed && (await reNameFile(HPMDirPath + fileName, `${HPMDirPath + fileName}.off`));
 
   //刷新
   await checkHPMFiles();
@@ -59,7 +59,7 @@ export async function enableHPM(fileName: string) {
 
   let isSucceed = true;
 
-  const HPMDirPath = `${config.environment.HotPEDrive.new.letter  }\\HotPEModule\\`;
+  const HPMDirPath = `${config.environment.HotPEDrive.new.letter}\\HotPEModule\\`;
   isSucceed =
     isSucceed &&
     (await reNameFile(

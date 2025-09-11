@@ -2,7 +2,7 @@
 
 import { Notification, Toast } from '@douyinfe/semi-ui';
 import { config } from '../../services/config';
-import {HPMDLRender,  HPMDlList } from '../../services/hpm';
+import { HPMDLRender, HPMDlList } from '../../services/hpm';
 import { Aria2Attrib } from '../../../types/aria2';
 import { HPM, HPMDl } from '../../../types/hpm';
 import { Aria2 } from '../../utils/aria2/aria2';
@@ -23,7 +23,7 @@ export function newHPMDl(hpmInfo: HPM) {
     delHPMDlFromList(hpmInfo);
   }
 
-  const HPMDirPath = `${config.environment.HotPEDrive.new.letter  }\\HotPEModule\\`;
+  const HPMDirPath = `${config.environment.HotPEDrive.new.letter}\\HotPEModule\\`;
 
   const HPMDlTemp: HPMDl = {
     HPMInfo: hpmInfo,
@@ -65,7 +65,7 @@ export function newHPMDl(hpmInfo: HPM) {
             }) */
 
         setTimeout(refreshRenderResult, 100);
-        Toast.success(`模块安装成功：${  HPMDlTemp.HPMInfo.name}`);
+        Toast.success(`模块安装成功：${HPMDlTemp.HPMInfo.name}`);
       } else if (back.state == 'error') {
         HPMDlTemp.dlInfo.percentage = -1;
         //Toast.info('下载错误：'+HPMDlTemp.HPMInfo.name)
@@ -90,7 +90,7 @@ export function newHPMDl(hpmInfo: HPM) {
   setTimeout(refreshRenderResult, 10);
 
   if (!isReDl) {
-    Toast.info(`加入下载队列：${  HPMDlTemp.HPMInfo.name}`);
+    Toast.info(`加入下载队列：${HPMDlTemp.HPMInfo.name}`);
   }
 }
 
@@ -140,7 +140,7 @@ function delHPMDlFromList(HPMInfo: HPM) {
 //更新界面实时
 function refreshRender() {
   HPMDLRender.callRefreshPage(); //页
-  HPMDLRender.callRefreshDlTab.map((fn: Function)=> {
+  HPMDLRender.callRefreshDlTab.map((fn: Function) => {
     fn();
   }); //标签
 }

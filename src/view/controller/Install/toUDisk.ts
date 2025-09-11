@@ -16,14 +16,14 @@ import { ReactNode } from 'react';
 import { getUsableLetter } from '../../utils/disk/diskInfo';
 import { safeFS } from '../../utils/safeAPI';
 
-const tempPath = `${roConfig.path.clientTemp  }install\\peFiles\\`;
-const tempEFIPath = `${roConfig.path.clientTemp  }install\\peFiles\\EFI\\`;
-const tempDataPath = `${roConfig.path.clientTemp  }install\\peFiles\\Data\\`;
+const tempPath = `${roConfig.path.clientTemp}install\\peFiles\\`;
+const tempEFIPath = `${roConfig.path.clientTemp}install\\peFiles\\EFI\\`;
+const tempDataPath = `${roConfig.path.clientTemp}install\\peFiles\\Data\\`;
 
-const pacmdPath = `${roConfig.path.tools  }PACMDforUSB\\PartAssist.exe`;
-const booticePath = `${roConfig.path.tools  }BOOTICE.exe`;
-const pecmdPath = `${roConfig.path.tools  }PECMD.exe`;
-const fbplusPath = `${roConfig.path.tools  }fbplus.exe`;
+const pacmdPath = `${roConfig.path.tools}PACMDforUSB\\PartAssist.exe`;
+const booticePath = `${roConfig.path.tools}BOOTICE.exe`;
+const pecmdPath = `${roConfig.path.tools}PECMD.exe`;
+const fbplusPath = `${roConfig.path.tools}fbplus.exe`;
 
 export async function installToUDisk(
   diskIndex: string,
@@ -31,7 +31,7 @@ export async function installToUDisk(
   setStepStr: Function,
   onMenuLockChange: Function
 ) {
-  console.log(`diskIndex${  diskIndex}`);
+  console.log(`diskIndex${diskIndex}`);
 
   if (!checkIsReady()) {
     return;
@@ -61,41 +61,37 @@ export async function installToUDisk(
   setStep(1);
   setStepStr('正在解除占用');
   //解除占用(数据分区强制分配盘符)
-  await runPacmd(` /hd:${  diskIndex  } /setletter:0 /letter:*`);
-  await runPacmd(` /hd:${  diskIndex  } /setletter:0 /letter:auto`);
+  await runPacmd(` /hd:${diskIndex} /setletter:0 /letter:*`);
+  await runPacmd(` /hd:${diskIndex} /setletter:0 /letter:auto`);
 
   setStepStr('正在删除U盘所有分区');
-  await runCmdAsync(`${fbplusPath  } (hd${  diskIndex  }) format --force --raw --fat32  --align`); //还原磁盘为普通模式（删除fbinst引导记录）
+  await runCmdAsync(`${fbplusPath} (hd${diskIndex}) format --force --raw --fat32  --align`); //还原磁盘为普通模式（删除fbinst引导记录）
   //删除磁盘所有分区
-  await runPacmd(` /hd:${  diskIndex  }  /del:all`);
+  await runPacmd(` /hd:${diskIndex}  /del:all`);
 
   setStepStr('正在初始化U盘');
   //初始化
-  await runPacmd(` /init:${  diskIndex}`);
-  await runPacmd(` /rebuildmbr:${  diskIndex  } /mbrtype:2`);
+  await runPacmd(` /init:${diskIndex}`);
+  await runPacmd(` /rebuildmbr:${diskIndex} /mbrtype:2`);
 
   setStepStr('正在创建EFI分区');
   //创建EFI分区，激活，写引导
   isSucceed =
     isSucceed &&
     (await runPacmd(
-      ` /hd:${  diskIndex  } /cre /size:1024 /pri /end /act /hide /align /fs:fat32 /label:EFI`
+      ` /hd:${diskIndex} /cre /size:1024 /pri /end /act /hide /align /fs:fat32 /label:EFI`
     ));
-  await runCmdAsync(`${booticePath  } /DEVICE=${  diskIndex  } /mbr /type=usbhdd+ /install /quiet`);
-  await runCmdAsync(
-    `${booticePath  } /DEVICE=${  diskIndex  }:0 /pbr /type=bootmgr /install /quiet`
-  );
+  await runCmdAsync(`${booticePath} /DEVICE=${diskIndex} /mbr /type=usbhdd+ /install /quiet`);
+  await runCmdAsync(`${booticePath} /DEVICE=${diskIndex}:0 /pbr /type=bootmgr /install /quiet`);
 
   setStepStr('正在写入文件');
   //写EFI分区文件
   isSucceed =
     isSucceed &&
     (await runPacmd(
-      ` /hd:${ 
-        diskIndex 
-        } /whide:0 /src:${ 
-        roConfig.path.execDir 
-        }${tempEFIPath.substring(2, tempEFIPath.length - 1)}`
+      ` /hd:${diskIndex} /whide:0 /src:${
+        roConfig.path.execDir
+      }${tempEFIPath.substring(2, tempEFIPath.length - 1)}`
     )); //去路径末'\'
 
   setStepStr('正在创建数据分区');
@@ -105,7 +101,7 @@ export async function installToUDisk(
   isSucceed =
     isSucceed &&
     (await runPacmd(
-      ` /hd:${  diskIndex  } /cre /size:auto /pri /align /fs:NTFS /letter:auto`,
+      ` /hd:${diskIndex} /cre /size:auto /pri /align /fs:NTFS /letter:auto`,
       (back: string) => {
         dataLetter = takeMidStr(back, '盘符:', '文件系统:')
           .replaceAll('\t', '')
@@ -116,36 +112,34 @@ export async function installToUDisk(
 
   //获取数据分区盘符失败后重新获取
   if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter) || !dataLetter) {
-    await runPacmd(` /hd:${  diskIndex  } /setletter:0 /letter:*`); //卸载盘符
+    await runPacmd(` /hd:${diskIndex} /setletter:0 /letter:*`); //卸载盘符
     dataLetter = await getUsableLetter(); //取个没被占用(可用)的盘符
     isSucceed =
-      isSucceed && (await runPacmd(` /hd:${  diskIndex  } /setletter:0 /letter:${  dataLetter}`)); //重新分配盘符
+      isSucceed && (await runPacmd(` /hd:${diskIndex} /setletter:0 /letter:${dataLetter}`)); //重新分配盘符
   }
 
-  await runCmdAsync(`${pecmdPath  } DFMT ${  dataLetter  },exFAT,HotPE工具箱`);
+  await runCmdAsync(`${pecmdPath} DFMT ${dataLetter},exFAT,HotPE工具箱`);
 
   //复制数据区文件
-  await copyDir(tempDataPath, `${dataLetter  }\\`);
+  await copyDir(tempDataPath, `${dataLetter}\\`);
 
   //pe配置文件
-  const HotPEConfig = await readHotPEConfig(`${dataLetter  }\\`);
+  const HotPEConfig = await readHotPEConfig(`${dataLetter}\\`);
   HotPEConfig['information'].Installation_Method = 'UDisk';
   HotPEConfig['information'].ReleaseVersion = takeLeftStr(config.resources.pe.new, '.');
-  await writeHotPEConfig(`${dataLetter  }\\`, HotPEConfig);
+  await writeHotPEConfig(`${dataLetter}\\`, HotPEConfig);
 
-  await runCmdAsync(`attrib ${  dataLetter  }\\HotPE +S +H /S /D`);
-  await runCmdAsync(`attrib ${  dataLetter  }\\HotPE\\* +S +H /S /D`);
-  await runCmdAsync(`attrib ${  dataLetter  }\\AUTORUN.INF +S +H /S /D`);
-  await runCmdAsync(`attrib ${  dataLetter  }\\HotPE.ico +S +H /S /D`);
+  await runCmdAsync(`attrib ${dataLetter}\\HotPE +S +H /S /D`);
+  await runCmdAsync(`attrib ${dataLetter}\\HotPE\\* +S +H /S /D`);
+  await runCmdAsync(`attrib ${dataLetter}\\AUTORUN.INF +S +H /S /D`);
+  await runCmdAsync(`attrib ${dataLetter}\\HotPE.ico +S +H /S /D`);
 
   //强制设置分区ID
-  await runCmdAsync(`${pecmdPath  } PART -admin ${  diskIndex  }#1 0x7`);
-  await runCmdAsync(`${pecmdPath  } PART -admin ${  diskIndex  }#2 0xEF`);
+  await runCmdAsync(`${pecmdPath} PART -admin ${diskIndex}#1 0x7`);
+  await runCmdAsync(`${pecmdPath} PART -admin ${diskIndex}#2 0xEF`);
 
-  await runCmdAsync(`${booticePath  } /DEVICE=${  diskIndex  }:0 /partitions /delete_letter /quiet`);
-  await runCmdAsync(
-    `${booticePath  } /DEVICE=${  diskIndex  }:0 /partitions  /assign_letter  /quiet`
-  );
+  await runCmdAsync(`${booticePath} /DEVICE=${diskIndex}:0 /partitions /delete_letter /quiet`);
+  await runCmdAsync(`${booticePath} /DEVICE=${diskIndex}:0 /partitions  /assign_letter  /quiet`);
 
   setStep(2);
   setStepStr('正在清理退出');
@@ -201,13 +195,13 @@ export async function UnInstallToUDisk(
 
   setStepStr('正在删除U盘所有分区');
   //删除磁盘所有分区
-  await runCmdAsync(`${fbplusPath  } (hd${  diskIndex  }) format --force --raw --fat32  --align`); //还原磁盘为普通模式（删除fbinst引导记录）
-  await runPacmd(` /hd:${  diskIndex  } /del:all`);
+  await runCmdAsync(`${fbplusPath} (hd${diskIndex}) format --force --raw --fat32  --align`); //还原磁盘为普通模式（删除fbinst引导记录）
+  await runPacmd(` /hd:${diskIndex} /del:all`);
 
   setStepStr('正在初始化U盘');
   //初始化
-  await runPacmd(` /init:${  diskIndex}`);
-  await runPacmd(` /rebuildmbr:${  diskIndex  } /mbrtype:2`);
+  await runPacmd(` /init:${diskIndex}`);
+  await runPacmd(` /rebuildmbr:${diskIndex} /mbrtype:2`);
 
   setStepStr('正在创建分区');
   //创建数据分区，EXFAT
@@ -216,9 +210,9 @@ export async function UnInstallToUDisk(
   isSucceed =
     isSucceed &&
     (await runPacmd(
-      ` /hd:${  diskIndex  } /cre /size:auto /pri /align /fs:NTFS /letter:${  dataLetter}`
+      ` /hd:${diskIndex} /cre /size:auto /pri /align /fs:NTFS /letter:${dataLetter}`
     ));
-  await runCmdAsync(`${pecmdPath  } DFMT ${  dataLetter  },exFAT,`);
+  await runCmdAsync(`${pecmdPath} DFMT ${dataLetter},exFAT,`);
 
   //更新PE安装状态
   await checkPEDrive();
@@ -268,18 +262,16 @@ export async function updatePEForUDisk(
   setStepStr('正在清理EFI分区');
 
   //格式化EFI分区
-  await runPacmd(` /hd:${  diskIndex  } /fmt:1 /fs:fat32 /label:EFI`);
+  await runPacmd(` /hd:${diskIndex} /fmt:1 /fs:fat32 /label:EFI`);
 
   //写EFI分区文件
   setStepStr('正在更新EFI分区');
   isSucceed =
     isSucceed &&
     (await runPacmd(
-      ` /hd:${ 
-        diskIndex 
-        } /whide:1 /src:${ 
-        roConfig.path.execDir 
-        }${tempEFIPath.substring(2, tempEFIPath.length - 1)}`
+      ` /hd:${diskIndex} /whide:1 /src:${
+        roConfig.path.execDir
+      }${tempEFIPath.substring(2, tempEFIPath.length - 1)}`
     )); //去路径末'\'
 
   setStepStr('正在更新数据分区');
@@ -287,18 +279,18 @@ export async function updatePEForUDisk(
 
   if (dataLetter !== '') {
     //复制数据区文件
-    await copyDir(tempDataPath, `${dataLetter  }\\`);
+    await copyDir(tempDataPath, `${dataLetter}\\`);
 
     //pe配置文件
-    const HotPEConfig = await readHotPEConfig(`${dataLetter  }\\`);
+    const HotPEConfig = await readHotPEConfig(`${dataLetter}\\`);
     HotPEConfig['information'].Installation_Method = 'UDisk';
     HotPEConfig['information'].ReleaseVersion = takeLeftStr(config.resources.pe.new, '.');
-    await writeHotPEConfig(`${dataLetter  }\\`, HotPEConfig);
+    await writeHotPEConfig(`${dataLetter}\\`, HotPEConfig);
 
-    await runCmdAsync(`attrib ${  dataLetter  }\\HotPE +S +H /S /D`);
-    await runCmdAsync(`attrib ${  dataLetter  }\\HotPE\\* +S +H /S /D`);
-    await runCmdAsync(`attrib ${  dataLetter  }\\AUTORUN.INF +S +H /S /D`);
-    await runCmdAsync(`attrib ${  dataLetter  }\\HotPE.ico +S +H /S /D`);
+    await runCmdAsync(`attrib ${dataLetter}\\HotPE +S +H /S /D`);
+    await runCmdAsync(`attrib ${dataLetter}\\HotPE\\* +S +H /S /D`);
+    await runCmdAsync(`attrib ${dataLetter}\\AUTORUN.INF +S +H /S /D`);
+    await runCmdAsync(`attrib ${dataLetter}\\HotPE.ico +S +H /S /D`);
   } else {
     isSucceed = isSucceed && false;
   }
@@ -331,9 +323,9 @@ export async function updatePEForUDisk(
 
 //运行傲梅
 async function runPacmd(cmd: string, callBack: Function = () => {}) {
-  const logPath = `${roConfig.path.clientTemp  }pacmd_${  Date.now()  }.log`;
+  const logPath = `${roConfig.path.clientTemp}pacmd_${Date.now()}.log`;
 
-  await runCmdAsync(`${pacmdPath  } ${  cmd  } /out:${  logPath}`);
+  await runCmdAsync(`${pacmdPath} ${cmd} /out:${logPath}`);
 
   try {
     const result = await safeFS.readFileSync(logPath, 'utf8');

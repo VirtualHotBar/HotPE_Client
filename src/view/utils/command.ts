@@ -16,7 +16,7 @@ export function runCmd(
     if (!commandId) {
       commandId = output.commandId;
     }
-    
+
     // 只处理属于当前命令的输出
     if (output.commandId === commandId) {
       if (output.type === 'stdout' || output.type === 'stderr') {

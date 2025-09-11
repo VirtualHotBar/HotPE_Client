@@ -14,9 +14,9 @@ export async function checkHPMFiles() {
   } //如果正在获取或没有HotPE安装，就取消
   isCheckingHPMFiles = true;
 
-  const HPMDirPath = `${config.environment.HotPEDrive.new.letter  }\\HotPEModule\\`;
+  const HPMDirPath = `${config.environment.HotPEDrive.new.letter}\\HotPEModule\\`;
 
-  let HPMsTemp = await traverseFiles(`${HPMDirPath  }*.HPM`);
+  let HPMsTemp = await traverseFiles(`${HPMDirPath}*.HPM`);
   const onHPMTemp = await Promise.all(
     HPMsTemp.map((fileName: string) => {
       return getHPMinfoLocal(HPMDirPath, fileName);
@@ -27,14 +27,14 @@ export async function checkHPMFiles() {
   for (const i in HPMListLocal.on) {
     if (
       HPMListLocal.on[i] &&
-      (await isFileExisted(`${HPMDirPath + HPMListLocal.on[i]!.fileName  }.aria2`))
+      (await isFileExisted(`${HPMDirPath + HPMListLocal.on[i]!.fileName}.aria2`))
     ) {
       //alert(HPMListLocal.on[1].fileName)
       HPMListLocal.on.splice(Number(i), 1);
     }
   }
 
-  HPMsTemp = await traverseFiles(`${HPMDirPath  }*.HPM.off`);
+  HPMsTemp = await traverseFiles(`${HPMDirPath}*.HPM.off`);
   const offHPMTemp = await Promise.all(
     HPMsTemp.map((fileName: string) => {
       return getHPMinfoLocal(HPMDirPath, fileName);

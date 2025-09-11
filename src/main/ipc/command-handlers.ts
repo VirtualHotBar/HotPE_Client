@@ -40,7 +40,6 @@ function getSystemEncoding(): string {
 }
 
 export function setupCommandHandlers(mainWindow: Electron.BrowserWindow): void {
-
   // 异步执行命令，支持实时输出
   ipcMain.handle('cmd:spawn', async (_, command: string) => {
     return new Promise<CommandResult>(resolve => {
@@ -57,7 +56,7 @@ export function setupCommandHandlers(mainWindow: Electron.BrowserWindow): void {
         mainWindow.webContents.send('cmd:output', {
           commandId,
           data: decoded,
-          type: 'stdout'
+          type: 'stdout',
         } as CommandOutput);
       });
 
@@ -68,7 +67,7 @@ export function setupCommandHandlers(mainWindow: Electron.BrowserWindow): void {
         mainWindow.webContents.send('cmd:output', {
           commandId,
           data: decoded,
-          type: 'stderr'
+          type: 'stderr',
         } as CommandOutput);
       });
 
@@ -78,14 +77,14 @@ export function setupCommandHandlers(mainWindow: Electron.BrowserWindow): void {
           commandId,
           data: '',
           type: 'exit',
-          code
+          code,
         } as CommandOutput);
-        
+
         resolve({
           success: code === 0,
           output: output + errorOutput,
           code: code || 0,
-          commandId
+          commandId,
         });
       });
     });

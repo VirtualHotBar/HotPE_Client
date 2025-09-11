@@ -31,5 +31,4 @@ interface HPMDLRenderType {
   callRefreshDlTab: Array<Function>;
 }
 
-
-export { HPMClass, HPM, HPMDl,HPMDLRenderType };
+export { HPMClass, HPM, HPMDl, HPMDLRenderType };

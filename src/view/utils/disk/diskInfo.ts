@@ -7,7 +7,7 @@ import { filterArrayNull } from '../utils';
 export async function getDisksInfo() {
   //disk
   const disksTemp = filterArrayNull(
-    (await runCmdAsync(`${roConfig.path.tools  }hdd.exe  -mohong`)).replaceAll('	', '|').split('\r\n')
+    (await runCmdAsync(`${roConfig.path.tools}hdd.exe  -mohong`)).replaceAll('	', '|').split('\r\n')
   );
   config.environment.ware.disks = disksTemp.map((disk: string, _index: number) => {
     const temp = disk.split('|');
@@ -33,7 +33,7 @@ export async function getDisksInfo() {
 export async function getPartitionsInfo() {
   //partition
   const partitionsTemp = filterArrayNull(
-    (await runCmdAsync(`${roConfig.path.tools  }CxDir.exe  -mohong`))
+    (await runCmdAsync(`${roConfig.path.tools}CxDir.exe  -mohong`))
       .replaceAll('	', '|')
       .split('\r\n')
   );
@@ -59,7 +59,7 @@ export async function getPartitionsInfo() {
 //获取所有盘符，包括虚拟盘符
 export async function getAllLetterInfo() {
   config.environment.ware.allLetter = filterArrayNull(
-    (await runCmdAsync(`${roConfig.path.tools  }letter.bat`)).split(' ')
+    (await runCmdAsync(`${roConfig.path.tools}letter.bat`)).split(' ')
   ).reverse(); //翻转
 }
 
@@ -106,8 +106,8 @@ export async function getUsableLetter() {
   await getAllLetterInfo(); //更新所有盘符信息
 
   for (const i in letters) {
-    if (!(await letterIsExist(`${letters[i]  }:`))) {
-      return `${letters[i]  }:`;
+    if (!(await letterIsExist(`${letters[i]}:`))) {
+      return `${letters[i]}:`;
     }
   }
 

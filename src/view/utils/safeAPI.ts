@@ -3,7 +3,13 @@
  * 所有操作都通过主进程的 IPC 通信完成
  */
 
-import { MkdirOptions, CpOptions, ErrorCallback, CommandOutput, CommandResult } from '../../types/fs-types';
+import {
+  MkdirOptions,
+  CpOptions,
+  ErrorCallback,
+  CommandOutput,
+  CommandResult,
+} from '../../types/fs-types';
 
 // 文件系统操作
 export const safeFS = {
@@ -179,7 +185,7 @@ export const compatFS = {
 };
 
 export const compatChildProcess = {
-    spawn: (
+  spawn: (
     shell: string,
     args: string[]
   ): {

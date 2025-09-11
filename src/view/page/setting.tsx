@@ -53,7 +53,7 @@ export default function Setting(props: SettingPageProps) {
                   {wallpaper == '' ? (
                     <Text>未自定义，请选择</Text>
                   ) : (
-                    <Image height={'100%'} src={`file://${  wallpaper}`} />
+                    <Image height={'100%'} src={`file://${wallpaper}`} />
                   )}
                 </div>
                 <div style={{ textAlign: 'right', width: '100%' }}>
@@ -269,12 +269,11 @@ export function HotPEDriveChoose(callback: Function) {
   if (config.environment.HotPEDrive.all.length > 1 /*  && HotPEDriveChooseOk == false */) {
     /* HotPEDriveChooseOk = true */
 
-    const driveData: TreeSelectOption[] = config.environment.HotPEDrive.all.map((
-      currentValue: { letter: string },
-      index: number
-    ) => {
-      return { label: currentValue.letter, value: currentValue.letter, key: index.toString() };
-    });
+    const driveData: TreeSelectOption[] = config.environment.HotPEDrive.all.map(
+      (currentValue: { letter: string }, index: number) => {
+        return { label: currentValue.letter, value: currentValue.letter, key: index.toString() };
+      }
+    );
 
     const modalContent = (
       <>

@@ -66,12 +66,12 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
     try {
       // 复制必要的文件
       await safeFS.copyFile(
-        `${roConfig.path.tools  }7z\\7z.exe`,
-        `${roConfig.path.resources.client  }7z.exe`
+        `${roConfig.path.tools}7z\\7z.exe`,
+        `${roConfig.path.resources.client}7z.exe`
       );
       await safeFS.copyFile(
-        `${roConfig.path.tools  }7z\\7z.dll`,
-        `${roConfig.path.resources.client  }7z.dll`
+        `${roConfig.path.tools}7z\\7z.dll`,
+        `${roConfig.path.resources.client}7z.dll`
       );
 
       restartClient();
@@ -87,7 +87,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
 
     try {
       const updateBatSource = await safeFS.readFileSync(
-        `${roConfig.path.tools  }update\\update.bat`,
+        `${roConfig.path.tools}update\\update.bat`,
         'utf8'
       );
 
@@ -97,10 +97,10 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
       );
       updateBat = updateBat.replaceAll('{clientDir}', roConfig.path.execDir);
 
-      const batPath = `${roConfig.path.resources.client  }update.bat`;
+      const batPath = `${roConfig.path.resources.client}update.bat`;
       await safeFS.writeFileSync(batPath, updateBat, 'utf8');
 
-      await runCmdAsync(`start cmd /c ${  batPath}`);
+      await runCmdAsync(`start cmd /c ${batPath}`);
 
       //退出
       exitapp();
@@ -112,7 +112,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
 
 //更新完成后提示
 export async function updateDoneTip() {
-  const markFile = `${roConfig.path.execDir  }update.mark`;
+  const markFile = `${roConfig.path.execDir}update.mark`;
 
   if (await safeFS.existsSync(markFile)) {
     //标记文件

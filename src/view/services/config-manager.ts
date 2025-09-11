@@ -203,13 +203,13 @@ export class ConfigManager {
     try {
       // 获取当前工作目录
       const execDir = await runCmdAsync('cd');
-      this._roConfig.path.execDir = `${execDir.replaceAll('\r\n', '')  }\\`;
+      this._roConfig.path.execDir = `${execDir.replaceAll('\r\n', '')}\\`;
 
       const sysLetter = await runCmdAsync('echo %SystemDrive%');
       this._roConfig.environment.sysLetter = sysLetter.substring(0, 2);
 
       const temp = await runCmdAsync('echo %temp%');
-      this._roConfig.environment.temp = `${temp.replaceAll('\r\n', '')  }\\`;
+      this._roConfig.environment.temp = `${temp.replaceAll('\r\n', '')}\\`;
 
       const userName = await runCmdAsync('echo %UserName%');
       this._roConfig.environment.userName = userName.replaceAll('\r\n', '');

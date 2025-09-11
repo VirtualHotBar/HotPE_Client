@@ -11,7 +11,7 @@ export function dlPERes(setDlPercent: Function, setDlSpeed: Function, callback: 
   aria2.start(
     config.resources.pe.update.download_url,
     roConfig.path.resources.pe,
-    `${config.resources.pe.update.id  }.7z`,
+    `${config.resources.pe.update.id}.7z`,
     config.download.thread,
     async (back: Aria2Attrib) => {
       if (back.state != 'error' && back.state != 'done') {

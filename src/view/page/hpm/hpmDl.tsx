@@ -58,21 +58,21 @@ export default function HPMDl() {
       // 搜索模块
       const searchValue = HPMSearch.value.toLowerCase();
       const items: HPM[] = [];
-      
+
       HPMListOnline.forEach(hpmClass => {
-        if (!hpmClass || hpmClass.class === '推荐') return;
-        
+        if (!hpmClass || hpmClass.class === '推荐') {return;}
+
         const hpmList = hpmClass.list || [];
         hpmList.forEach(hpm => {
-          if (!hpm) return;
-          
+          if (!hpm) {return;}
+
           const searchText = `${hpm.name}${hpm.description}${hpm.maker}`.toLowerCase();
           if (searchText.includes(searchValue)) {
             items.push(hpm);
           }
         });
       });
-      
+
       return items;
     } else {
       const selectedClass = HPMListOnline[selectHPMClassIndex];
@@ -142,10 +142,10 @@ export default function HPMDl() {
                   position: 'relative',
                 }}
               >
-                {virtualizer.getVirtualItems().map((virtualItem) => {
+                {virtualizer.getVirtualItems().map(virtualItem => {
                   const hpmItem = hpmItems[virtualItem.index];
-                  if (!hpmItem) return null;
-                  
+                  if (!hpmItem) {return null;}
+
                   return (
                     <HPMTab
                       key={virtualItem.key}
@@ -184,8 +184,7 @@ export default function HPMDl() {
   );
 }
 
-
-const HPMTab = React.memo(function HPMTab(props: HPMTabType) {
+const HPMTab = React.memo((props: HPMTabType) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
@@ -204,36 +203,40 @@ const HPMTab = React.memo(function HPMTab(props: HPMTabType) {
   const isDownloading = useMemo(() => isHPMinDlList(props.HPM), [props.HPM]);
   const downloadPercent = useMemo(() => getHPMDlPercent(props.HPM), [props.HPM]);
 
-  const hpmInfo = useMemo(() => 
-    `${props.HPM.version} | ${props.HPM.maker} | ${formatSize(props.HPM.size)}`,
+  const hpmInfo = useMemo(
+    () => `${props.HPM.version} | ${props.HPM.maker} | ${formatSize(props.HPM.size)}`,
     [props.HPM.version, props.HPM.maker, props.HPM.size]
   );
 
   return (
     <div style={props.Row.style}>
       <div
-        style={{ 
-          height: '100%', 
-          display: 'flex', 
+        style={{
+          height: '100%',
+          display: 'flex',
           border: '1px solid var(--semi-color-border)',
           borderRadius: '4px',
-          margin: '2px 4px'
+          margin: '2px 4px',
         }}
       >
-        <div style={{ 
-          width: 'calc(100% - 115px)', 
-          textAlign: 'left', 
-          padding: '10px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}>
-          <div style={{ 
-            whiteSpace: 'nowrap', 
-            overflow: 'hidden', 
-            textOverflow: 'ellipsis',
-            marginBottom: '4px'
-          }}>
+        <div
+          style={{
+            width: 'calc(100% - 115px)',
+            textAlign: 'left',
+            padding: '10px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
+          <div
+            style={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              marginBottom: '4px',
+            }}
+          >
             <span
               style={{
                 color: 'var(--semi-color-text-0)',
@@ -248,7 +251,7 @@ const HPMTab = React.memo(function HPMTab(props: HPMTabType) {
                 color: 'var(--semi-color-text-1)',
                 marginLeft: '10px',
                 verticalAlign: 'middle',
-                fontSize: '12px'
+                fontSize: '12px',
               }}
             >
               {hpmInfo}
@@ -261,7 +264,7 @@ const HPMTab = React.memo(function HPMTab(props: HPMTabType) {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               color: 'var(--semi-color-text-2)',
-              fontSize: '13px'
+              fontSize: '13px',
             }}
           >
             {props.HPM.description}
@@ -278,31 +281,27 @@ const HPMTab = React.memo(function HPMTab(props: HPMTabType) {
           }}
         >
           {isInstalled ? (
-            <div style={{ 
-              color: 'var(--semi-color-success)',
-              fontSize: '12px',
-              textAlign: 'center'
-            }}>
+            <div
+              style={{
+                color: 'var(--semi-color-success)',
+                fontSize: '12px',
+                textAlign: 'center',
+              }}
+            >
               已安装
             </div>
           ) : !isDownloading ? (
-            <Button
-              size="small"
-              onClick={handleDownload}
-            >
+            <Button size='small' onClick={handleDownload}>
               下载
             </Button>
           ) : downloadPercent > -1 ? (
-            <Spin
-              tip={`${downloadPercent}%`}
-              size="small"
-            />
+            <Spin tip={`${downloadPercent}%`} size='small' />
           ) : (
             <div
               style={{
                 color: 'var(--semi-color-danger)',
                 fontSize: '12px',
-                textAlign: 'center'
+                textAlign: 'center',
               }}
             >
               出错

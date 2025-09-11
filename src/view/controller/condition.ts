@@ -15,7 +15,7 @@ import {
 //检查PE资源
 export async function checkPERes() {
   //更新本地已有资源列表
-  config.resources.pe.all = await traverseFiles(`${roConfig.path.resources.pe  }*.7z`);
+  config.resources.pe.all = await traverseFiles(`${roConfig.path.resources.pe}*.7z`);
 
   //选择最新的资源
   if (config.resources.pe.all.length > 0) {
@@ -49,7 +49,9 @@ export async function checkPEDrive() {
   //遍历所有分区
   for (const i in config.environment.ware.partitions) {
     const partition = config.environment.ware.partitions[i];
-    if (!partition) {continue;}
+    if (!partition) {
+      continue;
+    }
 
     if (partition.letter != '') {
       if (await isHotPEDrive(partition.letter)) {

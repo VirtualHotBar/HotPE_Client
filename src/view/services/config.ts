@@ -45,13 +45,13 @@ async function initializeEnvironment() {
   try {
     // 获取当前工作目录
     const execDir = await runCmdAsync('cd');
-    roConfig.path.execDir = `${execDir.replaceAll('\r\n', '')  }\\`;
+    roConfig.path.execDir = `${execDir.replaceAll('\r\n', '')}\\`;
 
     const sysLetter = await runCmdAsync('echo %SystemDrive%');
     roConfig.environment.sysLetter = sysLetter.substring(0, 2);
 
     const temp = await runCmdAsync('echo %temp%');
-    roConfig.environment.temp = `${temp.replaceAll('\r\n', '')  }\\`;
+    roConfig.environment.temp = `${temp.replaceAll('\r\n', '')}\\`;
 
     const userName = await runCmdAsync('echo %UserName%');
     roConfig.environment.userName = userName.replaceAll('\r\n', '');

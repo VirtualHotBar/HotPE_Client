@@ -5,11 +5,11 @@ import { Modal } from '@douyinfe/semi-ui';
 import { ReactNode } from 'react';
 window.onerror = async function (msg, url, lineNo, columnNo, error) {
   const message = [
-    `Message: ${  msg}`,
-    `URL: ${  url}`,
-    `Line: ${  lineNo}`,
-    `Column: ${  columnNo}`,
-    `Error object: ${  JSON.stringify(error)}`,
+    `Message: ${msg}`,
+    `URL: ${url}`,
+    `Line: ${lineNo}`,
+    `Column: ${columnNo}`,
+    `Error object: ${JSON.stringify(error)}`,
   ].join(' - ');
 
   /* if(message.includes('Message: ResizeObserver loop limit exceeded')){
@@ -20,7 +20,7 @@ window.onerror = async function (msg, url, lineNo, columnNo, error) {
   return false;
 };
 
-window.addEventListener('unhandledrejection', async (event) => {
+window.addEventListener('unhandledrejection', async event => {
   await errorThrowToUser(event.reason);
 });
 
@@ -52,7 +52,7 @@ async function errorThrowToUser(message: string) {
     return;
   }
 
-  const content = `请尝试重启程序，并记录控制台错误信息向开发者反馈，` + `错误信息：${  message}`;
+  const content = `请尝试重启程序，并记录控制台错误信息向开发者反馈，` + `错误信息：${message}`;
 
   window.electronAPI?.windows?.openDevTools?.();
   //提示错误

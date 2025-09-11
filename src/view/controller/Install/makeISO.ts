@@ -11,8 +11,8 @@ import {
 } from '../../utils/utils';
 import { checkIsReady } from './check';
 
-const tempPathSource = `${roConfig.path.clientTemp  }install\\SourceFiles\\`;
-const tempPathISO = `${roConfig.path.clientTemp  }install\\ISOFile\\`;
+const tempPathSource = `${roConfig.path.clientTemp}install\\SourceFiles\\`;
+const tempPathISO = `${roConfig.path.clientTemp}install\\ISOFile\\`;
 
 export async function makeISOFile(
   setStep: Function,
@@ -24,7 +24,7 @@ export async function makeISOFile(
   } // 检查是否准备就绪
 
   const ISOSavePath = window.electronAPI.dialog.getSavePath(
-    `${roConfig.environment.desktopDir  }HotPE-${  takeLeftStr(config.resources.pe.new, '.')}`
+    `${roConfig.environment.desktopDir}HotPE-${takeLeftStr(config.resources.pe.new, '.')}`
   );
   if (ISOSavePath == undefined) {
     return;
@@ -43,20 +43,18 @@ export async function makeISOFile(
     (await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPathSource));
 
   setStepStr('正在复制HotPE文件');
-  isSucceed = isSucceed && (await copyDir(`${tempPathSource  }EFI\\`, tempPathISO));
-  isSucceed = isSucceed && (await copyDir(`${tempPathSource  }Data\\`, tempPathISO));
+  isSucceed = isSucceed && (await copyDir(`${tempPathSource}EFI\\`, tempPathISO));
+  isSucceed = isSucceed && (await copyDir(`${tempPathSource}Data\\`, tempPathISO));
 
   setStepStr('正在生成ISO文件');
   await runCmdAsync(
-    `${roConfig.path.tools 
-      }oscdimg\\oscdimg.exe -m -o -u2 -udfver102 -h -bootdata:2#p0,e,b${ 
-      dealStrForCmd(`${roConfig.path.tools  }oscdimg\\Etfsboot.com`) 
-      }#pEF,e,b${ 
-      dealStrForCmd(`${roConfig.path.tools  }oscdimg\\Efisys.bin`) 
-      } -lHotPEToolBox ${ 
-      dealStrForCmd(tempPathISO) 
-      } ${ 
-      dealStrForCmd(ISOSavePath)}`
+    `${
+      roConfig.path.tools
+    }oscdimg\\oscdimg.exe -m -o -u2 -udfver102 -h -bootdata:2#p0,e,b${dealStrForCmd(
+      `${roConfig.path.tools}oscdimg\\Etfsboot.com`
+    )}#pEF,e,b${dealStrForCmd(
+      `${roConfig.path.tools}oscdimg\\Efisys.bin`
+    )} -lHotPEToolBox ${dealStrForCmd(tempPathISO)} ${dealStrForCmd(ISOSavePath)}`
   );
 
   isSucceed = isSucceed && (await isFileExisted(ISOSavePath));
@@ -69,7 +67,7 @@ export async function makeISOFile(
   if (isSucceed) {
     Notification.success({
       title: '镜像生成成功！',
-      content: `已保存到:${  ISOSavePath}`,
+      content: `已保存到:${ISOSavePath}`,
       duration: 10,
     });
   } else {

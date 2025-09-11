@@ -121,7 +121,7 @@ export async function getSystemInfo() {
         config.environment.ware.system.firmware = temp['Firmware']
         config.environment.ware.system.architecture = temp['Processor Architecture'] */
 
-  const temp = await runCmdAsync(`${roConfig.path.tools  }BootMode.exe`);
+  const temp = await runCmdAsync(`${roConfig.path.tools}BootMode.exe`);
   if (temp.includes('UEFI')) {
     config.environment.ware.system.firmware = 'UEFI';
   } else {

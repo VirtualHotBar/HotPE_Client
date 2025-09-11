@@ -6,7 +6,7 @@ import { HPM, HPMClass } from '../../../types/hpm';
 
 //获取公告
 export async function getNotices() {
-  await fetch(`${config.api.api  }API/HotPE/GetNotices/`)
+  await fetch(`${config.api.api}API/HotPE/GetNotices/`)
     .then(response => response.json())
     .then(data => {
       if (config.notice.content != data.data.client.content) {
@@ -20,7 +20,7 @@ export async function getNotices() {
 
 //获取HPM列表
 export async function getHPMList() {
-  await fetch(`${config.api.api  }API/HotPE/GetHPMList/`)
+  await fetch(`${config.api.api}API/HotPE/GetHPMList/`)
     .then(response => response.json())
     .then(data => {
       if (data.state == 'success') {

@@ -31,7 +31,7 @@ export async function getHPMinfoLocal(HPMFilePath: string, HPMFileName: string) 
           // 尝试解析日期时间
           if (parts.length >= 2) {
             try {
-              const dateStr = `${parts[0]  } ${  parts[1]}`;
+              const dateStr = `${parts[0]} ${parts[1]}`;
               fileTime = new Date(dateStr);
             } catch (e) {
               fileTime = new Date();

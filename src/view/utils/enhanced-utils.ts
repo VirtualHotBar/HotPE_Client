@@ -51,7 +51,9 @@ export function safeSync<T>(fn: () => T): Result<T> {
  * 检查字符串是否为有效JSON
  */
 export function isValidJSON(str: string): boolean {
-  if (typeof str !== 'string') {return false;}
+  if (typeof str !== 'string') {
+    return false;
+  }
 
   try {
     JSON.parse(str);
@@ -229,7 +231,9 @@ export async function retry<T>(
  * 格式化文件大小
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) {return '0 B';}
+  if (bytes === 0) {
+    return '0 B';
+  }
 
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -302,9 +306,15 @@ export function deepClone<T>(obj: T): T {
  * 检查对象是否为空
  */
 export function isEmpty(obj: unknown): boolean {
-  if (obj == null) {return true;}
-  if (typeof obj === 'string' || Array.isArray(obj)) {return obj.length === 0;}
-  if (typeof obj === 'object') {return Object.keys(obj).length === 0;}
+  if (obj == null) {
+    return true;
+  }
+  if (typeof obj === 'string' || Array.isArray(obj)) {
+    return obj.length === 0;
+  }
+  if (typeof obj === 'object') {
+    return Object.keys(obj).length === 0;
+  }
   return false;
 }
 

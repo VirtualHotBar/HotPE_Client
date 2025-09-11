@@ -25,7 +25,7 @@ export function isJSON(str: string) {
         return false;
       }
     } catch (e) {
-      console.log(`error：${  str  }!!!${  e}`);
+      console.log(`error：${str}!!!${e}`);
       return false;
     }
   }
@@ -34,35 +34,32 @@ export function isJSON(str: string) {
 
 //读取Hotpe配置
 export async function readHotPEConfig(drive: string) {
-  const content = await safeFS.readFileSync(`${drive.substring(0, 1)  }:\\HotPE\\confi.ini`);
+  const content = await safeFS.readFileSync(`${drive.substring(0, 1)}:\\HotPE\\confi.ini`);
   return ini.parse(content);
 }
 
 //保存Hotpe配置
 export async function writeHotPEConfig(drive: string, obj: object) {
-  return await safeFS.writeFileSync(`${drive.substring(0, 1)  }:\\HotPE\\confi.ini`, ini.encode(obj));
+  return await safeFS.writeFileSync(`${drive.substring(0, 1)}:\\HotPE\\confi.ini`, ini.encode(obj));
 }
 
 //读取Hotpe设置
 export async function readHotPESetting(drive: string) {
-  const content = await safeFS.readFileSync(`${drive.substring(0, 1)  }:\\HotPE\\confi.ini`);
+  const content = await safeFS.readFileSync(`${drive.substring(0, 1)}:\\HotPE\\confi.ini`);
   return ini.parse(content);
 }
 
 //读取Hotpe设置
 export async function writeHotPESetting(drive: string, obj: object) {
-  return await safeFS.writeFileSync(`${drive.substring(0, 1)  }:\\HotPE\\confi.ini`, ini.encode(obj));
+  return await safeFS.writeFileSync(`${drive.substring(0, 1)}:\\HotPE\\confi.ini`, ini.encode(obj));
 }
 
 //解压文件7Z
 export function unZipFile(filePath: string, outDir: string) {
   return new Promise<boolean>((resolve, _reject) => {
-    const cmd =
-      `${roConfig.path.tools 
-      }.\\7z\\7z.exe x -y ${ 
-      dealStrForCmd(`-o${  outDir}`) 
-      } ${ 
-      dealStrForCmd(filePath)}`;
+    const cmd = `${roConfig.path.tools}.\\7z\\7z.exe x -y ${dealStrForCmd(
+      `-o${outDir}`
+    )} ${dealStrForCmd(filePath)}`;
 
     runCmd(
       cmd,
@@ -73,7 +70,7 @@ export function unZipFile(filePath: string, outDir: string) {
         if (end == 0) {
           resolve(true);
         } else {
-          console.error(Error(`Command execution failed:${  cmd}`));
+          console.error(Error(`Command execution failed:${cmd}`));
           resolve(false);
           //reject(false)
         }
@@ -84,8 +81,8 @@ export function unZipFile(filePath: string, outDir: string) {
 
 //判断是否为HotPE盘
 export async function isHotPEDrive(drive: string) {
-  const configExists = await safeFS.existsSync(`${drive.substring(0, 1)  }:\\HotPE\\confi.ini`);
-  const moduleExists = await safeFS.existsSync(`${drive.substring(0, 1)  }:\\HotPEModule\\`);
+  const configExists = await safeFS.existsSync(`${drive.substring(0, 1)}:\\HotPE\\confi.ini`);
+  const moduleExists = await safeFS.existsSync(`${drive.substring(0, 1)}:\\HotPEModule\\`);
   return configExists && moduleExists;
 }
 
@@ -108,7 +105,7 @@ export function objectCount(o: object) {
 export function dealStrForCmd(str: string) {
   let returnStr = '';
   if (str.includes(' ') || str.includes('&') || str.includes(',')) {
-    returnStr = `\"${  str  }\"`;
+    returnStr = `\"${str}\"`;
   } else {
     returnStr = str;
   }
@@ -142,7 +139,7 @@ export function filterArrayNull(arr: Array<string>) {
 //遍历文件,通过dir命令行
 export async function traverseFiles(path: string) {
   //if (!await isFileExisted(path)) {return [] }
-  const returnStr = (await runCmdAsync(`dir ${  dealStrForCmd(path)  } /b`)) as string;
+  const returnStr = (await runCmdAsync(`dir ${dealStrForCmd(path)} /b`)) as string;
   return filterArrayNull(returnStr.split('\r\n'));
 }
 
@@ -179,7 +176,7 @@ export async function copyDir(path: string, toPath: string) {
 
 export async function delFiles(path: string) {
   return new Promise<boolean>((resolve, _reject) => {
-    const cmd = `del ${  dealStrForCmd(path)  } /F /S /Q`;
+    const cmd = `del ${dealStrForCmd(path)} /F /S /Q`;
 
     runCmd(
       cmd,
@@ -190,7 +187,7 @@ export async function delFiles(path: string) {
         if (end == 0) {
           resolve(true);
         } else {
-          console.error(Error(`Command execution failed:${  cmd}`));
+          console.error(Error(`Command execution failed:${cmd}`));
           resolve(false);
           //reject(false)
         }
@@ -201,7 +198,7 @@ export async function delFiles(path: string) {
 
 export async function delDir(path: string) {
   return new Promise<boolean>((resolve, _reject) => {
-    const cmd = `rd ${  dealStrForCmd(path)  } /S /Q`;
+    const cmd = `rd ${dealStrForCmd(path)} /S /Q`;
 
     runCmd(
       cmd,
@@ -212,7 +209,7 @@ export async function delDir(path: string) {
         if (end == 0) {
           resolve(true);
         } else {
-          console.error(Error(`Command execution failed:${  cmd}`));
+          console.error(Error(`Command execution failed:${cmd}`));
           resolve(false);
           //reject(false)
         }
@@ -223,7 +220,7 @@ export async function delDir(path: string) {
 
 export async function moveFiles(path: string, toPath: string) {
   return new Promise<boolean>((resolve, _reject) => {
-    const cmd = `move /Y ${  dealStrForCmd(path)  } ${  dealStrForCmd(toPath)}`;
+    const cmd = `move /Y ${dealStrForCmd(path)} ${dealStrForCmd(toPath)}`;
     runCmd(
       cmd,
       (back: string) => {
@@ -233,7 +230,7 @@ export async function moveFiles(path: string, toPath: string) {
         if (end == 0) {
           resolve(true);
         } else {
-          console.error(Error(`Command execution failed:${  cmd}`));
+          console.error(Error(`Command execution failed:${cmd}`));
           resolve(false);
           //reject(false)
         }
@@ -286,5 +283,5 @@ export function formatSize(v: number) {
     v = prev;
     i -= 1;
   }
-  return `${Math.round(v * 100) / 100  } ${  UNITS[i]}`;
+  return `${Math.round(v * 100) / 100} ${UNITS[i]}`;
 }

@@ -4,15 +4,15 @@ import { setting } from '../../services/setting';
 import { runCmdAsync } from '../../utils/command';
 import { copyFile, isFileExisted } from '../../utils/utils';
 
-const bcdeditPath = `${roConfig.path.tools  }bcdedit.exe`;
+const bcdeditPath = `${roConfig.path.tools}bcdedit.exe`;
 
 export async function checkPESetting() {
   if (config.environment.HotPEDrive.new.letter == '') {
     return;
   }
 
-  if (await isFileExisted(`${config.environment.HotPEDrive.new.letter  }\\HotPE\\wallpaper.jpg`)) {
-    setting.pe.wallpaper = `${config.environment.HotPEDrive.new.letter  }\\HotPE\\wallpaper.jpg`;
+  if (await isFileExisted(`${config.environment.HotPEDrive.new.letter}\\HotPE\\wallpaper.jpg`)) {
+    setting.pe.wallpaper = `${config.environment.HotPEDrive.new.letter}\\HotPE\\wallpaper.jpg`;
   } else {
     setting.pe.wallpaper = '';
   }
@@ -26,12 +26,12 @@ export async function savePESetting() {
 
   if (config.environment.HotPEDrive.new.isMove == false) {
     config.setting.pe.bootWaitTime = setting.pe.bootWaitTime;
-    await runCmdAsync(`${bcdeditPath  } /timeout ${  config.setting.pe.bootWaitTime}`);
+    await runCmdAsync(`${bcdeditPath} /timeout ${config.setting.pe.bootWaitTime}`);
   }
 
   await copyFile(
     setting.pe.wallpaper,
-    `${config.environment.HotPEDrive.new.letter  }\\HotPE\\wallpaper.jpg`
+    `${config.environment.HotPEDrive.new.letter}\\HotPE\\wallpaper.jpg`
   );
 
   Toast.success('设置保存成功!');
