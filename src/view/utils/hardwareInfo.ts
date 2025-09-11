@@ -1,29 +1,20 @@
-import { roConfig } from '../services/config';
-import { runCmdAsync } from './command';
-import { delFiles, isFileExisted } from './utils';
-import { safeFS } from './safeAPI';
-
-export function getHardwareInfo(parameter: string) {
-  return new Promise(async resolve => {
-    const outPath = `${roConfig.path.clientTemp + Math.random().toString(36).substring(2, 7)}.json`; //随机文件名
-
-    const cmd = `${roConfig.path.tools}nwinfo\\nwinfo.exe  ${parameter} --format=json --output=${
-      outPath
-    }`;
-
-    await runCmdAsync(cmd);
-
-    let hwinfo = '';
-
-    if (await isFileExisted(outPath)) {
-      hwinfo = await safeFS.readFileSync(outPath);
-      await delFiles(outPath);
-    } else {
-      hwinfo = '{}';
+/**
+ * 安全的硬件信息获取函数
+ * 已迁移到主进程，修复eval()安全风险
+ */
+export async function getHardwareInfo(parameter: string): Promise<any> {
+  try {
+    // 参数验证
+    if (!parameter || typeof parameter !== 'string') {
+      throw new Error('Invalid parameter');
     }
 
-    //console.log(hwinfo);
-    //resolve(JSON.parse(hwinfo))//完成返回
-    resolve(eval(`(${hwinfo})`)); //完成返回
-  });
+    // 通过IPC调用主进程的安全处理器
+    const result = await window.electronAPI.invoke('hardware:getInfo', parameter);
+    return result;
+  } catch (error) {
+    console.error('获取硬件信息失败:', error);
+    // 返回空对象作为fallback
+    return {};
+  }
 }

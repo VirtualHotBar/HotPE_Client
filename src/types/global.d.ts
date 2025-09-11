@@ -7,6 +7,9 @@ import { CommandOutput, CommandResult } from './command';
 
 // Electron API 类型定义
 interface ElectronAPI {
+  // 通用IPC调用方法
+  invoke: (channel: string, ...args: any[]) => Promise<any>;
+
   // 窗口控制
   windows: {
     minimize: () => void;
@@ -45,6 +48,11 @@ interface ElectronAPI {
   dialog: {
     getSavePath: (defaultPath: string) => string | undefined;
     getOpenPath: (defaultPath: string) => string[] | undefined;
+  };
+
+  // 硬件信息（新增）
+  hardware: {
+    getInfo: (parameter: string) => Promise<any>;
   };
 }
 

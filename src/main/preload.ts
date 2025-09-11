@@ -19,6 +19,9 @@ interface CpOptions {
 
 // 定义 API 接口类型
 interface ElectronAPI {
+  // 通用IPC调用方法
+  invoke: (channel: string, ...args: any[]) => Promise<any>;
+  
   windows: {
     minimize: () => void;
     openDevTools: () => void;
@@ -49,10 +52,16 @@ interface ElectronAPI {
     getSavePath: (defaultPath: string) => string | undefined;
     getOpenPath: (defaultPath: string) => string[] | undefined;
   };
+  hardware: {
+    getInfo: (parameter: string) => Promise<any>;
+  };
 }
 
 // 实现 API
 const electronAPI: ElectronAPI = {
+  // 通用IPC调用方法
+  invoke: (channel: string, ...args: any[]) => ipcRenderer.invoke(channel, ...args),
+
   // 窗口控制
   windows: {
     minimize: () => ipcRenderer.send('windows:mini'),
@@ -99,6 +108,11 @@ const electronAPI: ElectronAPI = {
   dialog: {
     getSavePath: (defaultPath: string) => ipcRenderer.sendSync('file:getSavePath', defaultPath),
     getOpenPath: (defaultPath: string) => ipcRenderer.sendSync('file:getOpenPath', defaultPath),
+  },
+
+  // 硬件信息
+  hardware: {
+    getInfo: (parameter: string) => ipcRenderer.invoke('hardware:getInfo', parameter),
   },
 };
 

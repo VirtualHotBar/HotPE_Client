@@ -8,6 +8,12 @@ import { setupFileHandlers } from './file-handlers';
 import { setupCommandHandlers } from './command-handlers';
 import { setupPathHandlers } from './path-handlers';
 import { setupDialogHandlers } from './dialog-handlers';
+import { registerHardwareHandlers } from './hardware-handlers';
+import { registerDiskHandlers } from './disk-handlers';
+import { registerInstallHandlers } from './install-handlers';
+import { registerHPMHandlers } from './hpm-handlers';
+import { registerUpdateHandlers } from './update-handlers';
+import { registerAria2Handlers } from './aria2-handlers';
 
 /**
  * 初始化所有IPC处理器
@@ -22,6 +28,12 @@ export function setupIpcHandlers(mainWindow: Electron.BrowserWindow): void {
   setupCommandHandlers(mainWindow);
   setupPathHandlers();
   setupDialogHandlers();
+  registerHardwareHandlers();
+  registerDiskHandlers();
+  registerInstallHandlers();
+  registerHPMHandlers();
+  registerUpdateHandlers();
+  registerAria2Handlers();
 }
 
 /**
