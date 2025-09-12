@@ -16,21 +16,21 @@ export const safeFS = {
   /**
    * 同步读取文件
    */
-  readFileSync: async (filePath: string, encoding?: string): Promise<string> => {
+  readFile: async (filePath: string, encoding?: string): Promise<string> => {
     return await window.electronAPI.fs.readFile(filePath, encoding);
   },
 
   /**
    * 同步写入文件
    */
-  writeFileSync: async (filePath: string, data: string, encoding?: string): Promise<boolean> => {
+  writeFile: async (filePath: string, data: string, encoding?: string): Promise<boolean> => {
     return await window.electronAPI.fs.writeFile(filePath, data, encoding);
   },
 
   /**
    * 检查文件是否存在
    */
-  existsSync: async (filePath: string): Promise<boolean> => {
+  exists: async (filePath: string): Promise<boolean> => {
     return await window.electronAPI.fs.exists(filePath);
   },
 
@@ -44,7 +44,7 @@ export const safeFS = {
   /**
    * 创建目录
    */
-  mkdirSync: async (dirPath: string, options?: MkdirOptions): Promise<boolean> => {
+  mkdir: async (dirPath: string, options?: MkdirOptions): Promise<boolean> => {
     return await window.electronAPI.fs.mkdir(dirPath, options);
   },
 
@@ -67,6 +67,13 @@ export const safeFS = {
    */
   rename: async (oldPath: string, newPath: string): Promise<boolean> => {
     return await window.electronAPI.fs.rename(oldPath, newPath);
+  },
+
+  /**
+   * 删除文件
+   * */
+  rm: async (path: string, options?: { force?: boolean; maxRetries?: number }): Promise<boolean> => {
+    return await window.electronAPI.fs.rm(path, options);
   },
 };
 
@@ -139,16 +146,16 @@ export const safePath = {
 
 // 兼容性封装，模拟原有的同步 API
 export const compatFS = {
-  readFileSync: (filePath: string, encoding?: string): Promise<string> => {
-    return safeFS.readFileSync(filePath, encoding);
+  readFile: (filePath: string, encoding?: string): Promise<string> => {
+    return safeFS.readFile(filePath, encoding);
   },
 
-  writeFileSync: (filePath: string, data: string, encoding?: string): Promise<boolean> => {
-    return safeFS.writeFileSync(filePath, data, encoding);
+  writeFile: (filePath: string, data: string, encoding?: string): Promise<boolean> => {
+    return safeFS.writeFile(filePath, data, encoding);
   },
 
-  existsSync: (filePath: string): Promise<boolean> => {
-    return safeFS.existsSync(filePath);
+  exists: (filePath: string): Promise<boolean> => {
+    return safeFS.exists(filePath);
   },
 
   access: (filePath: string, callback: ErrorCallback): void => {
@@ -158,8 +165,8 @@ export const compatFS = {
     );
   },
 
-  mkdirSync: (dirPath: string, options?: MkdirOptions): Promise<boolean> => {
-    return safeFS.mkdirSync(dirPath, options);
+  mkdir: (dirPath: string, options?: MkdirOptions): Promise<boolean> => {
+    return safeFS.mkdir(dirPath, options);
   },
 
   copyFile: (src: string, dest: string, callback: ErrorCallback): void => {

@@ -1,19 +1,14 @@
 import { config, roConfig } from '../../services/config';
 import { runCmdAsync } from '../../utils/command';
-import {
-  copyDir,
-  copyFile,
-  delDir,
-  readHotPEConfig,
-  takeLeftStr,
-  unZipFile,
-  writeHotPEConfig,
-} from '../../utils/utils';
+
 import { Notification } from '@douyinfe/semi-ui';
 
 import { checkPEDrive } from '../condition';
 import { checkIsReady } from './check';
 import { safeFS } from '../../utils/safeAPI';
+import { copyDir, copyFile, delDir, unZipFile } from '@/view/utils/utils';
+import { readHotPEConfig, writeHotPEConfig } from '@/view/utils/core/file';
+import { takeLeftStr } from '@/view/utils/core/string';
 
 const GUID1 = '{4a00d3c0-3a86-2d40-b468-8bb065afa321}';
 const GUID2 = '{3a5d9b25-3e56-7c1a-0162-d1bfe6b14acc}';
@@ -48,7 +43,7 @@ export async function installToSystem(
 
   //创建目录
   try {
-    await safeFS.mkdirSync(`${roConfig.environment.sysLetter}\\HotPE\\`, { recursive: true });
+    await safeFS.mkdir(`${roConfig.environment.sysLetter}\\HotPE\\`, { recursive: true });
   } catch (error) {
     console.log('创建目录:', error);
   }

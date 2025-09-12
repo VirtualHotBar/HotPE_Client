@@ -3,29 +3,6 @@
  * 替代原有的不安全安装操作，通过IPC调用主进程
  */
 
-/**
- * 安全的PACMD命令执行
- * 已迁移到主进程，防止命令注入风险
- */
-export async function runSafePacmd(
-  cmd: string, 
-  diskIndex?: number,
-  callback?: (output: string) => void
-): Promise<{ success: boolean; output: string }> {
-  try {
-    const result = await window.electronAPI.invoke('install:runPacmd', cmd, diskIndex);
-    
-    // 如果有回调函数，调用它
-    if (callback && result.output) {
-      callback(result.output);
-    }
-    
-    return result;
-  } catch (error) {
-    console.error('PACMD命令执行失败:', error);
-    return { success: false, output: error instanceof Error ? error.message : String(error) };
-  }
-}
 
 /**
  * 安全的BOOTICE命令执行
@@ -99,8 +76,6 @@ export async function setSafeFileAttributes(
  * 兼容性函数 - 用于逐步迁移现有代码
  */
 
-// 兼容原有的runPacmd调用
-export { runSafePacmd as runPacmd };
 
 // 兼容原有的BOOTICE调用
 export async function runBooticeCommand(deviceIndex: number, options: string[]): Promise<boolean> {

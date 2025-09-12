@@ -2,7 +2,6 @@ import { Button, Spin, Steps, TreeSelect } from '@douyinfe/semi-ui';
 import { UsbMemoryStick } from '@icon-park/react';
 import { useState, useReducer, useEffect } from 'react';
 import { config } from '../../services/config';
-import { takeLeftStr } from '../../utils/utils';
 import { IconRefresh } from '@douyinfe/semi-icons';
 import {
   UnInstallToUDisk,
@@ -12,6 +11,8 @@ import {
 import { checkPEDrive } from '../../controller/condition';
 import { getHotPEDriveVer } from '../../controller/Install/check';
 import { SetupToUDiskPageProps, TreeSelectOption } from '../../../types/page-props';
+import { takeLeftStr } from '@/view/utils/core/string';
+
 
 //let uDiskRefreshing =false
 

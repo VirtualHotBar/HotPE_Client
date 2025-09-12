@@ -5,6 +5,9 @@
 
 import { config } from './config';
 import { disksInfo, partitionInfo } from '../../types/config';
+import { createLogger } from './logger';
+
+const logger = createLogger('DiskService');
 
 /**
  * 安全的磁盘信息获取函数
@@ -15,7 +18,7 @@ export async function getDisksInfo(): Promise<void> {
     const disks: disksInfo[] = await window.electronAPI.invoke('disk:getDisksInfo');
     config.environment.ware.disks = disks;
   } catch (error) {
-    console.error('获取磁盘信息失败:', error);
+    logger.error('获取磁盘信息失败', 'getDisksInfo', error);
     config.environment.ware.disks = [];
   }
 }
@@ -29,7 +32,7 @@ export async function getPartitionsInfo(): Promise<void> {
     const partitions: partitionInfo[] = await window.electronAPI.invoke('disk:getPartitionsInfo');
     config.environment.ware.partitions = partitions;
   } catch (error) {
-    console.error('获取分区信息失败:', error);
+    logger.error('获取分区信息失败', 'getPartitionsInfo', error);
     config.environment.ware.partitions = [];
   }
 }
@@ -43,7 +46,7 @@ export async function getAllLetterInfo(): Promise<void> {
     const allLetter: string[] = await window.electronAPI.invoke('disk:getAllLetterInfo');
     config.environment.ware.allLetter = allLetter;
   } catch (error) {
-    console.error('获取盘符信息失败:', error);
+    logger.error('获取盘符信息失败', 'getAllLetterInfo', error);
     config.environment.ware.allLetter = [];
   }
 }
@@ -61,7 +64,7 @@ export function isMoveForDisk(diskIndex: number): boolean {
     }
     return false;
   } catch (error) {
-    console.error('检查磁盘类型失败:', error);
+    logger.error('检查磁盘类型失败', 'isMoveForDisk', { error, diskIndex });
     return false;
   }
 }
@@ -75,7 +78,7 @@ export async function letterIsExist(letter: string): Promise<boolean> {
     const allLetters = config.environment.ware?.allLetter || [];
     return await window.electronAPI.invoke('disk:letterIsExist', letter, allLetters);
   } catch (error) {
-    console.error('检查盘符失败:', error);
+    logger.error('检查盘符失败', 'letterIsExist', { error, letter });
     return false;
   }
 }
@@ -88,7 +91,7 @@ export async function getUsableLetter(): Promise<string> {
   try {
     return await window.electronAPI.invoke('disk:getUsableLetter');
   } catch (error) {
-    console.error('获取可用盘符失败:', error);
+    logger.error('获取可用盘符失败', 'getUsableLetter', error);
     return '';
   }
 }
@@ -101,7 +104,7 @@ export async function runPacmd(cmd: string, diskIndex?: number): Promise<{ succe
   try {
     return await window.electronAPI.invoke('disk:runPacmd', cmd, diskIndex);
   } catch (error) {
-    console.error('PACMD命令执行失败:', error);
+    logger.error('PACMD命令执行失败', 'runPacmd', { error, cmd, diskIndex });
     return { success: false, output: error instanceof Error ? error.message : String(error) };
   }
 }

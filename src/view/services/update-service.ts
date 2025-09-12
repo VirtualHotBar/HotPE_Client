@@ -3,6 +3,10 @@
  * 提供安全的更新操作接口
  */
 
+import { createLogger } from './logger';
+
+const logger = createLogger('UpdateService');
+
 // 更新信息接口
 interface UpdateInfo {
   id: number;
@@ -21,7 +25,7 @@ export async function fetchUpdateInfoSafe(apiUrl: string): Promise<{ pe: UpdateI
     const result = await window.electronAPI.invoke('update:fetchInfo', apiUrl);
     return result;
   } catch (error) {
-    console.error('获取更新信息失败:', error);
+    logger.error('获取更新信息失败', 'fetchUpdateInfoSafe', { error, apiUrl });
     return null;
   }
 }
@@ -34,7 +38,7 @@ export async function copyUpdateFilesSafe(toolsPath: string, clientPath: string)
     const result = await window.electronAPI.invoke('update:copyFiles', toolsPath, clientPath);
     return result;
   } catch (error) {
-    console.error('复制更新文件失败:', error);
+    logger.error('复制更新文件失败', 'copyUpdateFilesSafe', { error, toolsPath, clientPath });
     return false;
   }
 }
@@ -52,7 +56,7 @@ export async function createUpdateBatchSafe(
     const result = await window.electronAPI.invoke('update:createBatch', toolsPath, clientPath, packPath, execDir);
     return result;
   } catch (error) {
-    console.error('创建更新批处理文件失败:', error);
+    logger.error('创建更新批处理文件失败', 'createUpdateBatchSafe', { error, toolsPath, clientPath, packPath, execDir });
     return null;
   }
 }
@@ -65,7 +69,7 @@ export async function executeUpdateRestartSafe(batPath: string): Promise<boolean
     const result = await window.electronAPI.invoke('update:executeRestart', batPath);
     return result;
   } catch (error) {
-    console.error('执行更新重启失败:', error);
+    logger.error('执行更新重启失败', 'executeUpdateRestartSafe', { error, batPath });
     return false;
   }
 }
@@ -78,7 +82,7 @@ export async function checkUpdateMarkSafe(markFilePath: string): Promise<boolean
     const result = await window.electronAPI.invoke('update:checkMark', markFilePath);
     return result;
   } catch (error) {
-    console.error('检查更新标记文件失败:', error);
+    logger.error('检查更新标记文件失败', 'checkUpdateMarkSafe', { error, markFilePath });
     return false;
   }
 }
@@ -91,7 +95,7 @@ export async function removeUpdateMarkSafe(markFilePath: string): Promise<boolea
     const result = await window.electronAPI.invoke('update:removeMark', markFilePath);
     return result;
   } catch (error) {
-    console.error('删除更新标记文件失败:', error);
+    logger.error('删除更新标记文件失败', 'removeUpdateMarkSafe', { error, markFilePath });
     return false;
   }
 }
@@ -136,7 +140,7 @@ export async function checkUpdateSafe(apiUrl: string, currentPEVersion: string, 
       clientUpdate: updateInfo.client
     };
   } catch (error) {
-    console.error('检查更新失败:', error);
+    logger.error('检查更新失败', 'checkUpdateSafe', { error, apiUrl, currentPEVersion, currentClientId });
     return { resUpdate: 'without' };
   }
 }
@@ -156,7 +160,7 @@ export async function updateDoneTipSafe(execDir: string): Promise<boolean> {
     
     return false;
   } catch (error) {
-    console.error('更新完成提示处理失败:', error);
+    logger.error('更新完成提示处理失败', 'updateDoneTipSafe', { error, execDir });
     return false;
   }
 }

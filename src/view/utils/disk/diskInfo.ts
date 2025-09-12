@@ -1,7 +1,7 @@
 import { config } from '../../services/config';
 import { disksInfo, partitionInfo } from '../../../types/config';
 import { runCmdAsync } from '../command';
-import { filterArrayNull } from '../utils';
+import { filterArrayNull } from '../core/string';
 
 //获取磁盘信息（更新
 export async function getDisksInfo() {

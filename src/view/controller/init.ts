@@ -1,148 +1,125 @@
 import { config, roConfig } from '../services/config';
-
+import { createLogger } from '../services/logger';
 import { checkUpdate } from './update';
 import { checkPERes, checkPEDrive } from './condition';
-import { makeDir } from '../utils/utils';
 import { getHPMList, getNotices } from './online/online';
 import { errorDialog } from './log';
 import { exitapp } from '../layout/header';
 import { HotPEDriveChoose } from '../page/setting';
 import { runCmdAsync } from '../utils/command';
-
 import './setting/themeMode';
-//import { ThemeMode } from "../type/setting"
+import { makeDir } from '../utils/core/file';
 
+const logger = createLogger('InitController');
 let isInitDone = false;
 
 export async function initClient(setStartStr: Function) {
-  //结束傲梅
-  //await runCmdAsync('taskkill /IM PartAssist.exe /F')
+  logger.info('开始初始化客户端');
+  
+  try {
+    await Promise.all([initDir(), getSystemInfo()]);
 
-  await initDir();
+    setStartStr('检查环境');
+    await checkEnvironment();
+    await Promise.all([checkPEDrive(), checkPERes()]);
 
-  //记录日志
-  //await logInit()
-  //系统信息
-  await getSystemInfo();
+    setStartStr('检查更新');
+    await Promise.all([getNotices(), checkUpdate()]);
+    await updateState();
+    await getHPMList();
 
-  setStartStr('检查环境');
-  //环境检查，不达标堵塞
-  await checkEnvironment();
+    isInitDone = true;
 
-  //获取需要的环境信息
-  //await getDisksInfo()
-  //await getPartitionsInfo()
-  //await getAllLetterInfo()
+    // 多个HotPE安装时显示选择界面
+    if (config.environment.HotPEDrive.all.length > 1) {
+      HotPEDriveChoose(() => {});
+    }
 
-  //检查已安装的分区
-  await checkPEDrive(); //默认选择最后一个，并获取获取本地HPM列表,have getDisksInfo and getPartitionsInfo
-
-  //检查已有的PE资源
-  await checkPERes(); //
-
-  setStartStr('检查更新');
-  //获取公告
-  await getNotices();
-
-  //检查更新
-  await checkUpdate();
-
-  //更新状态
-  await updateState();
-
-  //获取HPM分类和列表
-  await getHPMList();
-
-  //获取本地HPM列表
-  //await checkHPMFiles()
-
-  isInitDone = true;
-
-  //检测到有多个HotPE安装的时候，选择
-  if (config.environment.HotPEDrive.all.length > 1) {
-    HotPEDriveChoose(() => {});
+    logger.info('客户端初始化完成');
+  } catch (error) {
+    logger.error('客户端初始化失败','initClient', error);
+    throw error;
   }
-
-  console.log(config);
-  console.log(roConfig);
-  //setThemeMode(ThemeMode.Light)
-
-  //console.log(await getUsableLetter());
 }
 
-//更新状态
+/**
+ * 更新状态
+ */
 export async function updateState() {
-  if (config.resources.pe.new == '') {
-    config.state.install = 'noDown';
-  } else if (config.environment.HotPEDrive.all.length == 0) {
-    config.state.install = 'noSetup';
-  } else {
-    config.state.install = 'ready';
+  config.state.install = !config.resources.pe.new ? 'noDown' 
+    : config.environment.HotPEDrive.all.length === 0 ? 'noSetup' 
+    : 'ready';
+  
+  logger.info(`状态更新为: ${config.state.install}`);
+}
+
+/**
+ * 创建目录，运行所需的
+ */
+async function initDir() {
+  logger.info('初始化目录结构');
+  
+  try {
+    await Promise.all([
+      makeDir(roConfig.path.clientTemp),
+      makeDir(roConfig.path.resources.client),
+      makeDir(roConfig.path.resources.pe)
+    ]);
+    
+    logger.info('目录结构初始化完成');
+  } catch (error) {
+    logger.error('目录结构初始化失败','initDir', error);
+    throw error;
   }
 }
 
-//创建目录，运行所需的
-async function initDir() {
-  await makeDir(roConfig.path.clientTemp);
-  await makeDir(roConfig.path.resources.client);
-  await makeDir(roConfig.path.resources.pe);
-}
-
-//环境检查，启动时
+/**
+ * 环境检查，启动时
+ */
 async function checkEnvironment() {
-  //架构
-  /*     if (config.environment.ware.system.architecture != 'x64') {
-        await errorDialog('错误', '请在64位系统下运行！')
-        exitapp()
-    } */
+  logger.info('开始环境检查');
 
-  //联网检查
-  /*     while (!window.navigator.onLine) {
-        await errorDialog('已离线', '请检查网络，点击[确定]重试。')
-    } */
+  // 联网检查
   if (!window.navigator.onLine) {
+    logger.warn('网络连接检查失败，功能将受限');
     await errorDialog('已离线', '未连接互联网，功能将受限，点击[确定]继续。');
   }
 
-  //路径检查
+  // 路径检查
   if (roConfig.path.execDir.includes(' ')) {
+    logger.error('执行路径包含空格', 'checkEnvironment', { path: roConfig.path.execDir });
     await errorDialog('错误', '请在无空格路径下运行！');
     exitapp();
   }
+
+  logger.info('环境检查完成');
 }
 
-//系统信息
+/**
+ * 获取系统信息
+ */
 export async function getSystemInfo() {
-  /*     //system
-        let temp = (await getHardwareInfo('--sys') as Record<string, unknown>).System as Record<string, string>
-        config.environment.ware.system.os = temp['OS']
-        config.environment.ware.system.userName = temp['Username']
-        config.environment.ware.system.buildNumber = temp['Build Number']
-        config.environment.ware.system.firmware = temp['Firmware']
-        config.environment.ware.system.architecture = temp['Processor Architecture'] */
-
-  const temp = await runCmdAsync(`${roConfig.path.tools}BootMode.exe`);
-  if (temp.includes('UEFI')) {
-    config.environment.ware.system.firmware = 'UEFI';
-  } else {
+  logger.info('获取系统信息');
+  
+  try {
+    const result = await runCmdAsync(`${roConfig.path.tools}BootMode.exe`) as string;
+    config.environment.ware.system.firmware = result.includes('UEFI') ? 'UEFI' : 'Legacy';
+    logger.info(`系统固件类型: ${config.environment.ware.system.firmware}`);
+  } catch (error) {
+    logger.error('获取系统信息失败','getSystemInfo', error);
     config.environment.ware.system.firmware = 'Legacy';
   }
-
-  /*     temp = await runCmdAsync('echo %PROCESSOR_ARCHITECTURE%')
-    if (temp.includes('64')) {
-        config.environment.ware.system.architecture = process.arch
-    } else {
-        config.environment.ware.system.architecture = "32"
-    } */
-
-  //config.environment.ware.system.architecture = process.arch
 }
 
-//客户端是否准备就绪（客户端启动完成 and PE包是否下载
-export function isClientReady() {
-  if (!isInitDone || config.resources.pe.new == '') {
-    return false;
+/**
+ * 客户端是否准备就绪（客户端启动完成 and PE包是否下载）
+ */
+export function isClientReady(): boolean {
+  const ready = isInitDone && !!config.resources.pe.new;
+  
+  if (!ready) {
+    logger.debug('客户端未准备就绪','isClientReady', { isInitDone, hasPEResource: !!config.resources.pe.new });
   }
-
-  return true;
+  
+  return ready;
 }

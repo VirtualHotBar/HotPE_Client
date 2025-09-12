@@ -1,11 +1,12 @@
 import { roConfig, config } from '../services/config';
-import { takeLeftStr } from '../utils/utils';
 import { dlClientRes } from './dlRes';
 import { Aria2Attrib } from '../../types/aria2';
 import { runCmdAsync } from '../utils/command';
 import { exitapp } from '../layout/header';
 import { Notification } from '@douyinfe/semi-ui';
 import { safeFS } from '../utils/safeAPI';
+import { takeLeftStr } from '../utils/core/string';
+
 
 //检查更新,pe and client
 export async function checkUpdate() {
@@ -86,7 +87,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
     //callback(updateStep, tempAria2Attrib)
 
     try {
-      const updateBatSource = await safeFS.readFileSync(
+      const updateBatSource = await safeFS.readFile(
         `${roConfig.path.tools}update\\update.bat`,
         'utf8'
       );
@@ -98,7 +99,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
       updateBat = updateBat.replaceAll('{clientDir}', roConfig.path.execDir);
 
       const batPath = `${roConfig.path.resources.client}update.bat`;
-      await safeFS.writeFileSync(batPath, updateBat, 'utf8');
+      await safeFS.writeFile(batPath, updateBat, 'utf8');
 
       await runCmdAsync(`start cmd /c ${batPath}`);
 
@@ -114,7 +115,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
 export async function updateDoneTip() {
   const markFile = `${roConfig.path.execDir}update.mark`;
 
-  if (await safeFS.existsSync(markFile)) {
+  if (await safeFS.exists(markFile)) {
     //标记文件
     try {
       // 删除标记文件 - 这里需要通过命令行删除，因为我们没有实现 unlink API

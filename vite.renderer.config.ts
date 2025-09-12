@@ -1,11 +1,23 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import path from 'path';
 
 // https://vitejs.dev/config
 export default defineConfig({
   plugins: [react()],
   root: './src/view',
   base: './',
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@/main': path.resolve(__dirname, 'src/main'),
+      '@/view': path.resolve(__dirname, 'src/view'),
+      '@/types': path.resolve(__dirname, 'src/types'),
+      '@/utils': path.resolve(__dirname, 'src/view/utils'),
+      '@/services': path.resolve(__dirname, 'src/view/services'),
+      '@/components': path.resolve(__dirname, 'src/view/components')
+    }
+  },
   build: {
     outDir: '../../dist/view',
     rollupOptions: {

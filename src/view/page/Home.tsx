@@ -7,8 +7,8 @@ import { Aria2Attrib } from '../../types/aria2';
 import ReactMarkdown from 'react-markdown';
 import { UpdateLatest } from '../../types/update';
 import { updateClient, updateDoneTip } from '../controller/update';
-import { formatSize } from '../utils/utils';
 import { HomePageProps } from '../../types/page-props';
+import { formatFileSize } from '../utils/core/string';
 
 let updatePromptOk = false; //更新提示
 
@@ -100,7 +100,7 @@ export default function Home(props: HomePageProps) {
               <ReactMarkdown>{updateData.body}</ReactMarkdown>
             </Descriptions.Item>
             <Descriptions.Item itemKey='发布日期'>{updateData.pushTime}</Descriptions.Item>
-            <Descriptions.Item itemKey='更新大小'>{formatSize(updateData.size)}</Descriptions.Item>
+            <Descriptions.Item itemKey='更新大小'>{formatFileSize(updateData.size)}</Descriptions.Item>
           </Descriptions>
         </>
       );

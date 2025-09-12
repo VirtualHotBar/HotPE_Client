@@ -1,8 +1,8 @@
 //HPM的删除，禁用，启用
 //完成后自动刷新HPMListLocal
 
+import { delFiles, reNameFile } from '@/view/utils/core/file';
 import { config } from '../../services/config';
-import { delFiles, reNameFile } from '../../utils/utils';
 import { checkHPMFiles } from './checkHpmFiles';
 
 //删除队列(避免重复执行

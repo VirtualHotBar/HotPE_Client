@@ -1,8 +1,10 @@
 import { safeFS, safePath } from '../safeAPI';
 import { runCmd } from '../command';
-import { dealStrForCmd, delFiles, takeMidStr, takeRightStr } from '../utils';
+
 
 import { Aria2Attrib } from '../../../types/aria2';
+import { dealStrForCmd, takeMidStr, takeRightStr } from '../core/string';
+import { delFiles } from '../core/file';
 
 //接口
 interface Aria2 {

@@ -1,8 +1,10 @@
 import { config } from '../../services/config';
 import { HPMListLocal } from '../../services/hpm';
 import { HPM } from '../../../types/hpm';
-import { isFileExisted, takeLeftStr, traverseFiles } from '../../utils/utils';
 import { getHPMinfoLocal } from './hpm';
+import { isFileExisted, traverseFiles } from '@/view/utils/core/file';
+import { takeLeftStr } from '@/view/utils/core/string';
+
 
 //正在获取本地HPM列表
 let isCheckingHPMFiles = false;

@@ -5,9 +5,9 @@ import { HPMDLRender, HPMListOnline, HPMSearch } from '../../services/hpm';
 import type { HPM } from '../../../types/hpm';
 import type { HPMTab as HPMTabType } from '../../../types/hpm-page';
 
-import { formatSize } from '../../utils/utils';
 import { isHPMinDlList, getHPMDlPercent, newHPMDl } from '../../controller/hpm/hpmDl';
 import { isHPMHaveLocal } from '../../controller/hpm/checkHpmFiles';
+import { formatFileSize } from '@/view/utils/core/string';
 
 export default function HPMDl() {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -204,7 +204,7 @@ const HPMTab = React.memo((props: HPMTabType) => {
   const downloadPercent = useMemo(() => getHPMDlPercent(props.HPM), [props.HPM]);
 
   const hpmInfo = useMemo(
-    () => `${props.HPM.version} | ${props.HPM.maker} | ${formatSize(props.HPM.size)}`,
+    () => `${props.HPM.version} | ${props.HPM.maker} | ${formatFileSize(props.HPM.size)}`,
     [props.HPM.version, props.HPM.maker, props.HPM.size]
   );
 

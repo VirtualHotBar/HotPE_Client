@@ -1,8 +1,9 @@
 import { Notification } from '@douyinfe/semi-ui';
 import { config } from '../../services/config';
 import { HPM } from '../../../types/hpm';
-import { takeLeftStr } from '../../utils/utils';
 import { runCmdAsync } from '../../utils/command';
+import { takeLeftStr } from '@/view/utils/core/string';
+
 
 //通过文件名，和路径获取HPMInfo
 export async function getHPMinfoLocal(HPMFilePath: string, HPMFileName: string) {

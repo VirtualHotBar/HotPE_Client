@@ -5,8 +5,11 @@
 
 import { Config } from '../../types/config';
 import { safeFS } from '../utils/safeAPI';
-import { isJSON, writeJosnFile } from '../utils/utils';
+
 import { runCmdAsync } from '../utils/command';
+import { isJSON } from '../utils/core/string';
+import { writeJosnFile } from '../utils/core/file';
+
 
 // 只读配置类型
 interface ReadOnlyConfig {
@@ -233,9 +236,9 @@ class ConfigManager {
    */
   private async initializeConfig(): Promise<void> {
     try {
-      const configExists = await safeFS.existsSync(this.configPath);
+      const configExists = await safeFS.exists(this.configPath);
       if (configExists) {
-        const configContent = await safeFS.readFileSync(this.configPath, 'utf8');
+        const configContent = await safeFS.readFile(this.configPath, 'utf8');
         if (isJSON(configContent)) {
           const loadedConfig = JSON.parse(configContent);
           this._config = { ...this._config, ...loadedConfig }; // 合并配置

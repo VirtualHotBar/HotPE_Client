@@ -2,7 +2,9 @@ import { Button, Collapse, List, Typography } from '@douyinfe/semi-ui';
 import { useReducer } from 'react';
 import { delHPM, disableHPM, enableHPM } from '../../controller/hpm/setHpm';
 import { HPMListLocal } from '../../services/hpm';
-import { formatSize } from '../../utils/utils';
+import { formatFileSize } from '@/view/utils/core/string';
+
+
 
 const { Text } = Typography;
 
@@ -33,7 +35,7 @@ export default function HPMMgr() {
                     <Text
                       style={{ color: 'var(--semi-color-text-1)' }}
                       ellipsis={{ showTooltip: true }}
-                    >{`${onHPM.version} | ${onHPM.maker} | ${formatSize(onHPM.size)}`}</Text>
+                    >{`${onHPM.version} | ${onHPM.maker} | ${formatFileSize(onHPM.size)}`}</Text>
                   </div>
 
                   <div style={{ width: '150px', textAlign: 'right' }}>
@@ -75,7 +77,7 @@ export default function HPMMgr() {
                     </a>
                     <br />
                     <a style={{ color: 'var(--semi-color-text-1)' }}>
-                      {offHPM.version} | {offHPM.maker} | {formatSize(offHPM.size)}
+                      {offHPM.version} | {offHPM.maker} | {formatFileSize(offHPM.size)}
                     </a>
                   </div>
 

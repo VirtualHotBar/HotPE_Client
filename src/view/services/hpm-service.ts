@@ -4,6 +4,9 @@
  */
 
 import { HPM } from '../../types/hpm';
+import { createLogger } from './logger';
+
+const logger = createLogger('HPMService');
 
 // HPM信息接口
 interface HPMInfo {
@@ -24,7 +27,7 @@ export async function getHPMInfoSafe(hpmFilePath: string, hpmFileName: string): 
     const result = await window.electronAPI.invoke('hpm:getInfo', hpmFilePath, hpmFileName);
     return result;
   } catch (error) {
-    console.error('获取HPM文件信息失败:', error);
+    logger.error('获取HPM文件信息失败', 'getHPMInfoSafe', { error, hpmFilePath, hpmFileName });
     throw new Error('获取HPM文件信息失败');
   }
 }
@@ -37,7 +40,7 @@ export async function getHPMFilesList(hpmDirPath: string, extension: string = '.
     const result = await window.electronAPI.invoke('hpm:getFilesList', hpmDirPath, extension);
     return result || [];
   } catch (error) {
-    console.error('获取HPM文件列表失败:', error);
+    logger.error('获取HPM文件列表失败', 'getHPMFilesList', { error, hpmDirPath, extension });
     return [];
   }
 }
@@ -50,7 +53,7 @@ export async function deleteHPMFileSafe(hpmDirPath: string, fileName: string): P
     const result = await window.electronAPI.invoke('hpm:deleteFile', hpmDirPath, fileName);
     return result;
   } catch (error) {
-    console.error('删除HPM文件失败:', error);
+    logger.error('删除HPM文件失败', 'deleteHPMFileSafe', { error, fileName, hpmDirPath });
     return false;
   }
 }
@@ -63,7 +66,7 @@ export async function disableHPMSafe(hpmDirPath: string, fileName: string): Prom
     const result = await window.electronAPI.invoke('hpm:disable', hpmDirPath, fileName);
     return result;
   } catch (error) {
-    console.error('禁用HPM模块失败:', error);
+    logger.error('禁用HPM模块失败', 'disableHPMSafe', { error, fileName, hpmDirPath });
     return false;
   }
 }
@@ -76,7 +79,7 @@ export async function enableHPMSafe(hpmDirPath: string, fileName: string): Promi
     const result = await window.electronAPI.invoke('hpm:enable', hpmDirPath, fileName);
     return result;
   } catch (error) {
-    console.error('启用HPM模块失败:', error);
+    logger.error('启用HPM模块失败', 'enableHPMSafe', { error, fileName, hpmDirPath });
     return false;
   }
 }
@@ -89,7 +92,7 @@ export async function checkHPMFileExists(filePath: string): Promise<boolean> {
     const result = await window.electronAPI.invoke('hpm:fileExists', filePath);
     return result;
   } catch (error) {
-    console.error('检查文件存在性失败:', error);
+    logger.error('检查文件存在性失败', 'checkHPMFileExists', { error, filePath });
     return false;
   }
 }
@@ -102,7 +105,7 @@ export async function checkHPMReady(hpmDirPath: string): Promise<boolean> {
     const result = await window.electronAPI.invoke('hpm:checkReady', hpmDirPath);
     return result;
   } catch (error) {
-    console.error('检查HPM目录失败:', error);
+    logger.error('检查HPM目录失败', 'checkHPMReady', { error, hpmDirPath });
     return false;
   }
 }
@@ -138,7 +141,7 @@ export async function checkHPMFilesSafe(hpmDirPath: string): Promise<{ on: HPMIn
       off: offHPMs
     };
   } catch (error) {
-    console.error('获取本地HPM列表失败:', error);
+    logger.error('获取本地HPM列表失败', 'checkHPMFilesSafe', { error, hpmDirPath });
     return { on: [], off: [] };
   }
 }
@@ -157,7 +160,7 @@ export async function isHPMHaveLocalSafe(hpmInfo: HPM, hpmDirPath: string): Prom
       return localBaseName === targetBaseName;
     });
   } catch (error) {
-    console.error('检查HPM本地存在性失败:', error);
+    logger.error('检查HPM本地存在性失败', 'isHPMHaveLocalSafe', { error, hpmInfo: hpmInfo.fileName, hpmDirPath });
     return false;
   }
 }

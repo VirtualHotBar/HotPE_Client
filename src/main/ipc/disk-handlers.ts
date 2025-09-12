@@ -6,12 +6,18 @@ import { validateFilePath, safeExecCommand, validateDiskIndex, validateDriveLett
  * 负责处理磁盘信息获取、分区操作等功能
  */
 
+// 简单的日志工具，避免在主进程中引入复杂的日志系统
+const log = {
+  info: (message: string, data?: any) => console.info(`[DiskHandlers] ${message}`, data || ''),
+  warn: (message: string, data?: any) => console.warn(`[DiskHandlers] ${message}`, data || ''),
+  error: (message: string, data?: any) => console.error(`[DiskHandlers] ${message}`, data || '')
+};
+
 /**
  * 安全获取磁盘信息
  */
 async function getDiskInfoSafe(): Promise<any[]> {
   try {
-    // 使用 PowerShell 的 Get-CimInstance 替代已弃用的 wmic
     const result = await safeExecCommand('powershell', [
       '-Command',
       'Get-CimInstance -ClassName Win32_DiskDrive | Select-Object Index, Model, Size | ConvertTo-Json'
@@ -19,6 +25,7 @@ async function getDiskInfoSafe(): Promise<any[]> {
     
     const jsonOutput = result.stdout.trim();
     if (!jsonOutput) {
+      log.warn('磁盘信息查询返回空结果');
       return [];
     }
 
@@ -26,21 +33,23 @@ async function getDiskInfoSafe(): Promise<any[]> {
     try {
       diskData = JSON.parse(jsonOutput);
     } catch (parseError) {
-      console.error('解析磁盘信息JSON失败:', parseError);
+      log.error('解析磁盘信息JSON失败', parseError);
       return [];
     }
 
-    // 确保返回数组格式
     const disks = Array.isArray(diskData) ? diskData : [diskData];
-    
-    return disks.map(disk => ({
+    const result_disks = disks.map(disk => ({
       index: parseInt(disk.Index || '0') || 0,
       model: disk.Model || 'Unknown',
       size: parseInt(disk.Size || '0') || 0
     }));
+    
+    log.info(`成功获取 ${result_disks.length} 个磁盘信息`);
+    return result_disks;
   } catch (error) {
-    console.error('获取磁盘信息失败:', error instanceof Error ? error.message : String(error));
-    throw new Error(`获取磁盘信息失败: ${error instanceof Error ? error.message : String(error)}`);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    log.error('获取磁盘信息失败', errorMsg);
+    throw new Error(`获取磁盘信息失败: ${errorMsg}`);
   }
 }
 
@@ -49,7 +58,6 @@ async function getDiskInfoSafe(): Promise<any[]> {
  */
 async function getPartitionInfoSafe(): Promise<any[]> {
   try {
-    // 使用 PowerShell 的 Get-CimInstance 替代已弃用的 wmic
     const result = await safeExecCommand('powershell', [
       '-Command',
       'Get-CimInstance -ClassName Win32_LogicalDisk | Select-Object DeviceID, Size, FreeSpace | ConvertTo-Json'
@@ -57,6 +65,7 @@ async function getPartitionInfoSafe(): Promise<any[]> {
     
     const jsonOutput = result.stdout.trim();
     if (!jsonOutput) {
+      log.warn('分区信息查询返回空结果');
       return [];
     }
 
@@ -64,21 +73,23 @@ async function getPartitionInfoSafe(): Promise<any[]> {
     try {
       partitionData = JSON.parse(jsonOutput);
     } catch (parseError) {
-      console.error('解析分区信息JSON失败:', parseError);
+      log.error('解析分区信息JSON失败', parseError);
       return [];
     }
 
-    // 确保返回数组格式
     const partitions = Array.isArray(partitionData) ? partitionData : [partitionData];
-    
-    return partitions.map(partition => ({
+    const result_partitions = partitions.map(partition => ({
       caption: partition.DeviceID || '',
       freeSpace: parseInt(partition.FreeSpace || '0') || 0,
       size: parseInt(partition.Size || '0') || 0
     }));
+    
+    log.info(`成功获取 ${result_partitions.length} 个分区信息`);
+    return result_partitions;
   } catch (error) {
-    console.error('获取分区信息失败:', error instanceof Error ? error.message : String(error));
-    throw new Error(`获取分区信息失败: ${error instanceof Error ? error.message : String(error)}`);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    log.error('获取分区信息失败', errorMsg);
+    throw new Error(`获取分区信息失败: ${errorMsg}`);
   }
 }
 
@@ -87,7 +98,6 @@ async function getPartitionInfoSafe(): Promise<any[]> {
  */
 async function getAllLetterInfoSafe(): Promise<string[]> {
   try {
-    // 使用 PowerShell 的 Get-CimInstance 替代已弃用的 wmic
     const result = await safeExecCommand('powershell', [
       '-Command',
       'Get-CimInstance -ClassName Win32_LogicalDisk | Select-Object DeviceID | ConvertTo-Json'
@@ -95,6 +105,7 @@ async function getAllLetterInfoSafe(): Promise<string[]> {
     
     const jsonOutput = result.stdout.trim();
     if (!jsonOutput) {
+      log.warn('盘符信息查询返回空结果');
       return [];
     }
 
@@ -102,20 +113,22 @@ async function getAllLetterInfoSafe(): Promise<string[]> {
     try {
       letterData = JSON.parse(jsonOutput);
     } catch (parseError) {
-      console.error('解析盘符信息JSON失败:', parseError);
+      log.error('解析盘符信息JSON失败', parseError);
       return [];
     }
 
-    // 确保返回数组格式
     const letters = Array.isArray(letterData) ? letterData : [letterData];
-    
-    return letters
+    const result_letters = letters
       .map(letter => letter.DeviceID)
       .filter(deviceId => deviceId && typeof deviceId === 'string')
       .map(deviceId => deviceId.trim());
+    
+    log.info(`成功获取 ${result_letters.length} 个盘符信息`);
+    return result_letters;
   } catch (error) {
-    console.error('获取盘符信息失败:', error instanceof Error ? error.message : String(error));
-    throw new Error(`获取盘符信息失败: ${error instanceof Error ? error.message : String(error)}`);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    log.error('获取盘符信息失败', errorMsg);
+    throw new Error(`获取盘符信息失败: ${errorMsg}`);
   }
 }
 
@@ -126,6 +139,7 @@ async function letterIsExistSafe(letter: string, allLetters?: string[]): Promise
   try {
     const validatedLetter = validateDriveLetter(letter);
     if (!validatedLetter) {
+      log.warn('盘符格式无效', letter);
       return false;
     }
 
@@ -134,9 +148,11 @@ async function letterIsExistSafe(letter: string, allLetters?: string[]): Promise
     }
 
     const letters = await getAllLetterInfoSafe();
-    return letters.includes(validatedLetter);
+    const exists = letters.includes(validatedLetter);
+    log.info(`盘符 ${validatedLetter} ${exists ? '存在' : '不存在'}`);
+    return exists;
   } catch (error) {
-    console.error('检查盘符存在性失败:', error);
+    log.error('检查盘符存在性失败', error);
     return false;
   }
 }
@@ -151,38 +167,34 @@ async function executePACMDSafe(
   additionalArgs: string[] = []
 ): Promise<{ success: boolean; output: string }> {
   try {
-    // 验证PACMD路径
     const validatedPath = validateFilePath(pacmdPath);
     if (!validatedPath) {
       throw new Error('PACMD路径无效');
     }
 
-    // 验证磁盘索引
     const validatedIndex = validateDiskIndex(diskIndex);
     if (validatedIndex === null) {
       throw new Error('磁盘索引无效');
     }
 
-    // 构建安全的命令参数
-    const args = [
-      operation,
-      validatedIndex.toString(),
-      ...additionalArgs
-    ];
+    const args = [operation, validatedIndex.toString(), ...additionalArgs];
+    log.info(`执行PACMD命令: ${operation}`, { diskIndex: validatedIndex, args });
 
     const result = await safeExecCommand(validatedPath, args, {
-      timeout: 60000 // 60秒超时
+      timeout: 60000
     });
 
+    log.info('PACMD命令执行成功', { operation, diskIndex: validatedIndex });
     return {
       success: true,
       output: result.stdout
     };
   } catch (error) {
-    console.error('PACMD命令执行失败:', error instanceof Error ? error.message : String(error));
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    log.error('PACMD命令执行失败', { error: errorMsg, operation, diskIndex });
     return {
       success: false,
-      output: error instanceof Error ? error.message : String(error)
+      output: errorMsg
     };
   }
 }
@@ -267,5 +279,5 @@ export function registerDiskHandlers(): void {
     }
   });
 
-  console.log('磁盘处理器已注册');
+  log.info('磁盘处理器已注册');
 }

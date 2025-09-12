@@ -4,12 +4,15 @@
  */
 
 import { errorHandler, ErrorContext } from './error-handler';
+import { createLogger } from './logger';
 
 export abstract class BaseService {
   protected serviceName: string;
+  protected logger: ReturnType<typeof createLogger>;
 
   constructor(serviceName: string) {
     this.serviceName = serviceName;
+    this.logger = createLogger(serviceName);
   }
 
   /**
@@ -86,20 +89,27 @@ export abstract class BaseService {
    * 记录信息日志
    */
   protected logInfo(message: string, action?: string): void {
-    console.info(`[${this.serviceName}] ${action || 'Info'}: ${message}`);
+    this.logger.info(message, action);
   }
 
   /**
    * 记录警告日志
    */
   protected logWarning(message: string, action?: string): void {
-    console.warn(`[${this.serviceName}] ${action || 'Warning'}: ${message}`);
+    this.logger.warn(message, action);
   }
 
   /**
    * 记录错误日志
    */
   protected logError(message: string, action?: string): void {
-    console.error(`[${this.serviceName}] ${action || 'Error'}: ${message}`);
+    this.logger.error(message, action);
+  }
+
+  /**
+   * 记录调试日志
+   */
+  protected logDebug(message: string, action?: string, data?: any): void {
+    this.logger.debug(message, action, data);
   }
 }

@@ -2,7 +2,8 @@ import { Notification, Toast } from '@douyinfe/semi-ui';
 import { config, roConfig } from '../../services/config';
 import { setting } from '../../services/setting';
 import { runCmdAsync } from '../../utils/command';
-import { copyFile, isFileExisted } from '../../utils/utils';
+import { isFileExisted } from '@/view/utils/core/file';
+import { copyFile } from '@/view/utils/utils';
 
 const bcdeditPath = `${roConfig.path.tools}bcdedit.exe`;
 

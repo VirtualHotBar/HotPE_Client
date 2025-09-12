@@ -1,20 +1,14 @@
 import { Modal, Notification } from '@douyinfe/semi-ui';
 import { config, roConfig } from '../../services/config';
 import { runCmdAsync } from '../../utils/command';
-import {
-  copyDir,
-  delDir,
-  readHotPEConfig,
-  takeLeftStr,
-  takeMidStr,
-  unZipFile,
-  writeHotPEConfig,
-} from '../../utils/utils';
 import { checkPEDrive } from '../condition';
 import { checkIsReady, getHotPEDriveLetter } from './check';
 import { ReactNode } from 'react';
 import { getUsableLetter } from '../../utils/disk/diskInfo';
 import { safeFS } from '../../utils/safeAPI';
+import { copyDir, delDir, unZipFile } from '@/view/utils/utils';
+import { takeLeftStr, takeMidStr } from '@/view/utils/core/string';
+import { readHotPEConfig, writeHotPEConfig } from '@/view/utils/core/file';
 
 const tempPath = `${roConfig.path.clientTemp}install\\peFiles\\`;
 const tempEFIPath = `${roConfig.path.clientTemp}install\\peFiles\\EFI\\`;
@@ -124,7 +118,7 @@ export async function installToUDisk(
   await copyDir(tempDataPath, `${dataLetter}\\`);
 
   //pe配置文件
-  const HotPEConfig = await readHotPEConfig(`${dataLetter}\\`);
+  const HotPEConfig = await readHotPEConfig(`${dataLetter}\\`) ;
   HotPEConfig['information'].Installation_Method = 'UDisk';
   HotPEConfig['information'].ReleaseVersion = takeLeftStr(config.resources.pe.new, '.');
   await writeHotPEConfig(`${dataLetter}\\`, HotPEConfig);
@@ -328,7 +322,7 @@ async function runPacmd(cmd: string, callBack: Function = () => {}) {
   await runCmdAsync(`${pacmdPath} ${cmd} /out:${logPath}`);
 
   try {
-    const result = await safeFS.readFileSync(logPath, 'utf8');
+    const result = await safeFS.readFile(logPath, 'utf8');
     // 尝试解码 GBK，如果失败则使用原始内容
     let decodedResult = result;
     try {

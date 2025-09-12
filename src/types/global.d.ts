@@ -27,6 +27,7 @@ interface ElectronAPI {
     copyFile: (src: string, dest: string) => Promise<boolean>;
     cp: (src: string, dest: string, options?: CpOptions) => Promise<boolean>;
     rename: (oldPath: string, newPath: string) => Promise<boolean>;
+    rm: (path: string, options?: { force?: boolean }) => Promise<boolean>;
   };
 
   // 命令执行

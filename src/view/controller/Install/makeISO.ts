@@ -1,15 +1,11 @@
 import { Notification } from '@douyinfe/semi-ui';
 import { config, roConfig } from '../../services/config';
 import { runCmdAsync } from '../../utils/command';
-import {
-  copyDir,
-  dealStrForCmd,
-  delDir,
-  isFileExisted,
-  takeLeftStr,
-  unZipFile,
-} from '../../utils/utils';
+
 import { checkIsReady } from './check';
+import { dealStrForCmd, takeLeftStr } from '@/view/utils/core/string';
+import { copyDir, delDir, unZipFile } from '@/view/utils/utils';
+import { isFileExisted } from '@/view/utils/core/file';
 
 const tempPathSource = `${roConfig.path.clientTemp}install\\SourceFiles\\`;
 const tempPathISO = `${roConfig.path.clientTemp}install\\ISOFile\\`;
@@ -38,7 +34,7 @@ export async function makeISOFile(
 
   //解压
   setStepStr('正在解压HotPE源');
-  await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPathSource, () => {});
+  await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPathSource);
 
   setStepStr('正在复制HotPE文件');
   isSucceed = isSucceed && (await copyDir(`${tempPathSource}EFI\\`, tempPathISO));

@@ -4,7 +4,6 @@
  */
 
 import { config, roConfig } from '../services/config';
-import { isHotPEDrive, traverseFiles, readHotPEConfig, deleteFile } from '../utils/utils';
 import { updateState } from './init';
 import { checkHPMFiles } from './hpm/checkHpmFiles';
 import { checkPESetting } from './setting/setting';
@@ -16,6 +15,8 @@ import {
 } from '../utils/disk/diskInfo';
 import { errorHandler } from '../services/error-handler';
 import { eventBus } from '../services/event-bus';
+import { deleteFile, readHotPEConfig, traverseFiles } from '../utils/core/file';
+import { isHotPEDrive } from '../utils/core/system';
 
 /**
  * 检查PE资源
@@ -48,8 +49,7 @@ export async function checkPERes(): Promise<boolean> {
     // 删除旧的PE资源
     for (const fileName of config.resources.pe.all) {
       if (fileName !== config.resources.pe.new) {
-        const deleteResult = await deleteFile(roConfig.path.resources.pe + fileName);
-        if (deleteResult.success && deleteResult.data) {
+        if (await deleteFile(roConfig.path.resources.pe + fileName)) {
           eventBus.emit('notification:info', {
             message: `已删除旧版本: ${fileName}`,
             title: 'PE 资源清理'

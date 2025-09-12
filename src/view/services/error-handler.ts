@@ -4,6 +4,7 @@
  */
 
 import { NotificationManager } from './notification-manager';
+import { createLogger } from './logger';
 
 export interface ErrorContext {
   component?: string;
@@ -16,9 +17,11 @@ export interface ErrorContext {
 export class ErrorHandler {
   private static instance: ErrorHandler;
   private notificationManager: NotificationManager;
+  private logger: ReturnType<typeof createLogger>;
 
   private constructor() {
     this.notificationManager = NotificationManager.getInstance();
+    this.logger = createLogger('ErrorHandler');
   }
 
   public static getInstance(): ErrorHandler {
@@ -79,17 +82,19 @@ export class ErrorHandler {
    */
   private logError(message: string, stack?: string, context?: ErrorContext): void {
     const logLevel = context?.logLevel || 'error';
-    const logMessage = `[${context?.component || 'Unknown'}] ${context?.action || 'Operation'}: ${message}`;
+    const component = context?.component || 'Unknown';
+    const action = context?.action || 'Operation';
+    const data = stack ? { stack } : undefined;
 
     switch (logLevel) {
       case 'error':
-        console.error(logMessage, stack);
+        this.logger.error(message, action, data);
         break;
       case 'warn':
-        console.warn(logMessage);
+        this.logger.warn(message, action, data);
         break;
       case 'info':
-        console.info(logMessage);
+        this.logger.info(message, action, data);
         break;
     }
 
@@ -117,8 +122,8 @@ export class ErrorHandler {
   private reportError(message: string, stack?: string, context?: ErrorContext): void {
     // 这里可以添加错误上报逻辑，比如发送到服务器
     // 目前只是占位符
-    if (process.env['NODE_ENV'] === 'development') {
-      console.debug('Error reported:', { message, stack, context });
+    if (import.meta.env.DEV) {
+      this.logger.debug('Error reported', 'reportError', { message, stack, context });
     }
   }
 

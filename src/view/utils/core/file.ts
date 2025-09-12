@@ -4,49 +4,40 @@
  */
 
 import { safeFS } from '../safeAPI';
-import { safeAsync, Result } from '../types';
 import ini from 'ini';
 
 /**
  * 读取 JSON 文件
  */
-export async function readJSONFile<T = any>(filePath: string): Promise<Result<T>> {
-  return safeAsync(async () => {
-    const content = await safeFS.readFileSync(filePath, 'utf8');
-    return JSON.parse(content);
-  });
+export async function readJSONFile<T = any>(filePath: string): Promise<T> {
+  const content = await safeFS.readFile(filePath, 'utf8');
+  return JSON.parse(content);
 }
 
 /**
  * 写入 JSON 文件
  */
-export async function writeJSONFile(filePath: string, data: any): Promise<Result<boolean>> {
-  return safeAsync(async () => {
-    const content = JSON.stringify(data, null, 2);
-    return await safeFS.writeFileSync(filePath, content, 'utf8');
-  });
+export async function writeJSONFile(filePath: string, data: any): Promise<boolean> {
+  const content = JSON.stringify(data, null, 2);
+  return await safeFS.writeFile(filePath, content, 'utf8');
 }
 
 /**
  * 读取 HotPE 配置文件
  */
-export async function readHotPEConfig(drive: string): Promise<Result<any>> {
-  return safeAsync(async () => {
-    const configPath = `${drive}:\\HotPE\\HotPE.ini`;
-    const content = await safeFS.readFileSync(configPath, 'utf8');
-    return ini.parse(content);
-  });
+export async function readHotPEConfig(drive: string): Promise<any> {
+  const configPath = `${drive}:\\HotPE\\HotPE.ini`;
+  const content = await safeFS.readFile(configPath, 'utf8');
+  return ini.parse(content);
 }
 
 /**
  * 写入 HotPE 配置文件
  */
-export async function writeHotPEConfig(drive: string, config: any): Promise<Result<boolean>> {
-  return safeAsync(async () => {
-    const configPath = `${drive}:\\HotPE\\HotPE.ini`;
-    const content = ini.stringify(config);
-    return await safeFS.writeFileSync(configPath, content, 'utf8');
-  });
+export async function writeHotPEConfig(drive: string, config: any): Promise<boolean> {
+  const configPath = `${drive}:\\HotPE\\HotPE.ini`;
+  const content = ini.stringify(config);
+  return await safeFS.writeFile(configPath, content, 'utf8');
 }
 
 /**
@@ -54,7 +45,7 @@ export async function writeHotPEConfig(drive: string, config: any): Promise<Resu
  */
 export async function fileExists(filePath: string): Promise<boolean> {
   try {
-    return await safeFS.existsSync(filePath);
+    return await safeFS.exists(filePath);
   } catch {
     return false;
   }
@@ -63,50 +54,42 @@ export async function fileExists(filePath: string): Promise<boolean> {
 /**
  * 删除文件
  */
-export async function deleteFile(filePath: string): Promise<Result<boolean>> {
-  return safeAsync(async () => {
-    const exists = await safeFS.existsSync(filePath);
-    if (exists) {
-      // 使用现有的 IPC 方法删除文件
-      return await window.electronAPI.invoke('fs:deleteFile', filePath);
-    }
-    return false;
-  });
+export async function deleteFile(filePath: string): Promise<boolean> {
+  const exists = await safeFS.exists(filePath);
+  if (exists) {
+    // 使用现有的 IPC 方法删除文件
+    return await window.electronAPI.invoke('fs:deleteFile', filePath);
+  }
+  return false;
 }
 
 /**
  * 重命名文件
  */
-export async function renameFile(oldPath: string, newPath: string): Promise<Result<boolean>> {
-  return safeAsync(async () => {
-    return await safeFS.rename(oldPath, newPath);
-  });
+export async function renameFile(oldPath: string, newPath: string): Promise<boolean> {
+  return await safeFS.rename(oldPath, newPath);
 }
 
 /**
  * 创建目录
  */
-export async function createDirectory(dirPath: string): Promise<Result<boolean>> {
-  return safeAsync(async () => {
-    return await safeFS.mkdirSync(dirPath, { recursive: true });
-  });
+export async function createDirectory(dirPath: string): Promise<boolean> {
+  return await safeFS.mkdir(dirPath, { recursive: true });
 }
 
 /**
  * 遍历目录文件
  */
-export async function traverseFiles(dirPath: string, extension?: string): Promise<Result<string[]>> {
-  return safeAsync(async () => {
-    // 使用现有的命令行方式读取目录
-    const { runCmdAsync } = await import('../command');
-    const returnStr = await runCmdAsync(`dir "${dirPath}" /b`);
-    const files = returnStr.split('\n').filter(file => file.trim() !== '');
-    
-    if (extension) {
-      return files.filter((file: string) => file.endsWith(extension));
-    }
-    return files;
-  });
+export async function traverseFiles(dirPath: string, extension?: string): Promise<string[]> {
+  // 使用现有的命令行方式读取目录
+  const { runCmdAsync } = await import('../command');
+  const returnStr = await runCmdAsync(`dir "${dirPath}" /b`);
+  const files = returnStr.split('\n').filter(file => file.trim() !== '');
+  
+  if (extension) {
+    return files.filter((file: string) => file.endsWith(extension));
+  }
+  return files;
 }
 
 // 兼容性导出 - 保持原有函数名
