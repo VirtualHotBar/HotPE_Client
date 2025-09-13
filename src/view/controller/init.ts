@@ -5,7 +5,7 @@ import { checkPERes, checkPEDrive } from './condition';
 import { getHPMList, getNotices } from './online/online';
 import { errorDialog } from './log';
 import { exitapp } from '../layout/header';
-import { HotPEDriveChoose } from '../page/setting';
+import { HotPEDriveChoose } from '../components/hotpe-drive-chooser';
 import { runCmd } from '../utils/command';
 import './setting/themeMode';
 import { makeDir } from '../utils/core/file';

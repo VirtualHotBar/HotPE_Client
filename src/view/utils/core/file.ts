@@ -3,6 +3,7 @@
  * 整合了原有的文件相关功能
  */
 
+import { runCmd } from '../command';
 import { safeFS } from '../safeAPI';
 import ini from 'ini';
 
@@ -82,7 +83,6 @@ export async function createDirectory(dirPath: string): Promise<boolean> {
  */
 export async function traverseFiles(dirPath: string, extension?: string): Promise<string[]> {
   // 使用现有的命令行方式读取目录
-  const { runCmd } = await import('../command');
   const returnStr = await runCmd(`dir "${dirPath}" /b`);
   const files = returnStr.split('\n').filter(file => file.trim() !== '');
   

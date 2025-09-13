@@ -10,16 +10,14 @@ import {
   InputNumber,
   Image,
   Collapse,
-  Modal,
 } from '@douyinfe/semi-ui';
-import { checkPESetting, saveClientSetting, savePESetting } from '../controller/setting/setting';
+import { saveClientSetting, savePESetting } from '../controller/setting/setting';
 import { setting } from '../services/setting';
-import { updateState } from '../controller/init';
 import { AppTest } from '../controller/test';
 import { setThemeMode } from '../controller/setting/themeMode';
 import { runCmd } from '../utils/command';
-import { SettingPageProps, ThemeMode, TreeSelectOption } from '../../types/page-props';
-import { hpmService } from '../services';
+import { SettingPageProps, ThemeMode } from '../../types/page-props';
+
 
 const { Text } = Typography;
 
@@ -154,7 +152,8 @@ export default function Setting(props: SettingPageProps) {
           当前操作的HotPE安装
           {config.environment.HotPEDrive.all.length > 1 ? (
             <Text
-              onClick={() => {
+              onClick={async () => {
+                const { HotPEDriveChoose } = await import('../components/hotpe-drive-chooser');
                 HotPEDriveChoose(() => {
                   forceUpdate();
                 });
@@ -259,57 +258,4 @@ export default function Setting(props: SettingPageProps) {
   );
 }
 
-//let HotPEDriveChooseOk = false
 
-//多个pe安装时选择
-export function HotPEDriveChoose(callback: Function) {
-  //config.environment.HotPEDrive.all = Array.from(new Set(config.environment.HotPEDrive.all))//去重
-  //console.log(config.environment.HotPEDrive.all);
-
-  if (config.environment.HotPEDrive.all.length > 1 /*  && HotPEDriveChooseOk == false */) {
-    /* HotPEDriveChooseOk = true */
-
-    const driveData: TreeSelectOption[] = config.environment.HotPEDrive.all.map(
-      (currentValue: { letter: string }, index: number) => {
-        return { label: currentValue.letter, value: currentValue.letter, key: index.toString() };
-      }
-    );
-
-    const modalContent = (
-      <>
-        <p>请选择要操作的HotPE安装：</p>
-
-        <TreeSelect
-          defaultValue={config.environment.HotPEDrive.new.letter} //选择默认的
-          style={{ width: '100%' }}
-          dropdownStyle={{ overflow: 'auto' }}
-          treeData={driveData}
-          onSelect={async (value: string) => {
-            config.environment.HotPEDrive.new = config.environment.HotPEDrive.all[value];
-
-            //获取本地HPM列表,刷新一下
-            await hpmService.refreshLocalModules();
-
-            //获取设置
-            await checkPESetting();
-
-            console.log(value, config.environment.HotPEDrive.all[value]);
-          }}
-        />
-      </>
-    );
-
-    Modal.confirm({
-      title: '检测到安装了多个HotPE',
-      content: modalContent,
-      maskClosable: false,
-      closable: false,
-      hasCancel: false,
-      onOk: () => {
-        updateState();
-        callback();
-      },
-      centered: true,
-    });
-  }
-}

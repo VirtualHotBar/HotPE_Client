@@ -8,7 +8,7 @@
     "package": "bun run electron-forge package",
     "make": "bun run electron-forge make",
     "publish": "bun run electron-forge publish",
-    "build": "bun run tsc && bun run vite build && bun run tsc -p ./src/main",
+    "build": "bun run tsc && bun run vite build --config vite.renderer.config.ts && bun run tsc -p ./src/main",
     "lint": "bun run eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "bun run vite preview"
   },

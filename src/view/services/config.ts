@@ -351,14 +351,14 @@ class ConfigManager {
 }
 
 // 创建单例实例
-const configManager = ConfigManager.getInstance();
+const configMgr = ConfigManager.getInstance();
 
 // 向后兼容的导出 - 保持原有的使用方式
-export const config = configManager.config;
-export const roConfig = configManager.roConfig;
-export const saveConfig = () => configManager.saveConfig();
-export const initializeAll = () => configManager.initializeAll();
+export const config = configMgr.config;
+export const roConfig = configMgr.roConfig;
+export const saveConfig = () => configMgr.saveConfig();
+export const initializeAll = () => configMgr.initializeAll();
 
 // 新的管理器导出 - 提供更强大的功能
-export { ConfigManager, configManager };
+export { ConfigManager, configMgr };
 export type { ReadOnlyConfig };

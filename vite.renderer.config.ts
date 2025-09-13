@@ -12,10 +12,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
       '@/main': path.resolve(__dirname, 'src/main'),
       '@/view': path.resolve(__dirname, 'src/view'),
-      '@/types': path.resolve(__dirname, 'src/types'),
-      '@/utils': path.resolve(__dirname, 'src/view/utils'),
-      '@/services': path.resolve(__dirname, 'src/view/services'),
-      '@/components': path.resolve(__dirname, 'src/view/components')
+      '@/types': path.resolve(__dirname, 'src/types')
     }
   },
   build: {

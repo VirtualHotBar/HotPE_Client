@@ -4,6 +4,7 @@
  */
 
 import { runCmd } from '../command';
+import { fileExists } from './file';
 
 /**
  * 延迟函数
@@ -115,7 +116,6 @@ export async function getSystemEnvironment() {
 export async function isHotPEDrive(drive: string): Promise<boolean> {
   try {
     const configPath = `${drive.substring(0, 1)}:\\HotPE\\confi.ini`;
-    const { fileExists } = await import('./file');
     return await fileExists(configPath);
   } catch {
     return false;
