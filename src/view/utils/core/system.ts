@@ -3,7 +3,7 @@
  * 整合了原有的系统操作相关功能
  */
 
-import { runCmdAsync } from '../command';
+import { runCmd } from '../command';
 
 /**
  * 延迟函数
@@ -82,11 +82,11 @@ export async function retry<T>(
 export async function getSystemEnvironment() {
   try {
     const [execDir, sysLetter, temp, userName, desktopDir] = await Promise.all([
-      runCmdAsync('cd'),
-      runCmdAsync('echo %SystemDrive%'),
-      runCmdAsync('echo %temp%'),
-      runCmdAsync('echo %UserName%'),
-      runCmdAsync('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\')
+      runCmd('cd'),
+      runCmd('echo %SystemDrive%'),
+      runCmd('echo %temp%'),
+      runCmd('echo %UserName%'),
+      runCmd('echo %SystemDrive%\\Users\\%UserName%\\Desktop\\')
     ]);
 
     return {

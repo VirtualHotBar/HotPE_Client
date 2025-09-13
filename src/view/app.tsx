@@ -9,7 +9,7 @@ import { initializeAll } from './services/config';
 import Header from './layout/header';
 import Navigation from './layout/Navigation';
 import Page from './page/page';
-import { HPMListOnline } from './services/hpm';
+import hpmService from './services/hpm';
 
 const { Header: LayoutHeader, Sider, Content } = Layout;
 
@@ -59,7 +59,8 @@ function AppContent() {
       }
 
       // 检查HPM模块列表
-      if (HPMListOnline.length === 0 && targetPage === 'HPMDl') {
+      if (targetPage === 'HPMDl' && hpmService.onlineModules.length === 0) {
+
         Notification.warning({
           content: '未获取到模块列表，功能不可用。',
           duration: 2,

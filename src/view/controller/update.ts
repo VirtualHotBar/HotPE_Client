@@ -1,11 +1,11 @@
 import { roConfig, config } from '../services/config';
 import { dlClientRes } from './dlRes';
-import { Aria2Attrib } from '../../types/aria2';
-import { runCmdAsync } from '../utils/command';
+import { runCmd } from '../utils/command';
 import { exitapp } from '../layout/header';
 import { Notification } from '@douyinfe/semi-ui';
 import { safeFS } from '../utils/safeAPI';
 import { takeLeftStr } from '../utils/core/string';
+import { Aria2Status } from '@/types/aria2';
 
 
 //检查更新,pe and client
@@ -36,7 +36,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
   //let isDlOk = false//下载是否完成
 
   //返回Aria2属性，初始化
-  let tempAria2Attrib: Aria2Attrib = {
+  let tempAria2Attrib: Aria2Status = {
     state: 'request',
     speed: '', //速度
     percentage: 0, //进度百分比
@@ -47,7 +47,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
   };
 
   updateStep = 'dl';
-  dlClientRes(setDlPercent, setDlSpeed, (back: Aria2Attrib) => {
+  dlClientRes(setDlPercent, setDlSpeed, (back: Aria2Status) => {
     tempAria2Attrib = back;
     callback(updateStep, tempAria2Attrib);
 
@@ -101,7 +101,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
       const batPath = `${roConfig.path.resources.client}update.bat`;
       await safeFS.writeFile(batPath, updateBat, 'utf8');
 
-      await runCmdAsync(`start cmd /c ${batPath}`);
+      await runCmd(`start cmd /c ${batPath}`);
 
       //退出
       exitapp();
@@ -119,7 +119,7 @@ export async function updateDoneTip() {
     //标记文件
     try {
       // 删除标记文件 - 这里需要通过命令行删除，因为我们没有实现 unlink API
-      await runCmdAsync(`del "${markFile}"`);
+      await runCmd(`del "${markFile}"`);
 
       Notification.success({
         title: '更新完成',

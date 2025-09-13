@@ -6,7 +6,7 @@ import { getHPMList, getNotices } from './online/online';
 import { errorDialog } from './log';
 import { exitapp } from '../layout/header';
 import { HotPEDriveChoose } from '../page/setting';
-import { runCmdAsync } from '../utils/command';
+import { runCmd } from '../utils/command';
 import './setting/themeMode';
 import { makeDir } from '../utils/core/file';
 
@@ -102,7 +102,7 @@ export async function getSystemInfo() {
   logger.info('获取系统信息');
   
   try {
-    const result = await runCmdAsync(`${roConfig.path.tools}BootMode.exe`) as string;
+    const result = await runCmd(`${roConfig.path.tools}BootMode.exe`) as string;
     config.environment.ware.system.firmware = result.includes('UEFI') ? 'UEFI' : 'Legacy';
     logger.info(`系统固件类型: ${config.environment.ware.system.firmware}`);
   } catch (error) {

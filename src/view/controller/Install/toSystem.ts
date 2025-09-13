@@ -1,5 +1,5 @@
 import { config, roConfig } from '../../services/config';
-import { runCmdAsync } from '../../utils/command';
+import { runCmd } from '../../utils/command';
 
 import { Notification } from '@douyinfe/semi-ui';
 
@@ -86,39 +86,39 @@ export async function installToSystem(
 
   const installLetter = roConfig.environment.sysLetter.substring(0, 2);
 
-  await runCmdAsync(`${bcdeditPath} /create ${GUID1} /d HotPE工具箱 /application osloader`);
-  await runCmdAsync(`${bcdeditPath} /create ${GUID2} /d HotPE工具箱 /device`);
+  await runCmd(`${bcdeditPath} /create ${GUID1} /d HotPE工具箱 /application osloader`);
+  await runCmd(`${bcdeditPath} /create ${GUID2} /d HotPE工具箱 /device`);
 
-  await runCmdAsync(`${bcdeditPath} /set ${GUID2} ramdisksdidevice partition=${installLetter}`);
-  await runCmdAsync(`${bcdeditPath} /set ${GUID2} ramdisksdipath  \\HotPE\\Kernel.SDI`);
+  await runCmd(`${bcdeditPath} /set ${GUID2} ramdisksdidevice partition=${installLetter}`);
+  await runCmd(`${bcdeditPath} /set ${GUID2} ramdisksdipath  \\HotPE\\Kernel.SDI`);
 
-  await runCmdAsync(
+  await runCmd(
     `${bcdeditPath} /set ${GUID1} device ramdisk=[${installLetter}]\\HotPE\\Kernel.WIM,${GUID2}`
   );
 
   if ((config.environment.ware.system.firmware = 'UEFI')) {
-    await runCmdAsync(`${bcdeditPath} /set ${GUID1} path \\windows\\system32\\boot\\winload.efi`);
+    await runCmd(`${bcdeditPath} /set ${GUID1} path \\windows\\system32\\boot\\winload.efi`);
   } else {
-    await runCmdAsync(`${bcdeditPath} /set ${GUID1} path \\windows\\system32\\boot\\winload.exe`);
+    await runCmd(`${bcdeditPath} /set ${GUID1} path \\windows\\system32\\boot\\winload.exe`);
   }
 
-  await runCmdAsync(`${bcdeditPath} /set ${GUID1} description HotPE工具箱`);
-  await runCmdAsync(
+  await runCmd(`${bcdeditPath} /set ${GUID1} description HotPE工具箱`);
+  await runCmd(
     `${bcdeditPath} /set ${GUID1} osdevice ramdisk=[${installLetter}]\\HotPE\\Kernel.WIM,${GUID2}`
   );
-  await runCmdAsync(`${bcdeditPath} /set ${GUID1} systemroot \\windows`);
-  await runCmdAsync(`${bcdeditPath} /set ${GUID1} detecthal Yes`);
-  await runCmdAsync(`${bcdeditPath} /set ${GUID1} winpe Yes`);
-  await runCmdAsync(`${bcdeditPath} /displayorder ${GUID1} /addlast`);
+  await runCmd(`${bcdeditPath} /set ${GUID1} systemroot \\windows`);
+  await runCmd(`${bcdeditPath} /set ${GUID1} detecthal Yes`);
+  await runCmd(`${bcdeditPath} /set ${GUID1} winpe Yes`);
+  await runCmd(`${bcdeditPath} /displayorder ${GUID1} /addlast`);
 
-  await runCmdAsync(`${bcdeditPath} /timeout ${config.setting.pe.bootWaitTime}`);
+  await runCmd(`${bcdeditPath} /timeout ${config.setting.pe.bootWaitTime}`);
 
   //下面两项跟开机动画实现有关
-  //await runCmdAsync(bcdeditPath + ' /set {bootmgr} nointegritychecks yes')//禁用数字签名检查
-  //await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' BootMenuPolicy Standard')//启用Metro启动界面
+  //await runCmd(bcdeditPath + ' /set {bootmgr} nointegritychecks yes')//禁用数字签名检查
+  //await runCmd(bcdeditPath + ' /set ' + GUID1 + ' BootMenuPolicy Standard')//启用Metro启动界面
 
-  await runCmdAsync(`attrib ${roConfig.environment.sysLetter}\\HotPE +S +H /S /D`);
-  await runCmdAsync(`attrib ${roConfig.environment.sysLetter}\\HotPE\\* +S +H /S /D`);
+  await runCmd(`attrib ${roConfig.environment.sysLetter}\\HotPE +S +H /S /D`);
+  await runCmd(`attrib ${roConfig.environment.sysLetter}\\HotPE\\* +S +H /S /D`);
 
   //清理
   await delDir(tempPath);
@@ -142,8 +142,8 @@ export async function uninstallToSystem(setIsUninstalling: Function, onMenuLockC
   setIsUninstalling(true);
   onMenuLockChange(true);
 
-  await runCmdAsync(`${bcdeditPath} /delete ${GUID2} /f`);
-  await runCmdAsync(`${bcdeditPath} /delete ${GUID1} /f`);
+  await runCmd(`${bcdeditPath} /delete ${GUID2} /f`);
+  await runCmd(`${bcdeditPath} /delete ${GUID1} /f`);
 
   await delDir(`${roConfig.environment.sysLetter}\\HotPE\\`);
   if (!isUpdate) {

@@ -1,7 +1,7 @@
 import { Button, List, Typography } from '@douyinfe/semi-ui';
 import { useEffect, useReducer } from 'react';
-import { HPMDLRender, HPMDlList } from '../../services/hpm';
-import { cancelDlTask, newHPMDl } from '../../controller/hpm/hpmDl';
+
+import hpmService, { cancelDlTask, newHPMDl } from '../../services/hpm';
 
 const { Text } = Typography;
 
@@ -9,7 +9,7 @@ export default function TaskMgr() {
   const [, forceUpdate] = useReducer(x => x + 1, 0); //刷新页面
 
   useEffect(() => {
-    HPMDLRender.callRefreshPage = forceUpdate;
+    hpmService.render.callRefreshPage = forceUpdate;
     // Update the document title using the browser
   });
 
@@ -25,7 +25,7 @@ export default function TaskMgr() {
       {
         <List
           style={{ padding: '6px' }}
-          dataSource={HPMDlList}
+          dataSource={hpmService.downloadTasks}
           renderItem={HPMDlInfo => (
             <List.Item style={style}>
               <div style={{ display: 'flex', width: '100%' }}>
@@ -73,7 +73,7 @@ export default function TaskMgr() {
                     style={{ marginRight: 8 }}
                     type='danger'
                     onClick={async () => {
-                      await cancelDlTask(HPMDlInfo);
+                      await cancelDlTask(HPMDlInfo.taskId);
                       forceUpdate();
                     }}
                   >

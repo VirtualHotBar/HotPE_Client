@@ -14,6 +14,7 @@ import { registerInstallHandlers } from './install-handlers';
 import { registerHPMHandlers } from './hpm-handlers';
 import { registerUpdateHandlers } from './update-handlers';
 import { registerAria2Handlers } from './aria2-handlers';
+import { isDev } from '..';
 
 /**
  * 初始化所有IPC处理器
@@ -21,6 +22,8 @@ import { registerAria2Handlers } from './aria2-handlers';
 export function setupIpcHandlers(mainWindow: Electron.BrowserWindow): void {
   // 清理现有的监听器
   ipcMain.removeAllListeners();
+
+  
 
   // 设置各类处理器
   setupWindowHandlers(mainWindow);
@@ -34,6 +37,13 @@ export function setupIpcHandlers(mainWindow: Electron.BrowserWindow): void {
   registerHPMHandlers();
   registerUpdateHandlers();
   registerAria2Handlers();
+  setupOutherHandlers()
+}
+
+function setupOutherHandlers(){
+  ipcMain.on('isDev', (event) => {
+    event.returnValue = isDev;
+  });
 }
 
 /**

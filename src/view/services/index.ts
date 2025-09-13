@@ -25,7 +25,7 @@ export * from './progress-manager';
 // 业务服务
 export * from './aria2-service';
 export * from './disk-service';
-export * from './hpm-service';
+
 export * from './install-service';
 export * from './update-service';
 export * from './setting';

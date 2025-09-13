@@ -3,7 +3,7 @@ import { Button, Banner, Progress, Notification, Modal, Descriptions } from '@do
 import { DownloadOne } from '@icon-park/react';
 import { config } from '../services/config';
 import { dlPERes } from '../controller/dlRes';
-import { Aria2Attrib } from '../../types/aria2';
+import { Aria2Status } from '../../types/aria2';
 import ReactMarkdown from 'react-markdown';
 import { UpdateLatest } from '../../types/update';
 import { updateClient, updateDoneTip } from '../controller/update';
@@ -36,7 +36,7 @@ export default function Home(props: HomePageProps) {
     props.onMenuLockChange(true);
     setDlPercent(0);
 
-    dlPERes(setDlPercent, setDlSpeed, (back: Aria2Attrib) => {
+    dlPERes(setDlPercent, setDlSpeed, (back: Aria2Status) => {
       if (back.state == 'done' || back.state == 'error') {
         if (back.state == 'done') {
           Notification.success({
@@ -116,7 +116,7 @@ export default function Home(props: HomePageProps) {
             //锁定菜单
             props.onMenuLockChange(true);
             setDlPercent(0);
-            updateClient(setDlPercent, setDlSpeed, (aria2Back: Aria2Attrib, updateStep: string) => {
+            updateClient(setDlPercent, setDlSpeed, (aria2Back: Aria2Status, updateStep: string) => {
               console.log(updateStep);
               if (aria2Back.state == 'error') {
                 //下载错误

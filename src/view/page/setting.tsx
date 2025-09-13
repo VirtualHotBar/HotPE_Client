@@ -14,12 +14,12 @@ import {
 } from '@douyinfe/semi-ui';
 import { checkPESetting, saveClientSetting, savePESetting } from '../controller/setting/setting';
 import { setting } from '../services/setting';
-import { checkHPMFiles } from '../controller/hpm/checkHpmFiles';
 import { updateState } from '../controller/init';
 import { AppTest } from '../controller/test';
 import { setThemeMode } from '../controller/setting/themeMode';
-import { runCmdAsync } from '../utils/command';
+import { runCmd } from '../utils/command';
 import { SettingPageProps, ThemeMode, TreeSelectOption } from '../../types/page-props';
+import { hpmService } from '../services';
 
 const { Text } = Typography;
 
@@ -247,7 +247,7 @@ export default function Setting(props: SettingPageProps) {
             <Button
               style={{ marginLeft: '8px' }}
               onClick={() => {
-                runCmdAsync('notepad.exe ./resources/config.json');
+                runCmd('notepad.exe ./resources/config.json');
               }}
             >
               编辑配置文件
@@ -288,7 +288,7 @@ export function HotPEDriveChoose(callback: Function) {
             config.environment.HotPEDrive.new = config.environment.HotPEDrive.all[value];
 
             //获取本地HPM列表,刷新一下
-            await checkHPMFiles();
+            await hpmService.refreshLocalModules();
 
             //获取设置
             await checkPESetting();

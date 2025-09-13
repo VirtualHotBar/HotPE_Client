@@ -5,6 +5,7 @@
 
 import { NotificationManager } from './notification-manager';
 import { createLogger } from './logger';
+import { isDev } from '../utils/utils';
 
 export interface ErrorContext {
   component?: string;
@@ -122,7 +123,7 @@ export class ErrorHandler {
   private reportError(message: string, stack?: string, context?: ErrorContext): void {
     // 这里可以添加错误上报逻辑，比如发送到服务器
     // 目前只是占位符
-    if (import.meta.env.DEV) {
+    if (isDev()) {
       this.logger.debug('Error reported', 'reportError', { message, stack, context });
     }
   }

@@ -1,7 +1,7 @@
 import { Notification, Toast } from '@douyinfe/semi-ui';
 import { config, roConfig } from '../../services/config';
 import { setting } from '../../services/setting';
-import { runCmdAsync } from '../../utils/command';
+import { runCmd } from '../../utils/command';
 import { isFileExisted } from '@/view/utils/core/file';
 import { copyFile } from '@/view/utils/utils';
 
@@ -27,7 +27,7 @@ export async function savePESetting() {
 
   if (config.environment.HotPEDrive.new.isMove == false) {
     config.setting.pe.bootWaitTime = setting.pe.bootWaitTime;
-    await runCmdAsync(`${bcdeditPath} /timeout ${config.setting.pe.bootWaitTime}`);
+    await runCmd(`${bcdeditPath} /timeout ${config.setting.pe.bootWaitTime}`);
   }
 
   await copyFile(

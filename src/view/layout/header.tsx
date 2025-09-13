@@ -46,7 +46,7 @@ export default function Header({ onNavigate }: HeaderProps) {
     if (HPMSearch.value.trim() !== '') {
       HPMSearch.select = true;
       onNavigate('HPMDl');
-      HPMSearch.callRefres?.();
+      HPMSearch.callRefresh?.();
     }
   }, [onNavigate]);
 

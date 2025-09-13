@@ -82,8 +82,8 @@ export async function createDirectory(dirPath: string): Promise<boolean> {
  */
 export async function traverseFiles(dirPath: string, extension?: string): Promise<string[]> {
   // 使用现有的命令行方式读取目录
-  const { runCmdAsync } = await import('../command');
-  const returnStr = await runCmdAsync(`dir "${dirPath}" /b`);
+  const { runCmd } = await import('../command');
+  const returnStr = await runCmd(`dir "${dirPath}" /b`);
   const files = returnStr.split('\n').filter(file => file.trim() !== '');
   
   if (extension) {

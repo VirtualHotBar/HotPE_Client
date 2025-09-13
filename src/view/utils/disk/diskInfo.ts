@@ -1,6 +1,6 @@
 import { config } from '../../services/config';
 import { disksInfo, partitionInfo } from '../../../types/config';
-import { runCmdAsync } from '../command';
+import { runCmd } from '../command';
 import { filterArrayNull } from '../core/string';
 
 //获取磁盘信息（更新
@@ -8,7 +8,7 @@ export async function getDisksInfo() {
   //disk
   const { roConfig } = await import('../../services/config');
   const disksTemp = filterArrayNull(
-    (await runCmdAsync(`${roConfig.path.tools}hdd.exe  -mohong`)).replaceAll('	', '|').split('\r\n')
+    (await runCmd(`${roConfig.path.tools}hdd.exe  -mohong`)).replaceAll('	', '|').split('\r\n')
   );
   config.environment.ware.disks = disksTemp.map((disk: string, _index: number) => {
     const temp = disk.split('|');
@@ -35,7 +35,7 @@ export async function getPartitionsInfo() {
   //partition
   const { roConfig } = await import('../../services/config');
   const partitionsTemp = filterArrayNull(
-    (await runCmdAsync(`${roConfig.path.tools}CxDir.exe  -mohong`))
+    (await runCmd(`${roConfig.path.tools}CxDir.exe  -mohong`))
       .replaceAll('	', '|')
       .split('\r\n')
   );
@@ -62,7 +62,7 @@ export async function getPartitionsInfo() {
 export async function getAllLetterInfo() {
   const { roConfig } = await import('../../services/config');
   config.environment.ware.allLetter = filterArrayNull(
-    (await runCmdAsync(`${roConfig.path.tools}letter.bat`)).split(' ')
+    (await runCmd(`${roConfig.path.tools}letter.bat`)).split(' ')
   ).reverse(); //翻转
 }
 

@@ -93,17 +93,6 @@ export const safeChildProcess = {
     window.electronAPI.cmd.onOutput(callback);
   },
 
-  /**
-   * 监听命令输出（兼容旧格式）
-   */
-  onOutputLegacy: (callback: (data: string) => void): void => {
-    const wrappedCallback = (output: CommandOutput) => {
-      if (output.data.trim()) {
-        callback(output.data);
-      }
-    };
-    window.electronAPI.cmd.onOutput(wrappedCallback);
-  },
 
   /**
    * 移除输出监听器

@@ -3,6 +3,8 @@
  * 替代项目中所有的 console 调用
  */
 
+
+
 export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
@@ -27,8 +29,8 @@ export class Logger {
 
   private constructor() {
     // 在开发环境下启用调试日志
-    // 使用 import.meta.env 替代 process.env
-    if (import.meta.env.DEV) {
+    // 直接访问 electronAPI 避免循环依赖
+    if (window.electronAPI?.isDev) {
       this.logLevel = LogLevel.DEBUG;
     }
   }

@@ -1,6 +1,6 @@
 import { Notification } from '@douyinfe/semi-ui';
 import { config, roConfig } from '../../services/config';
-import { runCmdAsync } from '../../utils/command';
+import { runCmd } from '../../utils/command';
 
 import { checkIsReady } from './check';
 import { dealStrForCmd, takeLeftStr } from '@/view/utils/core/string';
@@ -41,7 +41,7 @@ export async function makeISOFile(
   isSucceed = isSucceed && (await copyDir(`${tempPathSource}Data\\`, tempPathISO));
 
   setStepStr('正在生成ISO文件');
-  await runCmdAsync(
+  await runCmd(
     `${
       roConfig.path.tools
     }oscdimg\\oscdimg.exe -m -o -u2 -udfver102 -h -bootdata:2#p0,e,b${dealStrForCmd(

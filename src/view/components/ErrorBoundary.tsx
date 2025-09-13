@@ -6,6 +6,7 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 import { Button, Typography, Space } from '@douyinfe/semi-ui';
 import { IconRefresh } from '@douyinfe/semi-icons';
 import { IconAlertTriangle } from '@douyinfe/semi-icons';
+import { isDev } from '../utils/utils';
 
 const { Title, Text } = Typography;
 
@@ -98,7 +99,7 @@ export class ErrorBoundary extends Component<Props, State> {
             很抱歉，应用遇到了一个意外错误。您可以尝试重新加载页面或重启应用。
           </Text>
 
-          {process.env['NODE_ENV'] === 'development' && this.state.error && (
+          {isDev() && this.state.error && (
             <details style={{ marginBottom: '24px', textAlign: 'left', maxWidth: '600px' }}>
               <summary style={{ cursor: 'pointer', marginBottom: '8px' }}>
                 <Text strong>错误详情 (开发模式)</Text>

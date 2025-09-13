@@ -1,12 +1,11 @@
 import React, { useReducer, useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { Button, Nav, Spin } from '@douyinfe/semi-ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { HPMDLRender, HPMListOnline, HPMSearch } from '../../services/hpm';
+import hpmService, {  HPMSearch } from '../../services/hpm';
 import type { HPM } from '../../../types/hpm';
 import type { HPMTab as HPMTabType } from '../../../types/hpm-page';
 
-import { isHPMinDlList, getHPMDlPercent, newHPMDl } from '../../controller/hpm/hpmDl';
-import { isHPMHaveLocal } from '../../controller/hpm/checkHpmFiles';
+import { isHPMinDlList, getHPMDlPercent, newHPMDl, isHPMHaveLocal } from '../../services/hpm';
 import { formatFileSize } from '@/view/utils/core/string';
 
 export default function HPMDl() {
@@ -23,14 +22,14 @@ export default function HPMDl() {
   // 初始化效果
   useEffect(() => {
     // 清空刷新队列
-    HPMDLRender.callRefreshDlTab = [];
-    HPMSearch.callRefres = forceUpdate;
+    hpmService.render.callRefreshDlTab = [];
+    HPMSearch.callRefresh = forceUpdate;
 
     // 检查数据是否已初始化
-    if (HPMListOnline && Array.isArray(HPMListOnline)) {
+    if (hpmService.onlineModules && Array.isArray(hpmService.onlineModules)) {
       setIsInitialized(true);
     }
-  }, [HPMListOnline]);
+  }, [hpmService.onlineModules]);
 
   // 使用 useMemo 优化模块分类计算
   const hpmClassItems = useMemo(() => {
@@ -38,19 +37,19 @@ export default function HPMDl() {
     if (HPMSearch.value !== '') {
       items.push({ itemKey: -1, text: '搜索' });
     }
-    if (HPMListOnline && Array.isArray(HPMListOnline) && HPMListOnline.length > 0) {
-      HPMListOnline.forEach((hpmClass, index) => {
+    if (hpmService.onlineModules && Array.isArray(hpmService.onlineModules) && hpmService.onlineModules.length > 0) {
+      hpmService.onlineModules.forEach((hpmClass, index) => {
         if (hpmClass?.class) {
           items.push({ itemKey: index, text: hpmClass.class });
         }
       });
     }
     return items;
-  }, [HPMListOnline, HPMSearch.value]);
+  }, [hpmService.onlineModules, HPMSearch.value]);
 
   // 使用 useMemo 优化模块列表计算
   const hpmItems = useMemo(() => {
-    if (!HPMListOnline || !Array.isArray(HPMListOnline) || HPMListOnline.length === 0) {
+    if (!hpmService.onlineModules || !Array.isArray(hpmService.onlineModules) || hpmService.onlineModules.length === 0) {
       return [];
     }
 
@@ -59,7 +58,7 @@ export default function HPMDl() {
       const searchValue = HPMSearch.value.toLowerCase();
       const items: HPM[] = [];
 
-      HPMListOnline.forEach(hpmClass => {
+      hpmService.onlineModules.forEach(hpmClass => {
         if (!hpmClass || hpmClass.class === '推荐') {return;}
 
         const hpmList = hpmClass.list || [];
@@ -75,10 +74,10 @@ export default function HPMDl() {
 
       return items;
     } else {
-      const selectedClass = HPMListOnline[selectHPMClassIndex];
+      const selectedClass = hpmService.onlineModules[selectHPMClassIndex];
       return selectedClass?.list?.filter(item => item != null) || [];
     }
-  }, [HPMListOnline, selectHPMClassIndex, HPMSearch.value]);
+  }, [hpmService.onlineModules, selectHPMClassIndex, HPMSearch.value]);
 
   // 创建虚拟化器
   const virtualizer = useVirtualizer({
@@ -95,7 +94,7 @@ export default function HPMDl() {
       HPMSearch.select = false;
     } else if (selectHPMClassIndex === -1 && HPMSearch.value === '') {
       // 确保有可用的分类才设置索引
-      if (HPMListOnline && Array.isArray(HPMListOnline) && HPMListOnline.length > 0) {
+      if (hpmService.onlineModules && Array.isArray(hpmService.onlineModules) && hpmService.onlineModules.length > 0) {
         setSelectHPMClassIndex(0);
       }
     }
@@ -189,8 +188,8 @@ const HPMTab = React.memo((props: HPMTabType) => {
 
   useEffect(() => {
     // 正在下载的项目，加入刷新队列（不重复）
-    if (isHPMinDlList(props.HPM) && !HPMDLRender.callRefreshDlTab.includes(forceUpdate)) {
-      HPMDLRender.callRefreshDlTab.push(forceUpdate);
+    if (isHPMinDlList(props.HPM) && !hpmService.render.callRefreshDlTab.includes(forceUpdate)) {
+      hpmService.render.callRefreshDlTab.push(forceUpdate);
     }
   }, [props.HPM]);
 

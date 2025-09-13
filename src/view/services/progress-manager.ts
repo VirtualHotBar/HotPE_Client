@@ -3,6 +3,7 @@
  * 统一管理各种进度显示
  */
 
+import { isDev } from '../utils/utils';
 import { eventBus } from './event-bus';
 import { NotificationManager } from './notification-manager';
 
@@ -193,7 +194,7 @@ export class ProgressManager {
   private notifyProgressUpdate(task: ProgressTask): void {
     // 可以在这里发送事件给 UI 组件
     // 比如更新进度条、状态栏等
-    if (import.meta.env.DEV) {
+    if (isDev()) {
       console.debug(`Progress [${task.id}]: ${task.progress}% - ${task.message || task.title}`);
     }
   }

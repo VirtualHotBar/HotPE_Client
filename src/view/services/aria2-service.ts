@@ -3,16 +3,11 @@
  * 提供安全的下载管理接口
  */
 
+import { Aria2Status } from "../../types/aria2";
+
+
 // Aria2下载状态接口
-export interface Aria2Status {
-  state: 'request' | 'doing' | 'done' | 'error' | 'stopped';
-  speed: string;
-  percentage: number;
-  remainder: string;
-  size: string;
-  newSize: string;
-  message: string;
-}
+
 
 // 下载任务管理
 const activeDownloads = new Map<string, {
@@ -31,7 +26,6 @@ function generateTaskId(): string {
  * 安全启动下载任务
  */
 export async function startDownloadSafe(
-  sourceAria2Path: string,
   url: string,
   saveDir: string,
   saveName: string,
@@ -45,7 +39,6 @@ export async function startDownloadSafe(
     const result = await window.electronAPI.invoke(
       'aria2:start',
       taskId,
-      sourceAria2Path,
       url,
       saveDir,
       saveName,
@@ -65,33 +58,28 @@ export async function startDownloadSafe(
         });
       }
 
-      // 设置状态回调
+      // 设置状态回调 - 使用事件驱动而非轮询
       if (onStatusUpdate) {
         await window.electronAPI.invoke('aria2:setCallback', taskId);
         
-        // 启动状态轮询
-        const pollStatus = async () => {
-          try {
-            const status = await getDownloadStatusSafe(taskId);
-            if (status && onStatusUpdate) {
-              onStatusUpdate(status);
-              
-              // 如果下载完成或出错，停止轮询
-              if (status.state === 'done' || status.state === 'error' || status.state === 'stopped') {
-                activeDownloads.delete(taskId);
-                return;
-              }
-              
-              // 继续轮询
-              setTimeout(pollStatus, 1000);
+        // 监听主进程发送的状态更新事件
+        const handleStatusUpdate = (_event: any, receivedTaskId: string, status: Aria2Status) => {
+          if (receivedTaskId === taskId) {
+            console.log(`[${taskId}] 收到状态更新:`, status);
+            onStatusUpdate(status);
+            
+            // 如果下载完成或出错，清理监听器和任务记录
+            if (status.state === 'done' || status.state === 'error' || status.state === 'stopped') {
+              window.electronAPI.removeListener('aria2:statusUpdate', handleStatusUpdate);
+              activeDownloads.delete(taskId);
             }
-          } catch (error) {
-            console.error('状态轮询失败:', error);
           }
         };
         
-        // 开始轮询
-        setTimeout(pollStatus, 1000);
+        // 注册事件监听器
+        window.electronAPI.on('aria2:statusUpdate', handleStatusUpdate);
+        
+        console.log(`[${taskId}] 已设置事件监听器，等待状态更新`);
       }
 
       return taskId;
@@ -166,11 +154,6 @@ export async function checkFileExistsSafe(filePath: string): Promise<boolean> {
  */
 export class SafeAria2 {
   private taskId: string | null = null;
-  private sourceAria2Path: string;
-
-  constructor(sourceAria2Path: string) {
-    this.sourceAria2Path = sourceAria2Path;
-  }
 
   /**
    * 开始下载
@@ -184,7 +167,6 @@ export class SafeAria2 {
   ): Promise<void> {
     try {
       this.taskId = await startDownloadSafe(
-        this.sourceAria2Path,
         url,
         saveDir,
         saveName,

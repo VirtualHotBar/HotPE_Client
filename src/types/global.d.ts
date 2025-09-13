@@ -9,6 +9,11 @@ import { CommandOutput, CommandResult } from './command';
 interface ElectronAPI {
   // 通用IPC调用方法
   invoke: (channel: string, ...args: any[]) => Promise<any>;
+  
+  // 事件监听方法
+  on: (channel: string, callback: (...args: any[]) => void) => void;
+  removeListener: (channel: string, callback: (...args: any[]) => void) => void;
+  removeAllListeners: (channel: string) => void;
 
   // 窗口控制
   windows: {
@@ -55,6 +60,8 @@ interface ElectronAPI {
   hardware: {
     getInfo: (parameter: string) => Promise<any>;
   };
+
+  isDev: boolean;
 }
 
 // 扩展 Window 接口
@@ -65,4 +72,4 @@ declare global {
 }
 
 // 导出空对象以使此文件成为模块
-export {};
+export {ElectronAPI};

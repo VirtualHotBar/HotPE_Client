@@ -1,7 +1,6 @@
 import { Button, Collapse, List, Typography } from '@douyinfe/semi-ui';
 import { useReducer } from 'react';
-import { delHPM, disableHPM, enableHPM } from '../../controller/hpm/setHpm';
-import { HPMListLocal } from '../../services/hpm';
+import hpmService, { delHPM, disableHPM, enableHPM } from '../../services/hpm';
 import { formatFileSize } from '@/view/utils/core/string';
 
 
@@ -21,9 +20,9 @@ export default function HPMMgr() {
   return (
     <>
       <Collapse defaultActiveKey={['on', 'off']}>
-        <Collapse.Panel header={'已启用：'} itemKey='on' extra={HPMListLocal.on.length}>
+        <Collapse.Panel header={'已启用：'} itemKey='on' extra={hpmService.localModules.enabled.length}>
           <List
-            dataSource={HPMListLocal.on}
+            dataSource={hpmService.localModules.enabled}
             renderItem={onHPM => (
               <List.Item style={style}>
                 <div style={{ display: 'flex', width: '100%' }}>
@@ -65,9 +64,9 @@ export default function HPMMgr() {
             )}
           />
         </Collapse.Panel>
-        <Collapse.Panel header={'已禁用：'} itemKey='off' extra={HPMListLocal.off.length}>
+        <Collapse.Panel header={'已禁用：'} itemKey='off' extra={hpmService.localModules.disabled.length}>
           <List
-            dataSource={HPMListLocal.off}
+            dataSource={hpmService.localModules.disabled}
             renderItem={offHPM => (
               <List.Item style={style}>
                 <div style={{ display: 'flex', width: '100%' }}>

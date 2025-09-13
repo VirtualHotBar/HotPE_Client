@@ -156,6 +156,10 @@ export class FileUtils {
   }
 }
 
+export const isDev=()=>{
+  return window.electronAPI.isDev
+}
+
 /**
  * 向后兼容的函数映射
  * 保持原有API不变，内部使用优化后的实现
@@ -173,3 +177,5 @@ export const copyDir = FileUtils.copyDirectory;
 export const delDir = async (dirPath: string) => {
   return await FileUtils.remove(dirPath);
 };
+
+

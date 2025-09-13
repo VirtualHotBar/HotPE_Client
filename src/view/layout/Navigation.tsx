@@ -12,7 +12,7 @@ import {
   IconHome,
   IconSetting,
 } from '@douyinfe/semi-icons';
-import { HPMDLRender, HPMDlList } from '../services/hpm';
+import { hpmService } from '../services';
 
 // 导航项类型定义
 interface NavigationItem {
@@ -37,11 +37,11 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
 
   // 设置HPM渲染器的刷新回调
   useEffect(() => {
-    HPMDLRender.callRefreshNav = forceUpdate;
+    hpmService.render.callRefreshNav = forceUpdate;
 
     // 清理函数
     return () => {
-      HPMDLRender.callRefreshNav = () => {};
+      hpmService.render.callRefreshNav = () => {};
     };
   }, []);
 
@@ -75,8 +75,8 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
             text: (
               <>
                 任务管理
-                {HPMDlList.length > 0 && (
-                  <Badge count={HPMDlList.length} overflowCount={99} type='primary' />
+                {hpmService.downloadTasks.length > 0 && (
+                  <Badge count={hpmService.downloadTasks.length} overflowCount={99} type='primary' />
                 )}
               </>
             ),
@@ -94,7 +94,7 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
         icon: <IconSetting />,
       },
     ],
-    [HPMDlList.length]
+    [hpmService.downloadTasks.length]
   );
 
   // 处理导航选择

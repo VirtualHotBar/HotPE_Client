@@ -1,4 +1,3 @@
-import { Aria2 } from '../view/utils/aria2/aria2';
 import { Aria2Attrib } from './aria2';
 
 interface HPMClass {
@@ -20,7 +19,7 @@ interface HPM {
 
 interface HPMDl {
   HPMInfo: HPM;
-  dlClass: Aria2;
+  taskId: string; // 替换 dlClass 为 taskId
   dlInfo: Aria2Attrib;
 }
 

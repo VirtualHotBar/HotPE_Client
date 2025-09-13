@@ -4,6 +4,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { CommandOutput, CommandResult } from '../types/command';
+import type { ElectronAPI } from '../types/global';
 
 // 文件系统操作类型
 interface MkdirOptions {
@@ -17,50 +18,27 @@ interface CpOptions {
   preserveTimestamps?: boolean;
 }
 
-// 定义 API 接口类型
-interface ElectronAPI {
-  // 通用IPC调用方法
-  invoke: (channel: string, ...args: any[]) => Promise<any>;
-  
-  windows: {
-    minimize: () => void;
-    openDevTools: () => void;
-    exit: () => void;
-  };
-  fs: {
-    readFile: (filePath: string, encoding?: string) => Promise<string>;
-    writeFile: (filePath: string, data: string, encoding?: string) => Promise<boolean>;
-    exists: (filePath: string) => Promise<boolean>;
-    access: (filePath: string) => Promise<boolean>;
-    mkdir: (dirPath: string, options?: MkdirOptions) => Promise<boolean>;
-    copyFile: (src: string, dest: string) => Promise<boolean>;
-    cp: (src: string, dest: string, options?: CpOptions) => Promise<boolean>;
-    rename: (oldPath: string, newPath: string) => Promise<boolean>;
-  };
-  cmd: {
-    spawn: (command: string) => Promise<CommandResult>;
-    onOutput: (callback: (output: CommandOutput) => void) => void;
-    removeOutputListener: () => void;
-  };
-  path: {
-    join: (...paths: string[]) => Promise<string>;
-    basename: (filePath: string) => Promise<string>;
-    dirname: (filePath: string) => Promise<string>;
-    extname: (filePath: string) => Promise<string>;
-  };
-  dialog: {
-    getSavePath: (defaultPath: string) => string | undefined;
-    getOpenPath: (defaultPath: string) => string[] | undefined;
-  };
-  hardware: {
-    getInfo: (parameter: string) => Promise<any>;
-  };
-}
+
 
 // 实现 API
 const electronAPI: ElectronAPI = {
   // 通用IPC调用方法
   invoke: (channel: string, ...args: any[]) => ipcRenderer.invoke(channel, ...args),
+  
+  // 事件监听方法
+  on: (channel: string, callback: (...args: any[]) => void) => {
+    ipcRenderer.on(channel, callback);
+  },
+  
+  // 移除事件监听器
+  removeListener: (channel: string, callback: (...args: any[]) => void) => {
+    ipcRenderer.removeListener(channel, callback);
+  },
+  
+  // 移除所有监听器
+  removeAllListeners: (channel: string) => {
+    ipcRenderer.removeAllListeners(channel);
+  },
 
   // 窗口控制
   windows: {
@@ -83,6 +61,7 @@ const electronAPI: ElectronAPI = {
     cp: (src: string, dest: string, options?: CpOptions) =>
       ipcRenderer.invoke('fs:cp', src, dest, options),
     rename: (oldPath: string, newPath: string) => ipcRenderer.invoke('fs:rename', oldPath, newPath),
+  rm: (path: string, options?: { force?: boolean }) => ipcRenderer.invoke('fs:rm', path, options),
   },
 
   // 命令执行
@@ -114,6 +93,8 @@ const electronAPI: ElectronAPI = {
   hardware: {
     getInfo: (parameter: string) => ipcRenderer.invoke('hardware:getInfo', parameter),
   },
+
+  isDev: ipcRenderer.sendSync('isDev') as boolean,
 };
 
 // 暴露 API 到渲染进程

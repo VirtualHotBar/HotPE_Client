@@ -7,22 +7,15 @@ import { ipcMain } from 'electron';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { spawn, ChildProcess } from 'child_process';
-import { 
-  validateFilePath, 
+import {
+  validateFilePath,
   cleanupTempFile,
   generateSafeTempPath
 } from './security-utils';
 
-// Aria2下载状态接口
-interface Aria2Status {
-  state: 'request' | 'doing' | 'done' | 'error' | 'stopped';
-  speed: string;
-  percentage: number;
-  remainder: string;
-  size: string;
-  newSize: string;
-  message: string;
-}
+
+import { Aria2Status } from "../../types/aria2";
+
 
 // 下载任务接口
 interface DownloadTask {
@@ -32,6 +25,7 @@ interface DownloadTask {
   filePath: string;
   status: Aria2Status;
   callback?: (status: Aria2Status) => void;
+  finalStatusSent?: boolean; // 标记是否已发送最终状态
 }
 
 // 活动的下载任务
@@ -40,7 +34,7 @@ const activeTasks = new Map<string, DownloadTask>();
 /**
  * 创建临时Aria2可执行文件
  */
-async function createTempAria2(sourceAria2Path: string): Promise<string> {
+async function createTempAria2(sourceAria2Path: string = 'resources/tools/aria2c.exe'): Promise<string> {
   try {
     const validatedPath = validateFilePath(sourceAria2Path);
     if (!validatedPath) {
@@ -83,19 +77,19 @@ function validateFileName(fileName: string): boolean {
   if (!fileName || typeof fileName !== 'string') {
     return false;
   }
-  
+
   // 检查危险字符
   const dangerousChars = /[<>:"|?*\x00-\x1f]/;
   if (dangerousChars.test(fileName)) {
     return false;
   }
-  
+
   // 检查保留名称
   const reservedNames = /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i;
   if (reservedNames.test(fileName.replace(/\.[^.]*$/, ''))) {
     return false;
   }
-  
+
   return true;
 }
 
@@ -103,9 +97,7 @@ function validateFileName(fileName: string): boolean {
  * 解析Aria2输出状态
  */
 function parseAria2Output(output: string): Partial<Aria2Status> {
-  const status: Partial<Aria2Status> = {
-    message: output
-  };
+  const status: Partial<Aria2Status> = {};
 
   // 解析下载进度信息
   if (output.includes('DL:') && output.includes('ETA')) {
@@ -141,9 +133,23 @@ function parseAria2Output(output: string): Partial<Aria2Status> {
     if (newSizeMatch && newSizeMatch[1]) {
       status.newSize = `${newSizeMatch[1].trim()}B`;
     }
-  } else if (output.includes('[NOTICE]')) {
-    // 请求状态
-    status.state = 'request';
+  } else if (output.includes('[NOTICE]') || output.includes('Download complete')) {
+    // 请求状态或完成状态
+    if (output.includes('Download complete')) {
+      status.state = 'done';
+      status.percentage = 100;
+    } else {
+      status.state = 'request';
+    }
+  } else if (output.includes('[ERROR]') || output.includes('error')) {
+    // 错误状态
+    status.state = 'error';
+    status.message = output.trim();
+  }
+
+  // 如果有状态更新，记录消息
+  if (Object.keys(status).length > 0) {
+    status.message = output.trim();
   }
 
   return status;
@@ -154,7 +160,6 @@ function parseAria2Output(output: string): Partial<Aria2Status> {
  */
 async function startDownload(
   taskId: string,
-  sourceAria2Path: string,
   url: string,
   saveDir: string,
   saveName: string,
@@ -176,7 +181,7 @@ async function startDownload(
     }
 
     // 创建临时Aria2文件
-    const aria2Path = await createTempAria2(sourceAria2Path);
+    const aria2Path = await createTempAria2();
     const filePath = path.join(validatedSaveDir, saveName);
 
     // 确保保存目录存在
@@ -223,37 +228,99 @@ async function startDownload(
     // 处理输出
     process.stdout?.on('data', (data) => {
       const output = data.toString();
+      console.log(`[${taskId}] Aria2 stdout:`, output);
+      
       const parsedStatus = parseAria2Output(output);
-      
-      task.status = { ...task.status, ...parsedStatus };
-      
-      // 通知前端状态更新
-      if (task.callback) {
-        task.callback(task.status);
+      if (Object.keys(parsedStatus).length > 1) { // 有实际状态更新
+        task.status = { ...task.status, ...parsedStatus };
+        console.log(`[${taskId}] 状态更新:`, task.status);
+        
+        // 主动向前端发送状态更新
+        if (task.callback && !task.finalStatusSent) {
+          // 如果是最终状态（done/error），标记已发送
+          if (task.status.state === 'done' || task.status.state === 'error') {
+            task.finalStatusSent = true;
+          }
+          task.callback(task.status);
+        }
       }
     });
 
     process.stderr?.on('data', (data) => {
-      console.error('Aria2 stderr:', data.toString());
+      const errorOutput = data.toString();
+      console.error(`[${taskId}] Aria2 stderr:`, errorOutput);
+      
+      // 更新错误状态
+      task.status.state = 'error';
+      task.status.message = errorOutput;
+      
+      // 主动向前端发送错误状态
+      if (task.callback && !task.finalStatusSent) {
+        task.finalStatusSent = true; // 标记已发送最终状态
+        task.callback(task.status);
+      }
     });
 
     // 处理进程结束
     process.on('close', async (code) => {
-      if (code === 0) {
-        task.status.state = 'done';
-        task.status.percentage = 100;
-      } else {
-        task.status.state = 'error';
-      }
+      console.log(`[${taskId}] Aria2进程结束，退出码:`, code);
+      
+      // 只有在还没发送最终状态时才更新和发送
+      if (!task.finalStatusSent) {
+        if (code === 0) {
+          task.status.state = 'done';
+          task.status.percentage = 100;
+          task.status.message = '下载完成';
+        } else {
+          task.status.state = 'error';
+          task.status.message = `下载失败，退出码: ${code}`;
+        }
 
-      // 通知前端最终状态
-      if (task.callback) {
-        task.callback(task.status);
+        console.log(`[${taskId}] 最终状态:`, task.status);
+
+        // 通知前端最终状态（在删除任务之前）
+        if (task.callback) {
+          task.finalStatusSent = true;
+          task.callback(task.status);
+        }
+      } else {
+        console.log(`[${taskId}] 最终状态已发送，跳过重复通知`);
       }
 
       // 清理临时文件
       await cleanupTempFile(aria2Path);
-      activeTasks.delete(taskId);
+      
+      // 延迟删除任务，给渲染进程一些时间处理最终状态
+      setTimeout(() => {
+        activeTasks.delete(taskId);
+        console.log(`[${taskId}] 任务已从活动列表中移除`);
+      }, 2000);
+    });
+
+    // 处理进程错误
+    process.on('error', async (error) => {
+      console.error(`[${taskId}] Aria2进程错误:`, error);
+      
+      // 只有在还没发送最终状态时才发送
+      if (!task.finalStatusSent) {
+        task.status.state = 'error';
+        task.status.message = `进程错误: ${error.message}`;
+        
+        // 通知前端错误状态
+        if (task.callback) {
+          task.finalStatusSent = true;
+          task.callback(task.status);
+        }
+      }
+      
+      // 清理临时文件
+      await cleanupTempFile(aria2Path);
+      
+      // 延迟删除任务
+      setTimeout(() => {
+        activeTasks.delete(taskId);
+        console.log(`[${taskId}] 错误任务已从活动列表中移除`);
+      }, 2000);
     });
 
     return true;
@@ -288,7 +355,7 @@ async function stopDownload(taskId: string): Promise<boolean> {
 
     // 清理临时文件
     await cleanupTempFile(task.aria2Path);
-    
+
     // 更新状态
     task.status.state = 'stopped';
     if (task.callback) {
@@ -320,7 +387,7 @@ async function checkFileExists(filePath: string): Promise<boolean> {
     if (!validatedPath) {
       return false;
     }
-    
+
     await fs.access(validatedPath);
     return true;
   } catch {
@@ -332,15 +399,14 @@ async function checkFileExists(filePath: string): Promise<boolean> {
 export function registerAria2Handlers() {
   // 启动下载
   ipcMain.handle('aria2:start', async (
-    _event, 
+    _event,
     taskId: string,
-    sourceAria2Path: string,
-    url: string, 
-    saveDir: string, 
-    saveName: string, 
+    url: string,
+    saveDir: string,
+    saveName: string,
     threads: number
   ) => {
-    return await startDownload(taskId, sourceAria2Path, url, saveDir, saveName, threads);
+    return await startDownload(taskId, url, saveDir, saveName, threads);
   });
 
   // 停止下载

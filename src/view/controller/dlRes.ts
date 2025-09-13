@@ -1,73 +1,146 @@
 import { config, roConfig } from '../services/config';
-import { Aria2Attrib } from '../../types/aria2';
-import { Aria2 } from '../utils/aria2/aria2';
+
+import { startDownloadSafe, stopDownloadSafe } from '../services/aria2-service';
 import { checkPERes } from './condition';
 import { updateState } from './init';
 import { checkUpdate } from './update';
+import { Aria2Status } from '../../types/aria2';
 
-export function dlPERes(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
-  const aria2 = new Aria2();
+// 活动的下载任务
+const activeDownloads = new Map<string, string>();
 
-  aria2.start(
-    config.resources.pe.update.download_url,
-    roConfig.path.resources.pe,
-    `${config.resources.pe.update.id}.7z`,
-    config.download.thread,
-    async (back: Aria2Attrib) => {
-      if (back.state != 'error' && back.state != 'done') {
-        setDlPercent(back.percentage);
-        if (back.state == 'doing') {
-          setDlSpeed(`${back.speed}(${back.newSize}\\${back.size},${back.remainder})`);
+export async function dlPERes(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
+  const url = config.resources.pe.update.download_url;
+  const saveDir = roConfig.path.resources.pe;
+  const saveName = `${config.resources.pe.update.id}.7z`;
+  const threads = config.download.thread;
+
+  try {
+    const taskId = await startDownloadSafe(
+      url,
+      saveDir,
+      saveName,
+      threads,
+      async (status: Aria2Status) => {
+        if (status.state != 'error' && status.state != 'done') {
+          setDlPercent(status.percentage);
+          if (status.state == 'doing') {
+            setDlSpeed(`${status.speed}(${status.newSize}\\${status.size},${status.remainder})`);
+          } else {
+            setDlSpeed('请求中...');
+          }
+        } else if (status.state == 'done') {
+          //检查资源
+          await checkPERes();
+          //检查更新
+          await checkUpdate();
+          //更新状态
+          await updateState();
+
+          setDlPercent(-1);
+          activeDownloads.delete('pe-download');
         } else {
-          setDlSpeed('请求中...');
+          setDlPercent(-1);
+          activeDownloads.delete('pe-download');
         }
-      } else if (back.state == 'done') {
-        //检查资源
-        await checkPERes();
-        //检查更新
-        await checkUpdate();
-        //更新状态
-        await updateState();
 
-        setDlPercent(-1);
-      } else {
-        setDlPercent(-1);
+        callback(status);
       }
+    );
 
-      callback(back);
+    if (taskId) {
+      activeDownloads.set('pe-download', taskId);
     }
-  );
+  } catch (error) {
+    console.error('启动PE资源下载失败:', error);
+    setDlPercent(-1);
+    callback({
+      state: 'error',
+      speed: '',
+      percentage: 0,
+      remainder: '',
+      size: '',
+      newSize: '',
+      message: '下载启动失败',
+    });
+  }
 }
 
-export function dlClientRes(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
-  const aria2 = new Aria2();
+export async function dlClientRes(setDlPercent: Function, setDlSpeed: Function, callback: Function) {
+  const url = config.resources.client.update.download_url;
+  const saveDir = roConfig.path.resources.client;
+  const saveName = config.resources.pe.update.fileName;
+  const threads = config.download.thread;
 
-  aria2.start(
-    config.resources.client.update.download_url,
-    roConfig.path.resources.client,
-    config.resources.pe.update.fileName,
-    config.download.thread,
-    async (back: Aria2Attrib) => {
-      if (back.state != 'error' && back.state != 'done') {
-        setDlPercent(back.percentage);
-        if (back.state == 'doing') {
-          setDlSpeed(`${back.speed}(${back.newSize}\\${back.size},${back.remainder})`);
+  try {
+    const taskId = await startDownloadSafe(
+      url,
+      saveDir,
+      saveName,
+      threads,
+      async (status: Aria2Status) => {
+
+        if (status.state != 'error' && status.state != 'done') {
+          setDlPercent(status.percentage);
+          if (status.state == 'doing') {
+            setDlSpeed(`${status.speed}(${status.newSize}\\${status.size},${status.remainder})`);
+          } else {
+            setDlSpeed('请求中...');
+          }
+        } else if (status.state == 'done') {
+          //检查更新
+          await checkUpdate();
+          //更新状态
+          await updateState();
+          activeDownloads.delete('client-download');
         } else {
-          setDlSpeed('请求中...');
+          setDlPercent(-1);
+          activeDownloads.delete('client-download');
         }
-      } else if (back.state == 'done') {
-        //setDlPercent(-1)
-        //检查资源
-        //await checkPERes()
-        //检查更新
-        await checkUpdate();
-        //更新状态
-        await updateState();
-      } else {
-        setDlPercent(-1);
-      }
 
-      callback(back);
+        callback(status);
+      }
+    );
+
+    if (taskId) {
+      activeDownloads.set('client-download', taskId);
     }
-  );
+  } catch (error) {
+    console.error('启动客户端资源下载失败:', error);
+    setDlPercent(-1);
+    callback({
+      state: 'error',
+      speed: '',
+      percentage: 0,
+      remainder: '',
+      size: '',
+      newSize: '',
+      message: '下载启动失败',
+    });
+  }
+}
+
+// 停止下载的辅助函数
+export async function stopPEDownload(): Promise<boolean> {
+  const taskId = activeDownloads.get('pe-download');
+  if (taskId) {
+    const result = await stopDownloadSafe(taskId);
+    if (result) {
+      activeDownloads.delete('pe-download');
+    }
+    return result;
+  }
+  return false;
+}
+
+export async function stopClientDownload(): Promise<boolean> {
+  const taskId = activeDownloads.get('client-download');
+  if (taskId) {
+    const result = await stopDownloadSafe(taskId);
+    if (result) {
+      activeDownloads.delete('client-download');
+    }
+    return result;
+  }
+  return false;
 }

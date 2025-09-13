@@ -91,3 +91,6 @@ app.on('activate', () => {
 app.on('before-quit', () => {
   cleanupIpcHandlers();
 });
+
+
+export {isDev}

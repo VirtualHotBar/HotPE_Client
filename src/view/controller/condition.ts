@@ -5,7 +5,6 @@
 
 import { config, roConfig } from '../services/config';
 import { updateState } from './init';
-import { checkHPMFiles } from './hpm/checkHpmFiles';
 import { checkPESetting } from './setting/setting';
 import {
   getAllLetterInfo,
@@ -17,6 +16,7 @@ import { errorHandler } from '../services/error-handler';
 import { eventBus } from '../services/event-bus';
 import { deleteFile, readHotPEConfig, traverseFiles } from '../utils/core/file';
 import { isHotPEDrive } from '../utils/core/system';
+import { hpmService } from '../services';
 
 /**
  * 检查PE资源
@@ -137,7 +137,7 @@ export async function checkPEDrive(): Promise<boolean> {
       });
 
       // 更新HPM列表和设置
-      await checkHPMFiles();
+     await  hpmService.refreshLocalModules();
       await checkPESetting();
     } else {
       eventBus.emit('notification:info', {
