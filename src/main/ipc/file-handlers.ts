@@ -102,4 +102,58 @@ export function setupFileHandlers(): void {
       });
     });
   });
+
+  // 读取目录文件
+  ipcMain.handle('fs:readdir', async (_, dirPath: string) => {
+    return new Promise<string[]>((resolve, reject) => {
+      fs.readdir(dirPath, (err, files) => {
+        if (err) {
+          reject(new Error(`读取目录失败: ${err}`));
+        } else {
+          resolve(files);
+        }
+      });
+    });
+  });
+
+  // 获取文件状态
+  ipcMain.handle('fs:stat', async (_, path: string) => {
+    return new Promise<fs.Stats>((resolve, reject) => {
+      fs.stat(path, (err, stats) => {
+        if (err) {
+          reject(new Error(`获取文件状态失败: ${err}`));
+        } else {
+          resolve(stats);
+        }
+      });
+    });
+  });
+
+  // 是否是目录
+  ipcMain.handle('fs:isDir', async (_, path: string) => {
+    return new Promise<boolean>((resolve, reject) => {
+      fs.stat(path, (err, stats) => {
+        if (err) {
+          reject(new Error(`获取文件状态失败: ${err}`));
+        } else {
+          resolve(stats.isDirectory());
+        }
+      });
+    });
+  });
+
+  // 删除文件或目录
+  ipcMain.handle('fs:rm', async (_, path: string, options?: fs.RmOptions) => {
+    return new Promise<boolean>((resolve, reject) => {
+      // 默认启用递归删除，以便删除目录
+      const defaultOptions = { recursive: true, ...options };
+      fs.rm(path, defaultOptions, err => {
+        if (err) {
+          reject(new Error(`删除失败: ${err}`));
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  });
 }

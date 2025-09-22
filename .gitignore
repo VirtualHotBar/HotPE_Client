@@ -4,6 +4,7 @@ logs
 *.7z
 
 ClientTools
+out
 dist
 dist-bin
 node_modules

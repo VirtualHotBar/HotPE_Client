@@ -16,26 +16,29 @@ const logger = createLogger('Utils');
 export class ArchiveUtils {
   // 在渲染进程中，我们不能直接使用 process.cwd()
   // 这个路径应该通过 IPC 从主进程获取，或者使用相对路径
-  private static readonly SEVEN_ZIP_PATH = `"resources\\tools\\7z\\7z.exe"`;
+  private static readonly SEVEN_ZIP_PATH = `resources\\tools\\7z\\7z.exe`;
 
   /**
    * 解压文件
    */
   static async unzip(filePath: string, toPath: string): Promise<boolean> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       try {
-        const cmd = `${this.SEVEN_ZIP_PATH} x -y "${dealStrForCmd(filePath)}" -o"${dealStrForCmd(toPath)}"`;
+        const cmd = `${ArchiveUtils.SEVEN_ZIP_PATH} x -y ${dealStrForCmd(filePath)} -o${dealStrForCmd(toPath)}`;
         
-        runCmd(
+        const t = await runCmd(
           cmd,
           (data: string) => {
             logger.debug('解压进度', 'unzip', data);
           },
-          () => {
-            logger.info('解压完成', 'unzip', { filePath, toPath });
-            resolve(true);
+          (code: number) => {
+            logger.info('解压完成', 'unzip', { filePath, toPath, code});
+            resolve(code === 0);
           }
         );
+
+        console.log(t);
+        
       } catch (error) {
         logger.error('解压失败', 'unzip', { error, filePath, toPath });
         resolve(false);
@@ -49,7 +52,7 @@ export class ArchiveUtils {
   static async zip(sourcePath: string, targetPath: string): Promise<boolean> {
     return new Promise((resolve) => {
       try {
-        const cmd = `${this.SEVEN_ZIP_PATH} a -y "${dealStrForCmd(targetPath)}" "${dealStrForCmd(sourcePath)}"`;
+        const cmd = `${ArchiveUtils.SEVEN_ZIP_PATH} a -y "${dealStrForCmd(targetPath)}" "${dealStrForCmd(sourcePath)}"`;
         
         runCmd(
           cmd,
@@ -177,5 +180,3 @@ export const copyDir = FileUtils.copyDirectory;
 export const delDir = async (dirPath: string) => {
   return await FileUtils.remove(dirPath);
 };
-
-

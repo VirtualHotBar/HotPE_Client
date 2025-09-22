@@ -4,6 +4,7 @@
 
 import { MkdirOptions, CpOptions } from './fs-types';
 import { CommandOutput, CommandResult } from './command';
+import { Stats,RmOptions } from 'fs';
 
 // Electron API 类型定义
 interface ElectronAPI {
@@ -32,7 +33,10 @@ interface ElectronAPI {
     copyFile: (src: string, dest: string) => Promise<boolean>;
     cp: (src: string, dest: string, options?: CpOptions) => Promise<boolean>;
     rename: (oldPath: string, newPath: string) => Promise<boolean>;
-    rm: (path: string, options?: { force?: boolean }) => Promise<boolean>;
+    rm: (path: string, options?: RmOptions) => Promise<boolean>;
+    stat: (path: string) => Promise<Stats>;
+    isDir: (path: string) => Promise<boolean>;
+    readdir: (path: string) => Promise<string[]>;
   };
 
   // 命令执行

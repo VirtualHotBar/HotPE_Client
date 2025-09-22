@@ -13,11 +13,12 @@
     "preview": "bun run vite preview"
   },
   "dependencies": {
-    "iconv-lite": "^0.7.0",
-    "ini": "^5.0.0",
-    "react-markdown": "^10.1.0"
+    "iconv-lite": "^0.7.0"
+
   },
   "devDependencies": {
+        "ini": "^5.0.0",
+    "react-markdown": "^10.1.0",
     "@douyinfe/semi-icons": "2.87.0-beta.0",
     "@douyinfe/semi-ui": "2.87.0-beta.0",
     "@electron-forge/cli": "^7.9.0",
@@ -40,7 +41,6 @@
     "eslint": "^9.35.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
-    "nodemon": "^3.1.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "@tanstack/react-virtual": "^3.10.8",
@@ -50,7 +50,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "HotPE Client",
+        "name": "HotPE_Client",
         "executableName": "hotpe-client",
         "icon": "./logo.ico",
         "extraResource": [
@@ -60,26 +60,10 @@
       "rebuildConfig": {},
       "makers": [
         {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "hotpe_client",
-            "setupIcon": "./logo.ico",
-            "requestedExecutionLevel": "highestAvailable"
-          }
-        },
-        {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin"
+            "win32"
           ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
         }
       ],
       "plugins": [

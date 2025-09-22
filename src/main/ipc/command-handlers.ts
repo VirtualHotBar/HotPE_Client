@@ -27,10 +27,14 @@ function getSystemEncoding(): string {
 
   try {
     const output = execSync('chcp').toString();
-    const match = output.match(/:s+(d+)/);
-    if (match && match[1]) {
-      const codePage = match[1];
-      return codePageEncodings[codePage] || 'UTF-8';
+
+    for (const key in codePageEncodings) {
+      if (output.includes(key)) {
+        const encoding = codePageEncodings[key];
+        if (encoding) {
+          return encoding;
+        }
+      }
     }
     return 'UTF-8';
   } catch (e) {
@@ -39,11 +43,14 @@ function getSystemEncoding(): string {
   }
 }
 
+const systemEncoding = getSystemEncoding();
+
 export function setupCommandHandlers(mainWindow: Electron.BrowserWindow): void {
   // 异步执行命令，支持实时输出
   ipcMain.handle('cmd:spawn', async (_, command: string) => {
+    console.log('cmd:spawn', command);
     return new Promise<CommandResult>(resolve => {
-      const encoding = getSystemEncoding();
+      const encoding = systemEncoding;
       const commandId = randomUUID(); // 生成唯一命令标识符
       const child = spawn('cmd.exe', ['/c', command]);
       let output = '';

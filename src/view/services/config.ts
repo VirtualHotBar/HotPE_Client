@@ -26,11 +26,11 @@ interface ReadOnlyConfig {
   };
   readonly path: {
     execDir: string;
-    readonly tools: string;
-    readonly clientTemp: string;
+     tools: string;
+     clientTemp: string;
     readonly resources: {
-      readonly pe: string;
-      readonly client: string;
+       pe: string;
+       client: string;
     };
   };
   readonly environment: {
@@ -67,11 +67,11 @@ class ConfigManager {
       },
       path: {
         execDir: '',
-        tools: '.\\resources\\tools\\',
-        clientTemp: '.\\resources\\temp\\',
+        tools: 'resources\\tools\\',
+        clientTemp: 'resources\\temp\\',
         resources: {
-          pe: '.\\resources\\files\\pe\\',
-          client: '.\\resources\\files\\client\\',
+          pe: 'resources\\files\\pe\\',
+          client: 'resources\\files\\client\\',
         },
       },
       environment: {
@@ -209,6 +209,12 @@ class ConfigManager {
       const execDir = await runCmd('cd');
       this._roConfig.path.execDir = `${execDir.replaceAll('\r\n', '')}\\`;
 
+      this._roConfig.path.clientTemp = `${this._roConfig.path.execDir}${this._roConfig.path.clientTemp}`;
+      this._roConfig.path.resources.pe = `${this._roConfig.path.execDir}${this._roConfig.path.resources.pe}`;
+      this._roConfig.path.resources.client = `${this._roConfig.path.execDir}${this._roConfig.path.resources.client}`;
+      this._roConfig.path.tools = `${this._roConfig.path.execDir}${this._roConfig.path.tools}`;
+
+
       const sysLetter = await runCmd('echo %SystemDrive%');
       this._roConfig.environment.sysLetter = sysLetter.substring(0, 2);
 
@@ -337,9 +343,11 @@ class ConfigManager {
       return;
     }
 
+    this._isInitialized = true;
+
     await this.initializeEnvironment();
     await this.initializeConfig();
-    this._isInitialized = true;
+    
   }
 
   /**

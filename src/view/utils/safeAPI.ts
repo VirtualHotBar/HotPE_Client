@@ -3,6 +3,7 @@
  * 所有操作都通过主进程的 IPC 通信完成
  */
 
+import { Stats } from 'fs';
 import {
   MkdirOptions,
   CpOptions,
@@ -10,9 +11,10 @@ import {
   CommandOutput,
   CommandResult,
 } from '../../types/fs-types';
+import { RmOptions } from 'fs';
 
 // 文件系统操作
-export const safeFS = {
+export const safeFS:typeof window.electronAPI.fs = {
   /**
    * 同步读取文件
    */
@@ -72,8 +74,29 @@ export const safeFS = {
   /**
    * 删除文件
    * */
-  rm: async (path: string, options?: { force?: boolean; maxRetries?: number }): Promise<boolean> => {
+  rm: async (path: string, options?: RmOptions): Promise<boolean> => {
     return await window.electronAPI.fs.rm(path, options);
+  },
+
+  /**
+   * 获取文件状态
+   */
+  stat: async (path: string): Promise<Stats> => {
+    return await window.electronAPI.fs.stat(path);
+  },
+
+  /**
+   * 检查是否是目录
+   * */
+  isDir: async (path: string): Promise<boolean> => {
+    return await window.electronAPI.fs.isDir(path); 
+  },
+
+  /**
+   * 读取目录
+   */
+  readdir: async (path: string): Promise<string[]> => {
+    return await window.electronAPI.fs.readdir(path);
   },
 };
 

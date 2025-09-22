@@ -58,8 +58,7 @@ export async function fileExists(filePath: string): Promise<boolean> {
 export async function deleteFile(filePath: string): Promise<boolean> {
   const exists = await safeFS.exists(filePath);
   if (exists) {
-    // 使用现有的 IPC 方法删除文件
-    return await window.electronAPI.invoke('fs:deleteFile', filePath);
+    return await safeFS.rm(filePath);
   }
   return false;
 }
@@ -82,14 +81,33 @@ export async function createDirectory(dirPath: string): Promise<boolean> {
  * 遍历目录文件
  */
 export async function traverseFiles(dirPath: string, extension?: string): Promise<string[]> {
-  // 使用现有的命令行方式读取目录
-  const returnStr = await runCmd(`dir "${dirPath}" /b`);
-  const files = returnStr.split('\n').filter(file => file.trim() !== '');
-  
-  if (extension) {
-    return files.filter((file: string) => file.endsWith(extension));
+  try {
+    // 如果路径包含通配符，提取基础目录路径
+    let baseDir = dirPath;
+    let targetExtension = extension;
+    
+    // 检查是否包含 *.ext 模式
+    const wildcardMatch = dirPath.match(/^(.+)\*\.(.+)$/);
+    if (wildcardMatch && wildcardMatch[1] && wildcardMatch[2]) {
+      baseDir = wildcardMatch[1];
+      targetExtension = '.' + wildcardMatch[2];
+    }
+    
+    // 读取目录内容
+    const returnStr = await safeFS.readdir(baseDir);
+    const files = returnStr.filter(file => file.trim() !== '');
+    
+    console.log('读取到的文件:', files);
+    
+    // 根据扩展名过滤
+    if (targetExtension) {
+      return files.filter((file: string) => file.endsWith(targetExtension));
+    }
+    return files;
+  } catch (error) {
+    console.error('遍历文件失败:', error);
+    return [];
   }
-  return files;
 }
 
 // 兼容性导出 - 保持原有函数名

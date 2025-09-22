@@ -24,17 +24,17 @@ interface CpOptions {
 const electronAPI: ElectronAPI = {
   // 通用IPC调用方法
   invoke: (channel: string, ...args: any[]) => ipcRenderer.invoke(channel, ...args),
-  
+
   // 事件监听方法
   on: (channel: string, callback: (...args: any[]) => void) => {
     ipcRenderer.on(channel, callback);
   },
-  
+
   // 移除事件监听器
   removeListener: (channel: string, callback: (...args: any[]) => void) => {
     ipcRenderer.removeListener(channel, callback);
   },
-  
+
   // 移除所有监听器
   removeAllListeners: (channel: string) => {
     ipcRenderer.removeAllListeners(channel);
@@ -61,7 +61,10 @@ const electronAPI: ElectronAPI = {
     cp: (src: string, dest: string, options?: CpOptions) =>
       ipcRenderer.invoke('fs:cp', src, dest, options),
     rename: (oldPath: string, newPath: string) => ipcRenderer.invoke('fs:rename', oldPath, newPath),
-  rm: (path: string, options?: { force?: boolean }) => ipcRenderer.invoke('fs:rm', path, options),
+    rm: (path: string, options?: { force?: boolean }) => ipcRenderer.invoke('fs:rm', path, options),
+    stat: (path: string) => ipcRenderer.invoke('fs:stat', path),
+    isDir: (path: string) => ipcRenderer.invoke('fs:isDir', path),
+    readdir: (path: string) => ipcRenderer.invoke('fs:readdir', path),
   },
 
   // 命令执行

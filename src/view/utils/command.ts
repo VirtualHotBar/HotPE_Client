@@ -50,5 +50,7 @@ export async function runCmd(
       safeChildProcess.removeOutputListener();
     });
 
+    console.info('命令执行成功', 'runCmd', { cmd, outputBuffer });
+
     return outputBuffer;
 }
