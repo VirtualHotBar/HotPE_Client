@@ -117,5 +117,6 @@ dist
 
 # TernJS port file
 .tern-port
-/resources/files
+resources/files
 resources/config.json
+resources/temp
