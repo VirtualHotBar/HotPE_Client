@@ -1,10 +1,11 @@
 import { config, roConfig } from "../../services/config";
 import { runCmdAsync } from "../../utils/command";
-import { copyDir, copyFile, delDir, delFiles, isFileExisted, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils";
+import { copyDir, copyFile, copyFiles, delDir, delFiles, isFileExisted, readHotPEConfig, takeLeftStr, unZipFile, writeHotPEConfig } from "../../utils/utils";
 import { Notification } from "@douyinfe/semi-ui";
 import ini from 'ini'
 import { checkPEDrive } from "../condition";
 import { checkIsReady } from "./check";
+import { migrateHPM } from "../hpm/hpm";
 //import fs from "fs";
 
 const fs = window.require('fs')
@@ -47,15 +48,13 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //创建目录
     await fs.mkdir(roConfig.environment.sysLetter + '\\HotPE\\', (back: any) => { console.log(back) })
     //await fs.mkdir(roConfig.environment.sysLetter + '\\HotPE\\Data\\', (back: any) => { console.log(back) })
-    //await fs.mkdir(roConfig.environment.sysLetter + '\\HotPEModule\\', (back: any) => { console.log(back) })
+    //await fs.mkdir(roConfig.environment.sysLetter + '\\HotProgMods\\', (back: any) => { console.log(back) })
 
     //复制文件
-    await copyFile(tempPath + 'EFI\\HotPE\\kernel.wim', roConfig.environment.sysLetter + '\\HotPE\\kernel.wim')
-    await copyFile(tempPath + 'EFI\\HotPE\\kernel.sdi', roConfig.environment.sysLetter + '\\HotPE\\kernel.sdi')
-    await copyFile(tempPath + 'Data\\HotPE\\confi.ini', roConfig.environment.sysLetter + '\\HotPE\\confi.ini')
-    await copyFile(tempPath + 'Data\\HotPE\\HotPE.ini', roConfig.environment.sysLetter + '\\HotPE\\HotPE.ini')
-    await copyDir(tempPath + 'EFI\\HotPE\\Data\\', roConfig.environment.sysLetter + '\\HotPE\\Data\\')
-    await copyDir(tempPath + 'Data\\HotPEModule\\', roConfig.environment.sysLetter + '\\HotPEModule\\')
+    await copyFiles(tempPath + 'HotPE\\*', roConfig.environment.sysLetter + '\\HotPE\\')
+    await copyFile(tempPath + 'EFI\\Boot\\boot.sdi', roConfig.environment.sysLetter + '\\HotPE\\boot.sdi')
+    await copyFile(tempPath + 'EFI\\HotPE\\boot.wim', roConfig.environment.sysLetter + '\\HotPE\\boot.wim')
+    await copyDir(tempPath + 'Data\\HotProgMods\\', roConfig.environment.sysLetter + '\\HotProgMods\\')
 
     //pe配置文件
     let HotPEConfig = readHotPEConfig(roConfig.environment.sysLetter)
@@ -73,9 +72,9 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     await runCmdAsync(bcdeditPath + ' /create ' + GUID2 + ' /d HotPE工具箱 /device')
 
     await runCmdAsync(bcdeditPath + ' /set ' + GUID2 + ' ramdisksdidevice partition=' + installLetter)
-    await runCmdAsync(bcdeditPath + ' /set ' + GUID2 + ' ramdisksdipath  \\HotPE\\Kernel.SDI')
+    await runCmdAsync(bcdeditPath + ' /set ' + GUID2 + ' ramdisksdipath  \\HotPE\\boot.SDI')
 
-    await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' device ramdisk=[' + installLetter + ']\\HotPE\\Kernel.WIM,' + GUID2)
+    await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' device ramdisk=[' + installLetter + ']\\HotPE\\boot.WIM,' + GUID2)
 
     if (config.environment.ware.system.firmware = 'UEFI') {
         await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' path \\windows\\system32\\boot\\winload.efi')
@@ -84,7 +83,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     }
 
     await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' description HotPE工具箱')
-    await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' osdevice ramdisk=[' + installLetter + ']\\HotPE\\Kernel.WIM,' + GUID2)
+    await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' osdevice ramdisk=[' + installLetter + ']\\HotPE\\boot.WIM,' + GUID2)
     await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' systemroot \\windows')
     await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' detecthal Yes')
     await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' winpe Yes')
@@ -134,6 +133,7 @@ export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen
 
     await delDir(roConfig.environment.sysLetter + '\\HotPE\\')
     if (!isUpdate) {
+        await delDir(roConfig.environment.sysLetter + '\\HotProgMods\\')
         await delDir(roConfig.environment.sysLetter + '\\HotPEModule\\')
     }
     
@@ -162,6 +162,8 @@ export async function updatePEForSys(setIsUninstalling: Function, setCurrentStep
     await uninstallToSystem(setIsUninstalling, setLockMuen)
 
     await installToSystem(setCurrentStep, setStepStr, setLockMuen)
+
+    await migrateHPM(roConfig.environment.sysLetter)
 
     //更新PE安装状态
     await checkPEDrive()

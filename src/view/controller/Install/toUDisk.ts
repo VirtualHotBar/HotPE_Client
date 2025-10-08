@@ -6,6 +6,7 @@ import { checkPEDrive } from "../condition"
 import { checkIsReady, getHotPEDriveLetter } from "./check"
 import { ReactNode } from "react"
 import { getUsableLetter } from "../../utils/disk/diskInfo"
+import { migrateHPM } from "../hpm/hpm"
 const fs = window.require('fs')
 
 const tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
@@ -242,6 +243,9 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
         //if (await letterIsExist(dataLetter)) {
         //复制数据区文件
         await copyDir(tempDataPath, dataLetter + '\\')
+
+        
+        await migrateHPM(dataLetter)
 
         //pe配置文件
         let HotPEConfig = readHotPEConfig(dataLetter + '\\')

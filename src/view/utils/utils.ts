@@ -79,7 +79,7 @@ export function unZipFile(filePath: string, outDir: string) {
 
 //判断是否为HotPE盘
 export function isHotPEDrive(drive: string) {
-    return (fs.existsSync(drive.substring(0,1) + ':\\HotPE\\confi.ini') && fs.existsSync(drive.substring(0,1) + ':\\HotPEModule\\'))
+    return (fs.existsSync(drive.substring(0,1) + ':\\HotPE\\confi.ini') && fs.existsSync(drive.substring(0,1) + ':\\HotProgMods\\'))
 }
 
 //判断文件是否存在
@@ -200,6 +200,26 @@ export async function copyDir(path: string, toPath: string) {
                         //reject(false)
                     }
                 }) */
+    })
+
+}
+
+export async function copyFiles(path: string, toPath: string) {
+
+    return new Promise<boolean>((resolve, reject) => {
+        let cmd = 'xcopy ' + dealStrForCmd(path) + '  /E /R  /H  /Y /C'
+
+        runCmd(cmd, (back: string) => {
+            console.log(back);
+        }, (end: number) => {
+            if (end == 0) {
+                resolve(true);
+            } else {
+                console.error(Error('Command execution failed:' + cmd));
+                resolve(false);
+                //reject(false)
+            }
+        })
     })
 
 }

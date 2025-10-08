@@ -21,7 +21,7 @@ export function newHPMDl(hpmInfo: HPM) {
         delHPMDlFromList(hpmInfo)
     }
 
-    const HPMDirPath = config.environment.HotPEDrive.new.letter + '\\HotPEModule\\'
+    const HPMDirPath = config.environment.HotPEDrive.new.letter + '\\HotProgMods\\'
     
 
     let HPMDlTemp: HPMDl = {

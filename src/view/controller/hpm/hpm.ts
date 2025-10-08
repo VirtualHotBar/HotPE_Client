@@ -1,7 +1,8 @@
 import { Notification } from "@douyinfe/semi-ui"
 import { config } from "../../services/config"
 import { HPM } from "../../type/hpm"
-import { takeLeftStr, takeRightStr } from "../../utils/utils"
+import { copyFile, delDir, delFiles, moveFiles, takeLeftStr, takeRightStr } from "../../utils/utils"
+import { runCmdAsync } from "../../utils/command"
 //import fs from 'fs'
 const fs = window.require('fs')
 
@@ -53,4 +54,14 @@ export function isHPMReady() {
         duration: 5,
     })
     return false
+}
+
+
+export async function migrateHPM(dataLetter:string) {
+        // 迁移模块目录HotPEModule到HotProgMods，并删除旧的HotPEModule和基础模块
+        await runCmdAsync('xcopy '+dataLetter+'\\HotPEModule\\* '+dataLetter+'\\HotProgMods\\');
+        await moveFiles(dataLetter + '\\HotPEModule\\*', dataLetter + '\\HotProgMods\\')
+        await copyFile(dataLetter + '\\HotPEModule\\*', dataLetter + '\\HotProgMods\\')
+        await delDir(dataLetter + '\\HotPEModule')
+        await delFiles(dataLetter + '\\HotProgMods\\HotPE基础包_*.HPM')
 }
