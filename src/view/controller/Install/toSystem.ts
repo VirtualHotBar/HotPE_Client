@@ -51,7 +51,8 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //await fs.mkdir(roConfig.environment.sysLetter + '\\HotProgMods\\', (back: any) => { console.log(back) })
 
     //复制文件
-    await copyFiles(tempPath + 'HotPE\\*', roConfig.environment.sysLetter + '\\HotPE\\')
+    await copyFiles(tempPath + 'Data\\HotPE\\*', roConfig.environment.sysLetter + '\\HotPE\\')
+    await copyFiles(tempPath + 'EFI\\HotPE\\*', roConfig.environment.sysLetter + '\\HotPE\\')
     await copyFile(tempPath + 'EFI\\Boot\\boot.sdi', roConfig.environment.sysLetter + '\\HotPE\\boot.sdi')
     await copyFile(tempPath + 'EFI\\HotPE\\boot.wim', roConfig.environment.sysLetter + '\\HotPE\\boot.wim')
     await copyDir(tempPath + 'Data\\HotProgMods\\', roConfig.environment.sysLetter + '\\HotProgMods\\')
