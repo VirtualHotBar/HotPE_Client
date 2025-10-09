@@ -207,7 +207,7 @@ export async function copyDir(path: string, toPath: string) {
 export async function copyFiles(path: string, toPath: string) {
 
     return new Promise<boolean>((resolve, reject) => {
-        let cmd = 'xcopy ' + dealStrForCmd(path) + '  /E /R  /H  /Y /C'
+        let cmd = 'xcopy ' + dealStrForCmd(path) + ' ' + dealStrForCmd(toPath) + '  /E /R  /H  /Y /C'
 
         runCmd(cmd, (back: string) => {
             console.log(back);

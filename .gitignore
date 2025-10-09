@@ -113,3 +113,4 @@ dist
 .tern-port
 /resources/files
 resources/config.json
+resources/temp

@@ -9,13 +9,10 @@ import { HPMDLRender, HPMDlList, HPMListOnline } from './services/hpm.ts';
 const { Header, Sider, Content } = Layout;
 
 export default function App() {
-
-
     const [navKey, setNavKey] = useState('Home');
     const [lockMuen, setLockMuen] = useState(false);
 
     function upNavKey(navKey_: string) {
-
 
 
         //锁定菜单

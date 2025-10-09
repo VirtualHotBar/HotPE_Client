@@ -14,22 +14,20 @@ const fs = window.require('fs')
 export async function checkUpdate() {
 
     fetch(config.api.api + roConfig.url.update).then(response => response.json())
-    .then(data => {
-        config.resources.pe.update = data.data.pe
-        config.resources.client.update = data.data.client
-    })
-    .catch(e => console.log(Error(e)))
-
-
+        .then(data => {
+            config.resources.pe.update = data.data.pe
+            config.resources.client.update = data.data.client
+        })
+        .catch(e => console.log(Error(e)))
 
     //await checkPEUpdate()
     //await checkClientUpdate()
 
-    if (takeLeftStr(config.resources.pe.new, '.') < config.resources.pe.update.id) {
-        config.state.resUpdate = 'needUpdatePE'
-    } else if (roConfig.id < config.resources.client.update.id) {
+    if (roConfig.id < config.resources.client.update.id) {
         config.state.resUpdate = 'needUpdateClient'
-    } else {
+    } else if (takeLeftStr(config.resources.pe.new, '.') < config.resources.pe.update.id) {
+        config.state.resUpdate = 'needUpdatePE'
+    } else{
         config.state.resUpdate = 'without'
     }
 }

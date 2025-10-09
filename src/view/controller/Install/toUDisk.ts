@@ -25,8 +25,9 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 
     //确认对话框
     if (!await confirmDialog('请确认',
-        '由于制作启动U盘会格式化U盘，请备份好数据后再操作!建议暂时关闭杀软。\r\n'
-        + '继续写入请点[确定]，点[取消]取消写入。\r\n')) { return };
+        '由于制作启动U盘会格式化U盘，请备份好数据后再操作!建议暂时关闭杀软。\r\n' +
+        '请选用质量较好的U盘，并将U盘插到主板USB接口上。' +
+        '继续写入请点[确定]，点[取消]取消写入。\r\n')) { return };
 
     //创建目录
     //await fs.mkdir(tempEFIPath, (back: any) => { console.log(back) })
@@ -84,7 +85,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 
     //获取数据分区盘符失败后重新获取
 
-    if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter)|| !dataLetter) {
+    if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter) || !dataLetter) {
         await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')//卸载盘符
         dataLetter = await getUsableLetter()//取个没被占用(可用)的盘符
         isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)//重新分配盘符
@@ -244,7 +245,7 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
         //复制数据区文件
         await copyDir(tempDataPath, dataLetter + '\\')
 
-        
+
         await migrateHPM(dataLetter)
 
         //pe配置文件
