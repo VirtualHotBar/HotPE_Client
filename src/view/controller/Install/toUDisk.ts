@@ -25,8 +25,8 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 
     //确认对话框
     if (!await confirmDialog('请确认',
-        '由于制作启动U盘会格式化U盘，请备份好数据后再操作!建议暂时关闭杀软。\r\n' +
-        '请选用质量较好的U盘，并将U盘插到主板USB接口上。' +
+        '由于制作启动U盘会格式化U盘，请备份好数据后再操作！建议暂时关闭杀软。\r\n' +
+        '请选用质量较好的正品U盘，并将U盘插到主板USB接口上。' +
         '继续写入请点[确定]，点[取消]取消写入。\r\n')) { return };
 
     //创建目录
