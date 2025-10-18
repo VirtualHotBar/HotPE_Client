@@ -14,26 +14,16 @@
 
 
 # 使用
-包管理器：cnpm
+包管理器：bun
 ## 开发服务器
 ```batch
-rem 启动渲染进程调试
-cnpm run dev 
-
-rem 启动主进程调试
-cnpm run dev-main 
-
-rem 启动electron调试
-cnpm run dev-ele 
-
-rem 一键启动
-cmd /c "start cnpm run dev && start cnpm run dev-main  && cnpm run dev-ele"
+bun run start 
 ```
 
 ## 构建
 直接输出二进制可执行文件
 ```batch
-cnpm run build
+bun run make
 ```
 
 ## 许可证

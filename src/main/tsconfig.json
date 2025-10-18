@@ -7,7 +7,6 @@
             "ESNext",
             "DOM"
         ],
-        "moduleResolution": "Node",
         "strict": true,
         "sourceMap": true,
         "resolveJsonModule": true,

@@ -26,7 +26,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
     setLockMuen(true)
 
-    if(await isFileExisted(roConfig.environment.sysLetter + '\\HotPE\\confi.ini')){
+    if (await isFileExisted(roConfig.environment.sysLetter + '\\HotPE\\confi.ini')) {
         await uninstallToSystem()
     }
 
@@ -119,7 +119,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     setLockMuen(false)
 }
 
-export async function uninstallToSystem(setIsDoing=(isDoing:boolean)=>{}, setLockMuen=(isLock: boolean)=>{}) {
+export async function uninstallToSystem(setIsDoing = (isDoing: boolean) => { }, setLockMuen = (isLock: boolean) => { }) {
     setIsDoing(true)
     setLockMuen(true)
 
@@ -131,7 +131,7 @@ export async function uninstallToSystem(setIsDoing=(isDoing:boolean)=>{}, setLoc
         await delDir(roConfig.environment.sysLetter + '\\HotProgMods\\')
         await delDir(roConfig.environment.sysLetter + '\\HotPEModule\\')
     }
-    
+
 
     //更新PE安装状态
     await checkPEDrive()
@@ -148,7 +148,7 @@ export async function uninstallToSystem(setIsDoing=(isDoing:boolean)=>{}, setLoc
     setIsDoing(false)
 }
 
-export async function updatePEForSys(setIsDoing=(isDoing:boolean)=>{} , setCurrentStep: Function, setStepStr: Function, setLockMuen=(isLock: boolean)=>{}) {
+export async function updatePEForSys(setIsDoing = (isDoing: boolean) => { }, setCurrentStep: Function, setStepStr: Function, setLockMuen = (isLock: boolean) => { }) {
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
     setLockMuen(true)
