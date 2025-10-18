@@ -26,6 +26,10 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
     setLockMuen(true)
 
+    if(await isFileExisted(roConfig.environment.sysLetter + '\\HotPE\\confi.ini')){
+        await uninstallToSystem()
+    }
+
     console.log('installToSystem');
     setCurrentStep(0)
     setStepStr('正在解压HotPE源')
@@ -115,8 +119,8 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     setLockMuen(false)
 }
 
-export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen: Function) {
-    setIsUninstalling(true)
+export async function uninstallToSystem(setIsDoing=(isDoing:boolean)=>{}, setLockMuen=(isLock: boolean)=>{}) {
+    setIsDoing(true)
     setLockMuen(true)
 
     await runCmdAsync(bcdeditPath + ' /delete ' + GUID2 + ' /f')
@@ -141,16 +145,16 @@ export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen
     }
 
     setLockMuen(false)
-    setIsUninstalling(false)
+    setIsDoing(false)
 }
 
-export async function updatePEForSys(setIsUninstalling: Function, setCurrentStep: Function, setStepStr: Function, setLockMuen: Function) {
+export async function updatePEForSys(setIsDoing=(isDoing:boolean)=>{} , setCurrentStep: Function, setStepStr: Function, setLockMuen=(isLock: boolean)=>{}) {
     if (!checkIsReady()) { return };// 检查是否准备就绪 
 
     setLockMuen(true)
     isUpdate = true
 
-    await uninstallToSystem(setIsUninstalling, setLockMuen)
+    await uninstallToSystem(setIsDoing, setLockMuen)
 
     await installToSystem(setCurrentStep, setStepStr, setLockMuen)
 
