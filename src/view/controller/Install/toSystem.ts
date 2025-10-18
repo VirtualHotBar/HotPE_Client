@@ -38,7 +38,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //}
 
     //解压
-    await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPath)
+    await unZipFile(roConfig.path.resources.pe + config.resources.pe.current?.fileName, tempPath)
 
 
 
@@ -51,15 +51,14 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //await fs.mkdir(roConfig.environment.sysLetter + '\\HotProgMods\\', (back: any) => { console.log(back) })
 
     //复制文件
-    await copyFiles(tempPath + 'Data\\HotPE\\*', roConfig.environment.sysLetter + '\\HotPE\\')
-    await copyFiles(tempPath + 'EFI\\HotPE\\*', roConfig.environment.sysLetter + '\\HotPE\\')
-    await copyFile(tempPath + 'EFI\\Boot\\boot.sdi', roConfig.environment.sysLetter + '\\HotPE\\boot.sdi')
-    await copyDir(tempPath + 'Data\\HotProgMods\\', roConfig.environment.sysLetter + '\\HotProgMods\\')
+    await copyFiles(tempPath + 'HotPE\\*', roConfig.environment.sysLetter + '\\HotPE\\')
+    await copyFile(tempPath + 'Boot\\boot.sdi', roConfig.environment.sysLetter + '\\HotPE\\boot.sdi')
+    await copyDir(tempPath + 'HotProgMods\\', roConfig.environment.sysLetter + '\\HotProgMods\\')
 
     //pe配置文件
     let HotPEConfig = readHotPEConfig(roConfig.environment.sysLetter)
     HotPEConfig.information.Installation_Method = 'System'
-    HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
+    HotPEConfig.information.ReleaseVersion = config.resources.pe.current?.id
     writeHotPEConfig(roConfig.environment.sysLetter, HotPEConfig)
 
     //添加引导
@@ -94,10 +93,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
     //下面两项跟开机动画实现有关
     //await runCmdAsync(bcdeditPath + ' /set {bootmgr} nointegritychecks yes')//禁用数字签名检查
     //await runCmdAsync(bcdeditPath + ' /set ' + GUID1 + ' BootMenuPolicy Standard')//启用Metro启动界面
-
-
-    await runCmdAsync('attrib ' + roConfig.environment.sysLetter + '\\HotPE +S +H /S /D')
-    await runCmdAsync('attrib ' + roConfig.environment.sysLetter + '\\HotPE\\* +S +H /S /D')
+    await runCmdAsync('attrib ' + roConfig.environment.sysLetter + '\\HotPE +S +H /D')
 
     //清理
     await delDir(tempPath)
@@ -117,12 +113,7 @@ export async function installToSystem(setCurrentStep: Function, setStepStr: Func
 
     setCurrentStep(-1)
     setLockMuen(false)
-
 }
-
-
-
-
 
 export async function uninstallToSystem(setIsUninstalling: Function, setLockMuen: Function) {
     setIsUninstalling(true)

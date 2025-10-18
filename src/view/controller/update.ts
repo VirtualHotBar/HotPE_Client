@@ -23,9 +23,9 @@ export async function checkUpdate() {
     //await checkPEUpdate()
     //await checkClientUpdate()
 
-    if (roConfig.id < config.resources.client.update.id) {
+    if (config.resources.client.update && roConfig.id < config.resources.client.update.id) {
         config.state.resUpdate = 'needUpdateClient'
-    } else if (takeLeftStr(config.resources.pe.new, '.') < config.resources.pe.update.id) {
+    } else if (config.resources.pe.current && config.resources.pe.update && roConfig.id < config.resources.pe.update.id) {
         config.state.resUpdate = 'needUpdatePE'
     } else{
         config.state.resUpdate = 'without'
@@ -92,7 +92,7 @@ export function updateClient(setDlPercent: Function, setDlSpeed: Function, callb
 
         const updateBatSource = fs.readFileSync(roConfig.path.tools + 'update\\update.bat', 'utf8')
 
-        let updateBat = updateBatSource.replaceAll('{pack}', roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update.fileName)
+        let updateBat = updateBatSource.replaceAll('{pack}', roConfig.path.execDir + roConfig.path.resources.client + config.resources.pe.update?.fileName)
         updateBat = updateBat.replaceAll('{clientDir}', roConfig.path.execDir)
 
         let batPath = roConfig.path.resources.client + 'update.bat'

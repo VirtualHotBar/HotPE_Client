@@ -103,7 +103,7 @@ export default function SetupToUDisk(props: any) {
                         if (selectUDiskIndex != '') { installToUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }
                         console.log(selectPEVersion, selectUDiskIndex, selectPEVersion);
                     }}>开始安装</Button> : <>
-                        {/* 更新按钮，更新判断 */Number(selectPEVersion) < Number(takeLeftStr(config.resources.pe.new, '.')) ? <Button type='primary' disabled={uDiskRefreshing} onClick={() => { updatePEForUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }}>免格更新</Button> : <></>}
+                        {/* 更新按钮，更新判断 */Number(selectPEVersion) < config.resources.pe.current?.id! ? <Button type='primary' disabled={uDiskRefreshing} onClick={() => { updatePEForUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }}>免格更新</Button> : <></>}
                         <Button disabled={uDiskRefreshing} style={{ marginLeft: 8 }} onClick={() => { UnInstallToUDisk(selectUDiskIndex, setStep, setStepStr, props.setLockMuen) }} type='danger'>还原U盘</Button>
                     </>}</> : <></>}
 

@@ -1,4 +1,9 @@
-%1 mshta vbscript:CreateObject("Shell.Application").ShellExecute("cmd.exe","/c %~s0 ::","","runas",1)(window.close)&&exit
+@echo off
+net session >nul 2>&1
+if '%errorlevel%' NEQ '0' (
+    powershell -Command "Start-Process '%~f0' -Verb RunAs"
+    exit
+)
 
 @echo off
 cd /d "%~dp0"

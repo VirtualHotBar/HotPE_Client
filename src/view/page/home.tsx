@@ -92,10 +92,10 @@ export default function Home(props: any) {
 
             if (config.state.resUpdate == 'needUpdatePE') {
                 updateModalTitle = '🎉PE资源有新版本发布，是否更新？'
-                updateData = config.resources.pe.update
+                updateData = config.resources.pe.update!
             } else if (config.state.resUpdate == 'needUpdateClient') {
                 updateModalTitle = '🎉客户端有新版本发布，是否更新？'
-                updateData = config.resources.client.update
+                updateData = config.resources.client.update!
             }
 
             const updateModalContent = <>

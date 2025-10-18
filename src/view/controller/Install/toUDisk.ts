@@ -10,13 +10,24 @@ import { migrateHPM } from "../hpm/hpm"
 const fs = window.require('fs')
 
 const tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
-const tempEFIPath = roConfig.path.clientTemp + 'install\\peFiles\\EFI\\'
-const tempDataPath = roConfig.path.clientTemp + 'install\\peFiles\\Data\\'
 
 const pacmdPath = roConfig.path.tools + 'PACMDforUSB\\PartAssist.exe'
 const booticePath = roConfig.path.tools + 'BOOTICE.exe'
 const pecmdPath = roConfig.path.tools + 'PECMD.exe'
 const fbplusPath = roConfig.path.tools + 'fbplus.exe'
+
+async function xPartFiles(ISOPath: string, xEFIPath: string, xDataPath: string) {
+    const EFI_List: string[] = ["EFI", "Boot", "HotPE\\Boot.wim", "bootmgr", "bootmgr.efi", "ventoy.dat"]
+    const Data_List: string[] = ["HotPE -xr!Boot.wim", "HotProgMods", "AUTORUN.INF", "HotPE.ico"]
+
+    //解压ISO文件
+    for (const tList of EFI_List) {
+        await unZipFile(ISOPath, xEFIPath, tList)
+    }
+    for (const tList of Data_List) {
+        await unZipFile(ISOPath, xDataPath, tList)
+    }
+}
 
 export async function installToUDisk(diskIndex: string, setStep: Function, setStepStr: Function, setLockMuen: Function) {
     console.log('diskIndex' + diskIndex);
@@ -26,7 +37,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     //确认对话框
     if (!await confirmDialog('请确认',
         '由于制作启动U盘会格式化U盘，请备份好数据后再操作！建议暂时关闭杀软。\r\n' +
-        '请选用质量较好的正品U盘，并将U盘插到主板USB接口上。' +
+        '请选用质量较好的正品U盘，并将U盘插到主板USB接口上。\r\n\r\n' +
         '继续写入请点[确定]，点[取消]取消写入。\r\n')) { return };
 
     //创建目录
@@ -43,7 +54,9 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
 
     //解压
     setStepStr('正在解压文件')
-    await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPath)
+    const tempEFIPath = tempPath + 'EFI\\'
+    const tempDataPath = tempPath + 'Data\\'
+    await xPartFiles(roConfig.path.resources.pe + config.resources.pe.current?.fileName, tempEFIPath, tempDataPath)
 
     setStep(1)
     setStepStr('正在解除占用')
@@ -99,7 +112,7 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     //pe配置文件
     let HotPEConfig = readHotPEConfig(dataLetter + '\\')
     HotPEConfig.information.Installation_Method = 'UDisk'
-    HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
+    HotPEConfig.information.ReleaseVersion = config.resources.pe.current?.id
     writeHotPEConfig(dataLetter + '\\', HotPEConfig)
 
     await runCmdAsync('attrib ' + dataLetter + '\\HotPE +S +H /S /D')
@@ -221,7 +234,9 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
 
     //解压
     setStepStr('正在解压文件')
-    await unZipFile(roConfig.path.resources.pe + config.resources.pe.new, tempPath)
+    const tempEFIPath = tempPath + 'EFI\\'
+    const tempDataPath = tempPath + 'Data\\'
+    await xPartFiles(roConfig.path.resources.pe + config.resources.pe.current?.fileName, tempEFIPath, tempDataPath)
 
     setStep(1)
 
@@ -251,7 +266,7 @@ export async function updatePEForUDisk(diskIndex: string, setStep: Function, set
         //pe配置文件
         let HotPEConfig = readHotPEConfig(dataLetter + '\\')
         HotPEConfig.information.Installation_Method = 'UDisk'
-        HotPEConfig.information.ReleaseVersion = takeLeftStr(config.resources.pe.new, '.')
+        HotPEConfig.information.ReleaseVersion = config.resources.pe.current?.id
         writeHotPEConfig(dataLetter + '\\', HotPEConfig)
 
         await runCmdAsync('attrib ' + dataLetter + '\\HotPE +S +H /S /D')

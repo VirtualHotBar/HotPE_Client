@@ -37,30 +37,30 @@ export function isJSON(str: string) {
 
 //读取Hotpe配置
 export function readHotPEConfig(drive: string) {
-    return ini.parse(fs.readFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini").toString());
+    return ini.parse(fs.readFileSync(drive.substring(0, 1) + ":\\HotPE\\confi.ini").toString());
 }
 
 
 //保存Hotpe配置
 export function writeHotPEConfig(drive: string, obj: object) {
-    return fs.writeFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini", ini.encode(obj))
+    return fs.writeFileSync(drive.substring(0, 1) + ":\\HotPE\\confi.ini", ini.encode(obj))
 }
 
 //读取Hotpe设置
 export function readHotPESetting(drive: string) {
-    return ini.parse(fs.readFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini").toString());
+    return ini.parse(fs.readFileSync(drive.substring(0, 1) + ":\\HotPE\\confi.ini").toString());
 }
 
 //读取Hotpe设置
 export function writeHotPESetting(drive: string, obj: object) {
-    return fs.writeFileSync(drive.substring(0,1)  + ":\\HotPE\\confi.ini", ini.encode(obj))
+    return fs.writeFileSync(drive.substring(0, 1) + ":\\HotPE\\confi.ini", ini.encode(obj))
 }
 
 
 //解压文件7Z
-export function unZipFile(filePath: string, outDir: string) {
+export function unZipFile(filePath: string, outDir: string, filter: string = '') {
     return new Promise<boolean>((resolve, reject) => {
-        let cmd = roConfig.path.tools + '.\\7z\\7z.exe x -y ' + dealStrForCmd('-o' + outDir) + ' ' + dealStrForCmd(filePath)
+        let cmd = roConfig.path.tools + '\\7z\\7z.exe x -y ' + dealStrForCmd('-o' + outDir) + ' ' + dealStrForCmd(filePath) + ' ' + filter
 
         runCmd(cmd, (back: string) => {
             console.log(back);
@@ -79,7 +79,7 @@ export function unZipFile(filePath: string, outDir: string) {
 
 //判断是否为HotPE盘
 export function isHotPEDrive(drive: string) {
-    return (fs.existsSync(drive.substring(0,1) + ':\\HotPE\\confi.ini') && fs.existsSync(drive.substring(0,1) + ':\\HotProgMods\\'))
+    return (fs.existsSync(drive.substring(0, 1) + ':\\HotPE\\confi.ini') && fs.existsSync(drive.substring(0, 1) + ':\\HotProgMods\\'))
 }
 
 //判断文件是否存在

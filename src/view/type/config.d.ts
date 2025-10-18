@@ -1,6 +1,11 @@
 //import {Type} from '@douyinfe/semi-foundation/lib/es/banner/index'
 import { UpdateLatest } from "./update"
 
+interface PERes {
+    fileName:string,
+    id:number
+}
+
 interface Config {
     api: {
         api: string,
@@ -34,14 +39,14 @@ interface Config {
     },
     resources: {
         pe: {
-            new: string,
-            all: Array,
-            update: UpdateLatest
+            current?: PERes,
+            all: Array<PERes>,
+            update?: UpdateLatest
         },
         client: {
             new: string,
             all: Array,
-            update: UpdateLatest
+            update?: UpdateLatest
         }
     }, directory: {
 

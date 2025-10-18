@@ -8,23 +8,34 @@ import { checkHPMFiles } from "./hpm/checkHpmFiles";
 import { checkPESetting } from "./setting/setting";
 import { getAllLetterInfo, getDisksInfo, getPartitionsInfo, isMoveForDisk } from "../utils/disk/diskInfo";
 
+const getIdFromISOName = (fileName: string) => {
+    let ids = fileName.split('.')
+    for (const id of ids) {
+        const tID = Number(id)
+        if (!isNaN(tID) && tID > 250000) {
+            return tID
+        }
+    }
+    return 0
+}
+
 //检查PE资源
 export async function checkPERes() {
     //更新本地已有资源列表
-    config.resources.pe.all = await traverseFiles(roConfig.path.resources.pe + '*.7z')
+    config.resources.pe.all = (await traverseFiles(roConfig.path.resources.pe + '*.ISO')).map((item) => {
+        return { fileName: item, id: getIdFromISOName(item) }
+    })
 
     //选择最新的资源
     if (config.resources.pe.all.length > 0) {
-        config.resources.pe.new = config.resources.pe.all[0]
-    } else {
-        config.resources.pe.new = ''
+        config.resources.pe.current = config.resources.pe.all[0]
     }
 
     //删除旧的PE资源
-    for (let i in config.resources.pe.all) {
-        if (config.resources.pe.all[i] != config.resources.pe.new) {
-            await delFiles(roConfig.path.resources.pe + config.resources.pe.all[i])
-            config.resources.pe.all.splice(i, 0)
+    for (let i = config.resources.pe.all.length - 1; i >= 0; i--) {
+        if (config.resources.pe.all[i].id !== config.resources.pe.current?.id) {
+            await delFiles(roConfig.path.resources.pe + config.resources.pe.all[i].fileName)
+            config.resources.pe.all.splice(i, 1)
         }
     }
 }

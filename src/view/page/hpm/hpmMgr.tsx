@@ -8,8 +8,7 @@ import { HPM } from '../../type/hpm';
 const { Text } = Typography;
 
 // 创建通用的HPM列表项组件
-const HPMListItem = ({ hpm, type }: { hpm: HPM; type: 'on' | 'off' }) => {
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+const HPMListItem = ({ hpm, type, forceUpdate}: { hpm: HPM; type: 'on' | 'off'; forceUpdate: () => void }) => {
 
     const style = {
         border: '1px solid var(--semi-color-border)',
@@ -97,19 +96,22 @@ const HPMListItem = ({ hpm, type }: { hpm: HPM; type: 'on' | 'off' }) => {
 };
 
 export default function HPMMgr() {
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
+
+
     return (
         <>
             <Collapse defaultActiveKey={['on', 'off']}>
                 <Collapse.Panel header={"已启用："} itemKey="on" extra={HPMListLocal.on.length}>
                     <List
                         dataSource={HPMListLocal.on}
-                        renderItem={onHPM => <HPMListItem hpm={onHPM} type="on" />}
+                        renderItem={onHPM => <HPMListItem hpm={onHPM} type="on" forceUpdate={forceUpdate} />}
                     />
                 </Collapse.Panel>
                 <Collapse.Panel header={"已禁用："} itemKey="off" extra={HPMListLocal.off.length}>
                     <List
                         dataSource={HPMListLocal.off}
-                        renderItem={offHPM => <HPMListItem hpm={offHPM} type="off" />}
+                        renderItem={offHPM => <HPMListItem hpm={offHPM} type="off" forceUpdate={forceUpdate} />}
                     />
                 </Collapse.Panel>
             </Collapse>

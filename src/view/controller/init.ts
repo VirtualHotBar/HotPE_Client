@@ -78,7 +78,7 @@ export async function initClient(setStartStr: Function) {
 
 //更新状态
 export async function updateState() {
-    if (config.resources.pe.new == '') {
+    if (!config.resources.pe.current) {
         config.state.install = 'noDown'
     } else if (config.environment.HotPEDrive.all.length == 0) {
         config.state.install = 'noSetup'
@@ -154,7 +154,7 @@ export async function getSystemInfo() {
 
 //客户端是否准备就绪（客户端启动完成 and PE包是否下载
 export function isClientReady() {
-    if (!isInitDone || config.resources.pe.new == '') {
+    if (!isInitDone || !config.resources.pe.current) {
         return false
     }
 

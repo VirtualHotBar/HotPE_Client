@@ -19,7 +19,7 @@ const roConfig = {
         donate: 'https://www.hotpe.top/donation/',//config.api.api
         update: 'API/HotPE/GetUpdate/',
         package: {//config.api.dl
-            //PE: 'Package/PE/{id}.7z',
+            //PE: 'Package/PE/{id}.ISO',
             //client: 'Package/Client/{id}.7z'
         }
     },
@@ -80,32 +80,11 @@ let config: Config = {
     },
     resources: {
         pe: {
-            new: '',
             all: [],
-            update: {
-                id: '',
-                name: '',
-                pushTime: '',
-                body: '',
-                size: 0,
-                download_url: '',
-                download_url_github: '',
-                fileName: ""
-            }
         },
         client: {
             new: '',
             all: [],
-            update: {
-                id: '',
-                name: '',
-                pushTime: '',
-                body: '',
-                size: 0,
-                download_url: '',
-                download_url_github: '',
-                fileName: ""
-            }
         }
     }, directory: {
 
