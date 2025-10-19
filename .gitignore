@@ -114,3 +114,4 @@ dist
 /resources/files
 resources/config.json
 resources/temp
+out
