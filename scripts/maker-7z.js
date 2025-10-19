@@ -13,10 +13,9 @@ class Maker7z {
   }
 
   async make(options) {
-    const { makeDir, targetPlatform, targetArch, packageJSON } = options;
+    const { makeDir, targetPlatform, targetArch, packageJSON,appName } = options;
     
     const outDir = path.dirname(makeDir);
-    const appName = 'HotPE_Client';
     const sevenZipExe = this.config.sevenZipPath;
     
     // 检查7z工具是否存在
