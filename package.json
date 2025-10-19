@@ -6,8 +6,7 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make --arch=ia32 && bun run pack-7z",
-    "pack-7z": "cd out&&del HotPE_Client.7z&&.\\..\\resources\\tools\\7z\\7z.exe a -t7z -mx=9 HotPE_Client.7z -ir!HotPE_Client HotPE_Client-win32-ia32\\*",
+    "make": "electron-forge make --arch=ia32",
     "publish": "electron-forge publish",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },

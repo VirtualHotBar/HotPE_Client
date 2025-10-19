@@ -1,3 +1,5 @@
+const { FusesPlugin } = require('@electron-forge/plugin-fuses');
+const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
 module.exports = {
   packagerConfig: {
@@ -13,10 +15,10 @@ module.exports = {
   },
   rebuildConfig: {},
   makers: [
-    /* {
-      name: '@electron-forge/maker-zip',
+    {
+      name: './scripts/maker-7z.js',
       platforms: ['win32'],
-    }, */
+    },
   ],
   plugins: [
     {
