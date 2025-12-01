@@ -48,16 +48,17 @@ export async function initClient(setStartStr: Function) {
 
     //检查更新
     await checkUpdate()
+    
 
     //更新状态
     await updateState()
+
 
     //获取HPM分类和列表
     await getHPMList()
 
     //获取本地HPM列表
     //await checkHPMFiles()
-
 
     isInitDone = true
 

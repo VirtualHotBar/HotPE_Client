@@ -75,7 +75,7 @@ export default function Home(props: any) {
 
 
         //更新处理
-        if (updatePromptOk == false && config.state.resUpdate != 'without' && config.state.install != "noDown") {
+        if (updatePromptOk == false && config.state.resUpdate != 'without' /* && config.state.install != "noDown" */) {
             updatePromptOk = true
 
             let updateModalTitle = ''

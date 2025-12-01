@@ -13,7 +13,7 @@ const fs = window.require('fs')
 //检查更新,pe and client
 export async function checkUpdate() {
 
-    fetch(config.api.api + roConfig.url.update).then(response => response.json())
+    await fetch(config.api.api + roConfig.url.update).then(response => response.json())
         .then(data => {
             config.resources.pe.update = data.data.pe
             config.resources.client.update = data.data.client
@@ -23,12 +23,14 @@ export async function checkUpdate() {
     //await checkPEUpdate()
     //await checkClientUpdate()
 
+    config.state.resUpdate = 'without'
+
+    if (config.resources.pe.current && config.resources.pe.update && roConfig.id < config.resources.pe.update.id) {
+        config.state.resUpdate = 'needUpdatePE'
+    }
+
     if (config.resources.client.update && roConfig.id < config.resources.client.update.id) {
         config.state.resUpdate = 'needUpdateClient'
-    } else if (config.resources.pe.current && config.resources.pe.update && roConfig.id < config.resources.pe.update.id) {
-        config.state.resUpdate = 'needUpdatePE'
-    } else{
-        config.state.resUpdate = 'without'
     }
 }
 
