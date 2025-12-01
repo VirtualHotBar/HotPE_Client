@@ -5,9 +5,13 @@ import path from 'path'
 // 是否为开发模式
 const isDev = process.env['NODE_ENV'] === 'development' || !app.isPackaged;
 
+// 声明全局变量用于 Vite 开发服务器
+declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
+declare const MAIN_WINDOW_VITE_NAME: string;
+
 app.on('ready', () => {
   //创建一个窗口
-  const mainWindow = new BrowserWindow({
+  const window = new BrowserWindow({
     resizable: true,   //允许用户改变窗口大小
     width: 900,        //设置窗口宽高
     minWidth: 800,
@@ -25,19 +29,22 @@ app.on('ready', () => {
     }
   })
   
-  //窗口加载html文件
-  //mainWindow.loadFile('./src/main.html')
-  mainWindow.loadURL(isDev ? 'http://localhost:5173' : `file://${path.join(__dirname, '../view/index.html')}`);
+  // 加载页面
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    window.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  } else {
+    window.loadFile(path.join(__dirname, '../view/index.html'));
+  }
 
   //去掉菜单栏
-  mainWindow.removeMenu()
+  window.removeMenu()
 
   //开发工具
   if (isDev == true) {
-    mainWindow.webContents.openDevTools({ mode: 'right' })
+    window.webContents.openDevTools({ mode: 'right' })
   }
   ipcMain.on('windows:openDevTools', () => {
-    mainWindow.webContents.openDevTools({ mode: 'right' })
+    window.webContents.openDevTools({ mode: 'right' })
   })
 
   ipcMain.on('exitapp', () => {
@@ -45,11 +52,11 @@ app.on('ready', () => {
   })
 
   ipcMain.on('windows:mini', () => {
-    mainWindow.minimize();//最小化
+    window.minimize();//最小化
   })
 
   //拦截首页打开新窗口的链接用浏览器打开  
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  window.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }//取消创建新窗口
   })

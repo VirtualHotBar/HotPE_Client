@@ -7,7 +7,14 @@ module.exports = {
     extraResource: ['resources/tools'],
     win32metadata: {
       "requested-execution-level": "requireAdministrator"
-    }
+    },
+    ignore: [
+      'resources',
+      'scripts',
+      'src',
+      '.vscode',
+      'out',
+    ]
   },
   rebuildConfig: {},
   makers: [
