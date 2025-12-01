@@ -13,7 +13,7 @@ class Maker7z {
   }
 
   async make(options) {
-    const { makeDir, targetPlatform, targetArch, packageJSON,appName } = options;
+    const { makeDir, targetPlatform, targetArch, packageJSON, appName } = options;
     
     const outDir = path.dirname(makeDir);
     const sevenZipExe = this.config.sevenZipPath;
@@ -24,22 +24,45 @@ class Maker7z {
     }
     
     // 查找源目录
-    const allDirs = fs.readdirSync(outDir).filter(f => 
-      fs.statSync(path.join(outDir, f)).isDirectory()
+    if (!fs.existsSync(outDir)) {
+      throw new Error(`Output directory does not exist: ${outDir}`);
+    }
+    
+    const allDirs = fs.readdirSync(outDir).filter(f => {
+      try {
+        return fs.statSync(path.join(outDir, f)).isDirectory();
+      } catch (err) {
+        return false;
+      }
+    });
+    
+    console.log('Found directories:', allDirs);
+    console.log('Looking for app with name:', packageJSON.name);
+    
+    // 优化目录查找逻辑
+    let actualSourceDir = allDirs.find(f => 
+      f.startsWith((packageJSON.name || 'HotPE_Client').replace(/n$/, '')) && f.includes(targetPlatform) && f.includes(targetArch)
     );
     
-    // 精简目录查找逻辑
-    let actualSourceDir = allDirs.find(f => 
-      f.startsWith(packageJSON.name) && f.includes(targetPlatform)
-    ) || allDirs.find(f => f.includes(targetPlatform));
+    if (!actualSourceDir) {
+      actualSourceDir = allDirs.find(f => 
+        f.startsWith((packageJSON.name || 'HotPE_Client').replace(/n$/, '')) && f.includes(targetPlatform)
+      );
+    }
+    
+    if (!actualSourceDir) {
+      actualSourceDir = allDirs.find(f => f.includes(targetPlatform));
+    }
     
     if (!actualSourceDir) {
       actualSourceDir = allDirs.find(f => !f.startsWith('.') && f !== 'make' && f !== appName);
     }
     
     if (!actualSourceDir) {
-      throw new Error(`Source directory not found for ${targetPlatform}-${targetArch}`);
+      throw new Error(`Source directory not found for ${targetPlatform}-${targetArch}. Found directories: [${allDirs.join(', ')}]`);
     }
+    
+    console.log('Found source directory:', actualSourceDir);
     
     try {
       // 切换到out目录
@@ -48,6 +71,7 @@ class Maker7z {
       
       // 重命名文件夹为统一名称
       if (actualSourceDir !== appName) {
+        console.log(`Renaming ${actualSourceDir} to ${appName}`);
         if (fs.existsSync(appName)) {
           fs.rmSync(appName, { recursive: true });
         }
@@ -60,7 +84,8 @@ class Maker7z {
       }
       
       // 执行7z压缩命令
-      const command = `"${sevenZipExe}" a -t7z -mx=9 "${appName}.7z" -ir!${appName} "${appName}\\*"`;
+      const command = `"${sevenZipExe}" a -t7z -mx=9 "${appName}.7z" "./${appName}/*"`;
+      console.log(`Executing 7z command: ${command}`);
       execSync(command, { stdio: 'inherit' });
       
       // 恢复工作目录
@@ -102,6 +127,16 @@ class Maker7z {
   
   getPlatforms() {
     return this.platforms;
+  }
+  
+  // 添加新的 requiredMethods 方法以适配新版本 Electron Forge
+  get requiredMethods() {
+    return ['make', 'isSupportedOnCurrentPlatform', 'checkSystemPrerequisites', 'ensureExternalBinariesExist'];
+  }
+  
+  // 添加 clone 方法以适配新版本 Electron Forge
+  clone(config) {
+    return new Maker7z({ ...this.config, ...config });
   }
 }
 

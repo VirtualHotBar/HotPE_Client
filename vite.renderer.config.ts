@@ -7,7 +7,7 @@ export default defineConfig({
   root: './src/view',
   base: './',
   build: {
-    outDir: '../../dist/view',
+    outDir: '../../.vite/dist/view',
     emptyOutDir: true,
     rollupOptions: {
       input: './src/view/index.html',

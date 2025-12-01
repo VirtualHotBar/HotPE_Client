@@ -1,4 +1,3 @@
-
 module.exports = {
   packagerConfig: {
     asar: true,
@@ -6,7 +5,6 @@ module.exports = {
     name: 'HotPE_Client',
     icon: './logo.ico',
     extraResource: ['resources/tools'],
-    ignore: ['src', 'resources'],
     win32metadata: {
       "requested-execution-level": "requireAdministrator"
     }
@@ -16,7 +14,7 @@ module.exports = {
     {
       name: './scripts/maker-7z.js',
       platforms: ['win32'],
-    },
+    }, 
   ],
   plugins: [
     {

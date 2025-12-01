@@ -7,7 +7,7 @@ export default defineConfig({
       formats: ['cjs'],
       fileName: () => 'index.js',
     },
-    outDir: 'dist/main',
+    outDir: '.vite/dist/main',
     emptyOutDir: true,
     rollupOptions: {
       external: ['electron'],

@@ -2,8 +2,8 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { dialog } from 'electron';
 import path from 'path'
     
-//是否为开发模式 
-import isDev from 'electron-is-dev'
+// 是否为开发模式
+const isDev = process.env['NODE_ENV'] === 'development' || !app.isPackaged;
 
 app.on('ready', () => {
   //创建一个窗口
