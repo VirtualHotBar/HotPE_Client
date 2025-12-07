@@ -5,12 +5,31 @@ import path from 'path'
 // 是否为开发模式
 const isDev = process.env['NODE_ENV'] === 'development' || !app.isPackaged;
 
+// 标记是否已经禁用硬件加速并重启过
+let hasRetried = false;
+
+// 检查是否之前因为GPU问题重启过
+const gpuCrashRestart = app.commandLine.hasSwitch('gpu-crash-restart');
+if (gpuCrashRestart && !hasRetried) {
+  console.log('Disabling hardware acceleration due to previous GPU crash');
+  app.disableHardwareAcceleration();
+  hasRetried = true;
+}
+
 // 声明全局变量用于 Vite 开发服务器
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
 
+// GPU错误重启处理函数
+const handleGpuCrashAndRestart = (reason: string) => {
+  console.log(`${reason}, disabling hardware acceleration and restarting...`);
+  app.commandLine.appendSwitch('gpu-crash-restart');
+  app.relaunch();
+  app.exit(0);
+};
+
 app.on('ready', () => {
-  //创建一个窗口
+  // 创建一个窗口
   const window = new BrowserWindow({
     resizable: true,   //允许用户改变窗口大小
     width: 900,        //设置窗口宽高
@@ -84,5 +103,17 @@ app.on('ready', () => {
     })
   })
 
-  
+  // 监听渲染进程错误，在出错时禁用硬件加速并重启
+  if (!hasRetried) {
+    window.webContents.on('render-process-gone', (event, details) => {
+      handleGpuCrashAndRestart(`Renderer process gone (reason: ${details.reason}, exitCode: ${details.exitCode})`);
+    });
+
+    // 监听子进程崩溃事件（包括GPU进程）
+    app.on('child-process-gone', (event, details) => {
+      if (details.type === 'GPU') {
+        handleGpuCrashAndRestart(`GPU process gone (reason: ${details.reason}, exitCode: ${details.exitCode})`);
+      }
+    });
+  }
 })
