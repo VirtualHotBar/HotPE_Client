@@ -8,17 +8,24 @@ const isDev = process.env['NODE_ENV'] === 'development' || !app.isPackaged;
 // 标记是否已经禁用硬件加速并重启过
 let hasRetried = false;
 
+// 声明全局变量用于 Vite 开发服务器
+declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
+declare const MAIN_WINDOW_VITE_NAME: string;
+
+
+
+// 检查是否已经禁用沙箱
+if(!app.commandLine.hasSwitch('--no-sandbox')){
+app.commandLine.appendSwitch('--no-sandbox');
+}
+
+
 // 检查是否之前因为GPU问题重启过
-const gpuCrashRestart = app.commandLine.hasSwitch('gpu-crash-restart');
-if (gpuCrashRestart && !hasRetried) {
+if (app.commandLine.hasSwitch('gpu-crash-restart') && !hasRetried) {
   console.log('Disabling hardware acceleration due to previous GPU crash');
   app.disableHardwareAcceleration();
   hasRetried = true;
 }
-
-// 声明全局变量用于 Vite 开发服务器
-declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
-declare const MAIN_WINDOW_VITE_NAME: string;
 
 // GPU错误重启处理函数
 const handleGpuCrashAndRestart = (reason: string) => {
@@ -53,6 +60,7 @@ app.on('ready', () => {
     window.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     window.loadFile(path.join(__dirname, '../view/index.html'));
+    //window.webContents.openDevTools({ mode: 'right' })
   }
 
   //去掉菜单栏

@@ -2,7 +2,7 @@ module.exports = {
   packagerConfig: {
     asar: true,
     platform: "win32",
-    extraArgs: [], 
+    //extraArguments: ['--no-sandbox'], 
     name: 'HotPE_Client',
     icon: './logo.ico',
     extraResource: ['resources/tools'],
