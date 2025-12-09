@@ -7,7 +7,7 @@ import { checkIsReady, getHotPEDriveLetter } from "./check"
 import { ReactNode } from "react"
 import { getUsableLetter } from "../../utils/disk/diskInfo"
 import { migrateHPM } from "../hpm/hpm"
-const fs = window.require('fs')
+const fs = window.require('fs') as typeof import('fs')
 
 const tempPath = roConfig.path.clientTemp + 'install\\peFiles\\'
 
@@ -17,13 +17,18 @@ const pecmdPath = roConfig.path.tools + 'PECMD.exe'
 const fbplusPath = roConfig.path.tools + 'fbplus.exe'
 
 async function xPartFiles(ISOPath: string, xEFIPath: string, xDataPath: string) {
-    const EFI_List: string[] = ["EFI", "Boot", "HotPE\\Boot.wim", "bootmgr", "bootmgr.efi", "ventoy.dat"]
+    const EFI_List: string[] = ["EFI", "Boot", "HotPE\\Boot.wim", "bootmgr", "bootmgr.efi", "ntldr", "ventoy.dat"]
     const Data_List: string[] = ["HotPE -xr!Boot.wim", "HotProgMods", "AUTORUN.INF", "HotPE.ico"]
 
-    //解压ISO文件
+    //解压ISO文件EFI 分区
     for (const tList of EFI_List) {
         await unZipFile(ISOPath, xEFIPath, tList)
     }
+    if (!fs.existsSync(xEFIPath + 'ntldr')) {
+        await copyFile(xEFIPath + 'bootmgr', xEFIPath + 'ntldr')
+    }
+
+    //解压ISO文件Data 分区
     for (const tList of Data_List) {
         await unZipFile(ISOPath, xDataPath, tList)
     }
