@@ -83,8 +83,19 @@ class Maker7z {
         throw new Error(`${appName} directory not found`);
       }
       
+      // 创建快捷方式（使用相对路径，便于用户移动文件夹后仍能使用）
+      const exePath = path.join(outDir, appName, `${appName}.exe`);
+      const shortcutPath = path.join(outDir, appName, `${appName}.lnk`);
+      
+      if (fs.existsSync(exePath)) {
+        console.log(`Creating shortcut: ${shortcutPath}`);
+        // 使用相对路径，这样无论解压到哪个位置，快捷方式都能正常工作
+        const psCommand = `$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('${shortcutPath}'); $s.TargetPath = '${appName}.exe'; $s.WorkingDirectory = '.'; $s.Save()`;
+        execSync(`powershell.exe -Command "${psCommand}"`, { stdio: 'inherit' });
+      }
+      
       // 执行7z压缩命令
-      const command = `"${sevenZipExe}" a -t7z -mx=9 "${appName}.7z" "./${appName}/*"`;
+      const command = `"${sevenZipExe}" a -t7z -mx=9 "${appName}.7z" "./${appName}"`;
       console.log(`Executing 7z command: ${command}`);
       execSync(command, { stdio: 'inherit' });
       
