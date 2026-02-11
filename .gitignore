@@ -116,3 +116,5 @@ resources/config.json
 resources/temp
 out
 .vscode
+.tmp
+.qoder

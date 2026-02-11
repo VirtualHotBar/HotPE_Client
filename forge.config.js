@@ -1,6 +1,6 @@
 module.exports = {
   packagerConfig: {
-    asar: true,
+    asar: ture,
     platform: "win32",
     //extraArguments: ['--no-sandbox'], 
     name: 'HotPE_Client',
@@ -9,13 +9,16 @@ module.exports = {
     win32metadata: {
       "requested-execution-level": "requireAdministrator"
     },
-    ignore: [
-      'resources',
-      'scripts',
-      'src',
-      '.vscode',
-      'out',
-    ]
+    // Keep Vite output lean, but allow runtime-required third-party modules.
+    ignore: (file) => {
+      if (!file) return false;
+      if (file === '/node_modules') return false;
+      return !(
+        file.startsWith('/.vite') ||
+        file.startsWith('/node_modules/iconv-lite') ||
+        file.startsWith('/node_modules/safer-buffer')
+      );
+    },
   },
   rebuildConfig: {},
   makers: [

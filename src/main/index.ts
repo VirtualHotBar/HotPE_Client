@@ -3,7 +3,7 @@ import { dialog } from 'electron';
 import path from 'path'
     
 // 是否为开发模式
-const isDev = process.env['NODE_ENV'] === 'development' || !app.isPackaged;
+const isDev = process.env['NODE_ENV'] === 'development' || !app.isPackaged || process.argv.includes('-dev');
 
 // 标记是否已经禁用硬件加速并重启过
 let hasRetried = false;
@@ -11,8 +11,6 @@ let hasRetried = false;
 // 声明全局变量用于 Vite 开发服务器
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
-
-
 
 // 检查是否已经禁用沙箱
 if(!app.commandLine.hasSwitch('--no-sandbox')){

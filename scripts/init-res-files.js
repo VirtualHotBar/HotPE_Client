@@ -1,13 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-// 初始化资源文件
 const dels = [
   'resources/files/pe/',
   'resources/files/client/',
   'resources/temp/',
   'resources/tools/PACMDforUSB/log/',
-  'out/',
   '.vite/'
 ];
 
