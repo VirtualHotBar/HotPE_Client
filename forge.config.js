@@ -1,6 +1,6 @@
 module.exports = {
   packagerConfig: {
-    asar: ture,
+    asar: true,
     platform: "win32",
     //extraArguments: ['--no-sandbox'], 
     name: 'HotPE_Client',
