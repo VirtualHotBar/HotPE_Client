@@ -54,10 +54,9 @@ class Maker7z {
         fs.renameSync(actualSourceDir, appName);
       }
 
-      // 打包（增量更新）
+      // 打包
       const archive = `${appName}.7z`;
-      const cmd = fs.existsSync(archive) ? 'u' : 'a';
-      execSync(`"${sevenZipExe}" ${cmd} -t7z -mx=9 "${archive}" "./${appName}"`, { stdio: 'inherit' });
+      execSync(`"${sevenZipExe}" a -t7z -mx=9 "${archive}" "./${appName}"`, { stdio: 'inherit' });
 
       return [path.join(outDir, archive)];
     } finally {
