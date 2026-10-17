@@ -5,7 +5,7 @@ import { copyDir, copyFile, delDir, delFiles, isHotPEDrive, moveFiles, readHotPE
 import { checkPEDrive } from "../condition"
 import { checkIsReady, getHotPEDriveLetter } from "./check"
 import { ReactNode } from "react"
-import { getUsableLetter } from "../../utils/disk/diskInfo"
+import { getUsableLetter, checkBootPartition } from "../../utils/disk/diskInfo"
 import { migrateHPM } from "../hpm/hpm"
 const fs = window.require('fs') as typeof import('fs')
 
@@ -34,6 +34,46 @@ async function xPartFiles(ISOPath: string, xEFIPath: string, xDataPath: string) 
     }
 }
 
+export async function installToUDisk_diskpart(diskIndex: string, setStepStr: Function) {
+    setStepStr('正在初始化U盘')
+    await runDiskPart("echo,select disk " + diskIndex + "&echo,clean&echo,clean&echo,convert MBR noerr&echo,exit")
+
+    setStepStr('正在创建数据分区')
+    await runDiskPart("echo,select disk " + diskIndex + "&echo,create partition primary offset=1024&echo,format fs=NTFS quick&echo,assign&echo,shrink desired=1024&echo,exit")
+
+    setStepStr('正在创建EFI分区')
+    await runDiskPart("echo,select disk " + diskIndex + "&echo,create partition primary&echo,format fs=FAT32 label=EFI quick&echo,active&echo,assign&echo,exit")
+}
+
+export async function installToUDisk_PACMD(diskIndex: string, setStepStr: Function) {
+    setStepStr('正在解除占用')
+    //解除占用(数据分区强制分配盘符)
+    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')
+    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
+
+    setStepStr('正在删除U盘所有分区')
+    await runCmdAsync(fbplusPath + ' (hd' + diskIndex + ') format --force --raw --fat32  --align')//还原磁盘为普通模式（删除fbinst引导记录）
+
+    //删除磁盘所有分区
+    await runPacmd(' /hd:' + diskIndex + '  /del:all')
+
+    setStepStr('正在初始化U盘')
+    //初始化
+    await runPacmd(' /init:' + diskIndex)
+    await runPacmd(' /rebuildmbr:' + diskIndex + ' /mbrtype:2')
+
+    setStepStr('正在创建EFI分区')
+    //创建EFI分区，激活
+    await runPacmd(' /hd:' + diskIndex + ' /cre /size:1024 /pri /end /act /hide /align /fs:fat32 /label:EFI')
+
+    setStepStr('正在创建数据分区')
+    //创建数据分区，EXFAT
+    //let dataLetter = (await getUsableLetter()).substring(0, 2)
+
+    //isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
+    await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:auto')
+}
+
 export async function installToUDisk(diskIndex: string, setStep: Function, setStepStr: Function, setLockMuen: Function) {
     console.log('diskIndex' + diskIndex);
 
@@ -49,13 +89,11 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     //await fs.mkdir(tempEFIPath, (back: any) => { console.log(back) })
     //await fs.mkdir(tempDataPath, (back: any) => { console.log(back) })
 
-
     setLockMuen(true)
     setStep(0)
 
     //当前操作是否成功
     let isSucceed = true
-
 
     //解压
     setStepStr('正在解压文件')
@@ -64,53 +102,29 @@ export async function installToUDisk(diskIndex: string, setStep: Function, setSt
     await xPartFiles(roConfig.path.resources.pe + config.resources.pe.current?.fileName, tempEFIPath, tempDataPath)
 
     setStep(1)
-    setStepStr('正在解除占用')
-    //解除占用(数据分区强制分配盘符)
-    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')
-    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:auto')
 
-    setStepStr('正在删除U盘所有分区')
-    await runCmdAsync(fbplusPath + ' (hd' + diskIndex + ') format --force --raw --fat32  --align')//还原磁盘为普通模式（删除fbinst引导记录）
-    //删除磁盘所有分区
-    await runPacmd(' /hd:' + diskIndex + '  /del:all')
+    // 分区助手
+    await installToUDisk_PACMD(diskIndex, setStepStr)
 
+    // DiskPart
+    if (!await checkBootPartition(Number(diskIndex))) await installToUDisk_diskpart(diskIndex, setStepStr)
 
-
-    setStepStr('正在初始化U盘')
-    //初始化
-    await runPacmd(' /init:' + diskIndex)
-    await runPacmd(' /rebuildmbr:' + diskIndex + ' /mbrtype:2')
-
-    setStepStr('正在创建EFI分区')
-    //创建EFI分区，激活，写引导
-    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:1024 /pri /end /act /hide /align /fs:fat32 /label:EFI')
+    //写引导
     await runCmdAsync(booticePath + ' /DEVICE=' + diskIndex + ' /mbr /type=usbhdd+ /install /quiet')
     await runCmdAsync(booticePath + ' /DEVICE=' + diskIndex + ':0 /pbr /type=bootmgr /install /quiet')
+
+    //获取数据分区盘符失败后重新获取
+    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')//卸载盘符
+    let dataLetter = await getUsableLetter()//取个没被占用(可用)的盘符
+    // 重新分配盘符
+    await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)
+
+    // 格式化数据分区
+    await runCmdAsync(pecmdPath + ' DFMT ' + dataLetter + ',exFAT,HotPE工具箱')
 
     setStepStr('正在写入文件')
     //写EFI分区文件
     isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /whide:0 /src:' + roConfig.path.execDir + tempEFIPath.substring(2, tempEFIPath.length - 1))//去路径末'\'
-
-    setStepStr('正在创建数据分区')
-    //创建数据分区，EXFAT
-    //let dataLetter = (await getUsableLetter()).substring(0, 2)
-    let dataLetter = ''
-
-    //isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:' + dataLetter)
-    isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /cre /size:auto /pri /align /fs:NTFS /letter:auto', (back: string) => {
-        dataLetter = takeMidStr(back, '盘符:', '文件系统:').replaceAll('	', '').replaceAll('\r\n', '').replaceAll(' ', '');
-    });
-
-    //获取数据分区盘符失败后重新获取
-
-    if (!'F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:A:B:C:D:E:'.includes(dataLetter) || !dataLetter) {
-        await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:*')//卸载盘符
-        dataLetter = await getUsableLetter()//取个没被占用(可用)的盘符
-        isSucceed = isSucceed && await runPacmd(' /hd:' + diskIndex + ' /setletter:0 /letter:' + dataLetter)//重新分配盘符
-    }
-
-    await runCmdAsync(pecmdPath + ' DFMT ' + dataLetter + ',exFAT,HotPE工具箱')
-
     //复制数据区文件
     await copyDir(tempDataPath, dataLetter + '\\')
 
@@ -317,6 +331,10 @@ async function runPacmd(cmd: string, callBack: Function = () => { }) {
     let logPath = roConfig.path.clientTemp + 'pacmd_' + Date.now() + ".log"
 
     await runCmdAsync(pacmdPath + ' ' + cmd + ' /out:' + logPath)
+    if (!fs.existsSync(logPath)) {
+        callBack('傲梅分区助手运行失败')
+        return false
+    }
     let result = new TextDecoder('gbk').decode(fs.readFileSync(logPath))
     //await delFiles(logPath)
     callBack(result)
@@ -324,6 +342,21 @@ async function runPacmd(cmd: string, callBack: Function = () => { }) {
         return true
     }
     return false
+}
+
+//运行DiskPart
+async function runDiskPart(cmd: string, callBack: Function = () => { }) {
+    // Group the echoed commands before piping them to DiskPart. A nested
+    // `cmd /c "..."` is not safe here because spawn passes the quotes through
+    // to cmd.exe and they can be interpreted as part of the command name.
+    const result = await runCmdAsync('(' + cmd + ') | diskpart')
+    callBack(result)
+
+    // DiskPart normally exits with code 0 even when one of its commands fails,
+    // so inspect its localized output as well as the command result.
+    const hasError = /(错误|失败|error|failed|unable)/i.test(result)
+    const hasSuccess = /(成功|success|completed)/i.test(result)
+    return !hasError && hasSuccess
 }
 
 //确认对话框

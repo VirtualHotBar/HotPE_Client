@@ -51,6 +51,53 @@ export async function getPartitionsInfo() {
     config.environment.ware.partitions = config.environment.ware.partitions.reverse()//翻转
 }
 
+//判断指定物理磁盘是否符合HotPE启动盘的分区结构：
+//目标磁盘必须恰好有两个分区，第二个分区为EFI分区且文件系统为FAT32。
+export async function checkBootPartition(diskIndex: number) {
+    if (!Number.isInteger(diskIndex) || diskIndex < 0) {
+        return false
+    }
+
+    try {
+        const partitionsTemp = filterArrayNull(
+            (await runCmdAsync(roConfig.path.tools + 'CxDir.exe  -mohong'))
+                .replaceAll('\t', '|')
+                .split('\r\n')
+        )
+
+        const partitions = partitionsTemp.map((partition: string) => {
+            const temp = partition.split('|')
+            const diskAndPartition = temp[0].split(':')
+
+            return {
+                diskIndex: Number(diskAndPartition[0]) - 1,
+                partitionIndex: Number(diskAndPartition[1]) - 1,
+                type: (temp[4] || '').trim().toUpperCase(),
+                fileSystem: (temp[5] || '').trim().toUpperCase(),
+                label: (temp[6] || '').trim().toUpperCase(),
+            }
+        }).filter((partition) => {
+            return partition.diskIndex === diskIndex &&
+                Number.isInteger(partition.partitionIndex) &&
+                partition.partitionIndex >= 0
+        })
+
+        if (partitions.length !== 2) {
+            return false
+        }
+
+        const efiPartition = partitions.find((partition) => partition.partitionIndex === 1)
+        if (!efiPartition || efiPartition.fileSystem !== 'FAT32') {
+            return false
+        }
+
+        //不同分区工具可能把EFI标记写入“类型”或“卷标”，两种输出都兼容。
+        return efiPartition.type === 'EFI' || efiPartition.label === 'EFI'
+    } catch {
+        return false
+    }
+}
+
 
 //获取所有盘符，包括虚拟盘符
 export async function getAllLetterInfo() {
