@@ -72,9 +72,7 @@ export async function checkBootPartition(diskIndex: number) {
             return {
                 diskIndex: Number(diskAndPartition[0]) - 1,
                 partitionIndex: Number(diskAndPartition[1]) - 1,
-                type: (temp[4] || '').trim().toUpperCase(),
                 fileSystem: (temp[5] || '').trim().toUpperCase(),
-                label: (temp[6] || '').trim().toUpperCase(),
             }
         }).filter((partition) => {
             return partition.diskIndex === diskIndex &&
@@ -87,12 +85,11 @@ export async function checkBootPartition(diskIndex: number) {
         }
 
         const efiPartition = partitions.find((partition) => partition.partitionIndex === 1)
-        if (!efiPartition || efiPartition.fileSystem !== 'FAT32') {
+        if (!efiPartition || (efiPartition.fileSystem !== 'FAT32' && efiPartition.fileSystem !== 'FAT32LBA')) {
             return false
         }
 
-        //不同分区工具可能把EFI标记写入“类型”或“卷标”，两种输出都兼容。
-        return efiPartition.type === 'EFI' || efiPartition.label === 'EFI'
+        return true
     } catch {
         return false
     }
