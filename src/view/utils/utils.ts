@@ -56,6 +56,15 @@ export function writeHotPESetting(drive: string, obj: object) {
     return fs.writeFileSync(drive.substring(0, 1) + ":\\HotPE\\confi.ini", ini.encode(obj))
 }
 
+//读取Hotpe配置文件
+export function readHotPEConfigByPath(path: string) {
+    return ini.parse(fs.readFileSync(path).toString())
+}
+
+//保存Hotpe配置文件
+export function writeHotPEConfigByPath(path: string, obj: object) {
+    return fs.writeFileSync(path, ini.encode(obj))
+}
 
 //解压文件7Z
 export function unZipFile(filePath: string, outDir: string, filter: string = '') {
@@ -352,4 +361,8 @@ export function formatSize(v: number) {
         i -= 1;
     }
     return Math.round(v * 100) / 100 + ' ' + UNITS[i];
+}
+
+export async function sleep(ms: number) {
+    return new Promise<void>(resolve => setTimeout(resolve, ms))
 }

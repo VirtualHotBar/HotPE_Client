@@ -62,7 +62,7 @@ export function runCmdAsync(cmd: string) {
     let returnStr: string = '';
     runCmd(cmd, (back: string) => {
       returnStr += back;
-      console.log(returnStr);
+      console.log(back);
       
     }, (code: number) => {
       if (code === 0) {
